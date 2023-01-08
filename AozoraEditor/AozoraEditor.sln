@@ -8,6 +8,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aozora2html", "..\..\aozora
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraGaijiChuki", "..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj", "{DCFB64F4-D1B7-4757-8F24-AEC064993540}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraLibraryWasm", "AozoraLibraryWasm\AozoraLibraryWasm.csproj", "{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,12 +30,16 @@ Global
 		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Release|Any CPU.Build.0 = Release|Any CPU
+		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
 		SolutionGuid = {0088FA8F-1D60-4212-ABBB-1F6C7BAFEE28}
+		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
 	EndGlobalSection
 EndGlobal
