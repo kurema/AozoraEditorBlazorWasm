@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraEditor", "AozoraEdito
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aozora2html", "..\..\aozora2htmlSharp\aozora2html\aozora2html\aozora2html.csproj", "{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraGaijiChuki", "..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki\AozoraGaijiChuki.csproj", "{DCFB64F4-D1B7-4757-8F24-AEC064993540}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraGaijiChuki", "..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj", "{DCFB64F4-D1B7-4757-8F24-AEC064993540}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,7 +33,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0088FA8F-1D60-4212-ABBB-1F6C7BAFEE28}
 		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
+		SolutionGuid = {0088FA8F-1D60-4212-ABBB-1F6C7BAFEE28}
 	EndGlobalSection
 EndGlobal
