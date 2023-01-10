@@ -23,17 +23,11 @@ setModuleImports('main.js', {
 
 const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
-//const text = exports.MyClass.Greeting();
-//console.log(text);
 
-document.getElementById('convertButton').onclick = () => {
+document.getElementById('convertButton').onclick = async () => {
     exports.AozoraFunctions.Convert();
 }
-//document.getElementById('out').innerHTML = text;
-await dotnet.run();
 
-//function convert() {
-//    let input = document.getElementById('input').value;
-//    let html = exports.AozoraFunctions.Aozora2html(input);
-//    document.getElementById('outframe').src = "data:text/html;charset=utf-8," + escape(html);
-//}
+document.getElementById('convertButton').disabled = false;
+document.getElementById('out').innerHTML = "";
+await dotnet.run();

@@ -12,6 +12,25 @@
 </head>
 
 <body>
+    <span id="out">Loading...</span>
+    <script src="./lib/monaco-editor/min/vs/loader.js"></script>
+    <div id="container" style="width: 800px; height: 600px; border: 1px solid grey;"></div>
+    <script>
+      require.config({ paths: { vs: "./lib/monaco-editor/min/vs" } });
+
+      require(["vs/editor/editor.main"], function () {
+        var editor = monaco.editor.create(
+          document.getElementById("container"),
+          {
+            value: [
+              "function x() {",
+              '\tconsole.log("Hello world!");',
+              "}",
+            ].join("\n"),
+            language: "javascript",
+          }
+        );
+      });</script>
     <textarea id="input">
 吾輩は猫である
 夏目漱石
@@ -39,11 +58,10 @@ http://www.aozora.gr.jp/accent_separation.html
 
 　吾輩《わがはい》は猫である。名前はまだ無い。
   </textarea>
-  <span id="out"></span>
-  <iframe id="outframe">
-  </iframe>
-  <script type='module' src="./main.js"></script>
-  <button id="convertButton" title="Convert">Convert!</button>
+    <iframe id="outframe">
+    </iframe>
+    <script type='module' src="./main.js"></script>
+    <button id="convertButton" title="Convert" disabled>Convert!</button>
 </body>
 
 </html>
