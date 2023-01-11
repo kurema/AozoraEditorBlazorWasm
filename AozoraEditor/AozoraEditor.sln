@@ -1,14 +1,13 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.31611.283
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraEditor", "AozoraEditor\AozoraEditor.csproj", "{40773771-F327-4DEF-8305-EED1FAB32860}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraEditor", "AozoraEditor\AozoraEditor.csproj", "{DF2B8B32-0F77-47A0-B3F8-DAA43765B6A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aozora2html", "..\..\aozora2htmlSharp\aozora2html\aozora2html\aozora2html.csproj", "{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraGaijiChuki", "..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj", "{B41D8036-0EAC-49C2-A05B-22155C47FE9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraGaijiChuki", "..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj", "{DCFB64F4-D1B7-4757-8F24-AEC064993540}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraLibraryWasm", "AozoraLibraryWasm\AozoraLibraryWasm.csproj", "{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aozora2html", "..\..\aozora2htmlSharp\aozora2html\aozora2html\aozora2html.csproj", "{CF43DAAB-1439-458E-970C-A7F131F46D29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,30 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40773771-F327-4DEF-8305-EED1FAB32860}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D961EEBC-0242-4C3F-ABD7-B1AA4F051202}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCFB64F4-D1B7-4757-8F24-AEC064993540}.Release|Any CPU.Build.0 = Release|Any CPU
-		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{857B6D23-6976-48B5-AD6C-B526D9BC5DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF2B8B32-0F77-47A0-B3F8-DAA43765B6A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF2B8B32-0F77-47A0-B3F8-DAA43765B6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF2B8B32-0F77-47A0-B3F8-DAA43765B6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF2B8B32-0F77-47A0-B3F8-DAA43765B6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B41D8036-0EAC-49C2-A05B-22155C47FE9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41D8036-0EAC-49C2-A05B-22155C47FE9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41D8036-0EAC-49C2-A05B-22155C47FE9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41D8036-0EAC-49C2-A05B-22155C47FE9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF43DAAB-1439-458E-970C-A7F131F46D29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF43DAAB-1439-458E-970C-A7F131F46D29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF43DAAB-1439-458E-970C-A7F131F46D29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF43DAAB-1439-458E-970C-A7F131F46D29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0088FA8F-1D60-4212-ABBB-1F6C7BAFEE28}
-		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
+		SolutionGuid = {E1CBCE2D-45D6-4FD4-B763-C4C6DAF06CDF}
 	EndGlobalSection
 EndGlobal

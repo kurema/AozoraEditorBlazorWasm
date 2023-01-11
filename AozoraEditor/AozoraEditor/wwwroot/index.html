@@ -1,29 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>AozoraEditor</title>
     <base href="/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/app.css" rel="stylesheet" />
-    <link href="AozoraEditor.styles.css" rel="stylesheet" />
+    <link href="manifest.json" rel="manifest" />
+    
+    <!-- If you add any scoped CSS files, uncomment the following to load them
+    <link href="AozoraEditor.styles.css" rel="stylesheet" /> -->
 </head>
 
 <body>
-
-    <div class="status-bar-safe-area"></div>
-
     <div id="app">Loading...</div>
+
+    <script src="./lib/monaco-editor/min/vs/loader.js"></script>
+
+    <script>
+        require.config({ paths: { vs: "./lib/monaco-editor/min/vs" } });
+
+        var editors = [];
+
+        function GetMonacoText(editor_id) {
+            if (editor_id < 0) return "";
+            return editors[editor_id].getValue();
+        }
+
+        function ApplyMonacoEditorAozora(container_id, initial_text) {//id:string
+            const editor_id = editors.length;
+            require(["vs/editor/editor.main"], function () {
+                monaco.languages.register({ id: 'aozora' });
+                const keywords = ['底本', '青空文庫'];
+                monaco.languages.setMonarchTokensProvider('aozora', {
+                    keywords,
+                    tokenizer: {
+                        root: [
+                            [/".*?"/, 'string'],
+                            [/\/\/.+$/, 'comment'],
+                        ],
+                    }
+                });
+
+                const editor = monaco.editor.create(
+                    document.getElementById(container_id),
+                    {
+                        value: initial_text,
+                        language: "aozora",
+
+                        // Disable suggestion:
+                        //https://github.com/microsoft/monaco-editor/issues/1681
+                        suggest: {
+                            showFields: false,
+                            showFunctions: false,
+
+                        },
+                        quickSuggestions: {
+                            "other": false,
+                            "comments": false,
+                            "strings": false
+                        },
+                        parameterHints: {
+                            enabled: false
+                        },
+                        suggestOnTriggerCharacters: false,
+                        acceptSuggestionOnEnter: "off",
+                        tabCompletion: "off",
+                        wordBasedSuggestions: false,
+                    }
+                );
+                editors[editor_id] = editor;
+            });
+            return editor_id;
+        }
+    </script>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-
-    <script src="_framework/blazor.webview.js" autostart="false"></script>
-
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
 
 </html>
