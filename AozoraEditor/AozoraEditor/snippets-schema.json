@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "https://raw.githubusercontent.com/kurema/AozoraEditorBlazorWasm/master/AozoraEditor/AozoraEditor/Program.cs",
   "title": "JSON Schema for snippets.json",
 
   "type": "array",
@@ -8,8 +7,12 @@
   "items": {
     "type": "object",
     "additionalProperties": false,
-    "required": [ "label", "text" ],
+    "required": [ "type", "label", "text" ],
     "properties": {
+      "type": {
+        "type": "string",
+        "enum": [ "command", "text" ]
+      },
       "label": {
         "anyOf": [
           { "type": "string" },
@@ -34,22 +37,7 @@
           "type": "string",
           "enum": [ "number_full", "number_half", "any" ]
         }
-
       }
     }
   }
-
-  //"properties": {
-  //  "name": {
-  //    "type": "string",
-  //    "description": "This shows up in tooltips for the 'name' property."
-  //  },
-  //  "versions": {
-  //    "type": "array",
-  //    "description": "An array of version numbers.",
-  //    "minItems": 1,
-  //    "items": {
-  //      "type": "number"
-  //    }
-  //  }
-} }
+}
