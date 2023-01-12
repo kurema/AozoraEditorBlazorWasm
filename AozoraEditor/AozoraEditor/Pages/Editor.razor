@@ -1,29 +1,35 @@
-﻿@page "/editor";
+﻿@page "/";
 @inject IJSRuntime JSRuntime;
 
-<div id="container"
-	 style="width: 800px; height: 600px; border: 1px solid grey;"></div>
+<div style="display:flex;align-items:stretch;width:100%;height:100%;margin:0;">
+	<div id="container-monaco" class="" style="flex:1 0 50%;width:0;"></div>
+	<div id="container-preview" style="flex:1 0 50%;width:0;">
+		<iframe style="width:100%;height:100%;border:none;" srcdoc="@htmlPreview"></iframe>
+	</div>
+</div>
 
-<button @onclick="Test">Check on console</button>
+@*<button @onclick="Test">プレビュー</button>*@
 
 @code {
 	int monaco_id = -1;
 
-	private async void Test()
+	string htmlPreview = "<html><body>プレビューボタンを押してください。</body></html>";
+
+	private async Task Test()
 	{
 		var text = await GetText();
 
 		var jstream = new Aozora.JstreamString(text, false);
 		var output = new Aozora.Helpers.OutputString();
 		//var output = new Aozora.Helpers.OutputConsole();
-		var aozora = new Aozora.Aozora2Html(jstream, output, new Aozora.Helpers.OutputConsole(), "./gaiji/", null)
+		var aozora = new Aozora.Aozora2Html(jstream, output, new Aozora.Helpers.OutputConsole(), "./gaiji/", new string[0])
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,
 				UseUnicodeEmbedGaiji = true,
 			};
-		aozora.Process();
-		Console.WriteLine(output.ToString());
+		await Task.Run(() => aozora.Process());
+		htmlPreview = output.ToString();
 	}
 
 	private async Task<string> GetText()
@@ -34,7 +40,7 @@
 
 	private async Task InitEditor()
 	{
-		monaco_id = await JSRuntime.InvokeAsync<int>("ApplyMonacoEditorAozora", "container", "吾輩は猫である\n夏目漱石\n\nここに本文を入力。\n");
+		monaco_id = await JSRuntime.InvokeAsync<int>("ApplyMonacoEditorAozora", "container-monaco", "タイトル\n作者\n\n本文。\n\n［＃本文終わり］\n本文後のテキスト\n");
 	}
 
 

@@ -7,7 +7,7 @@
     <base href="/" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="manifest.json" rel="manifest" />
-    
+
     <!-- If you add any scoped CSS files, uncomment the following to load them
     <link href="AozoraEditor.styles.css" rel="stylesheet" /> -->
 </head>
@@ -20,10 +20,24 @@
     <script>
         require.config({ paths: { vs: "./lib/monaco-editor/min/vs" } });
 
+        const snippets = [
+            { key: 'kaicho', text: '改丁' },
+            { key: 'kaipage', text: '改ページ' },
+            { key: 'kaimihiraki', text: '改見開き' },
+            { key: 'kaidan', text: '改段' },
+
+            { key: 'jisa', text: '${1:number}字下げ' },
+            { key: 'jisastart', text: ['ここから${1:number}字下げ', 'ここで字下げ終わり'].join('\n') },
+            { key: 'jisaorikaeshi', text: ['ここから${1:number}字下げ、折り返して${2:number}字下げ', 'ここで字下げ終わり'].join('\n') },
+            { key: 'tenorikaeshi', text: 'ここから改行天付き、折り返して[０-９]+字下げ' },
+
+        ];
+
+        //エディタは配列で監理して、要素の番号をIDとして扱います。
         var editors = [];
 
         function GetMonacoText(editor_id) {
-            if (editor_id < 0) return "";
+            if (editor_id < 0 || editor_id >= editors.length) return "";
             return editors[editor_id].getValue();
         }
 
@@ -31,14 +45,103 @@
             const editor_id = editors.length;
             require(["vs/editor/editor.main"], function () {
                 monaco.languages.register({ id: 'aozora' });
-                const keywords = ['底本', '青空文庫'];
+                /*
+                 * keywordはキーワードなので正規表現は使えない。
+                 * ['改丁', '改ページ', '改見開き', '改段', '[０-９]+字下げ',
+                 * 'ここで字下げ終わり', 'ここから[０-９]+字下げ', 'ここから[０-９]+字下げ、折り返して[０-９]+字下げ',
+                 * 'ここから改行天付き、折り返して[０-９]+字下げ', '[０-９]+字下げ', '地付き', 'ここから地付き', 'ここで地付き終わり',
+                 * '地から[０-９]+字上げ', 'ここから地から[０-９]+字上げ', 'ここで字上げ終わり',
+                 * 'ページの左右中央',
+                 * '「.+?」は[小中大]見出し', '小見出しよりもさらに下位の見出しには、注記しませんでした。'?,
+                 * '[小中大]見出し', '[小中大]見出し終わり',
+                 * 'ここから[小中大]見出し', 'ここから[小中大]見出し終わり',
+                 * '「.+?」は同行[小中大]見出し',
+                 * '同行[小中大]見出し', '同行[小中大]見出し終わり',
+                 * '「.+?」は窓[小中大]見出し',
+                 * '窓[小中大]見出し', '窓[小中大]見出し終わり',
+                 * * 外字はキーワード向きではない
+                 * * 訓点もややこしいので省略
+                 * '「.+」に.+', 下は色んなキーワード
+                 * '傍点', '白ゴマ傍点', '丸傍点', '白丸傍点', '黒三角傍点', '白三角傍点', '二重丸傍点', '蛇の目傍点', 'ばつ傍点', '傍線', '二重傍線', '鎖線', '破線', '波線', '下付き小文字', '上付き小文字', '行右小書き', '行左小書き',
+                 * '「.+?」は(太字|斜体)', '(太字|斜体)', '(太字|斜体)終わり', 'ここから(太字|斜体)', 'ここで(太字|斜体)終わり',
+                 * '.+?（.+?、横[0-9]+×縦[0-9]+）入る', '「.+」.+?（.+?、横[0-9]+×縦[0-9]+）入る', '.+?（.+?）入る'(obsolete),
+                 * '「.+?」はキャプション', 'キャプション', 'キャプション終わり',
+                 * '「.+?」に「.+?」の注記', '「.+?」は底本では「.+?」', '「.+?」はママ',
+                 * '「.+?」の左に「.+?」のルビ', '左にルビ付き', '左に「.+?」のルビ付き終わり', '「.+?」の左に「.+?」の注記',
+                 * '注記付き', '「.+?」の注記付き終わり',
+                 * '左に注記付き', '左に「.+?」の注記付き終わり',
+                 * '底本：'(コマンド外), '本文終わり',
+                 * '「.+?」は縦中横', '縦中横', '縦中横終わり', '割り注', '割り注終わり', '改行',
+                 * '「.+」は行[右左]小書き', '行[右左]小書き', '行[右左]小書き終わり',
+                 * '「.+?」は[上下]付き小文字', '[上下]付き小文字', '[上下]付き小文字終わり',
+                 * 'ここから[０-９]+字詰め', 'ここで字詰め終わり',
+                 * 'ここから罫囲み', 'ここで罫囲み終わり', '「.+?」は罫囲み', '罫囲み', '罫囲み終わり',
+                 * 'ここから横組み', 'ここで横組み終わり', '「.+?」は横組み', '横組み', '横組み終わり',
+                 * '「.+」は[０-９]+段階大きな文字', '[０-９]+段階大きな文字', '大きな文字終わり', '[０-９]+段階小さな文字', '小さな文字終わり',
+                 * 'ここから[０-９]+段階大きな文字', 'ここで大きな文字終わり', 'ここから[０-９]+段階小さな文字', 'ここで小さな文字終わり',
+                 * ];
+                 */
+                const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
                 monaco.languages.setMonarchTokensProvider('aozora', {
+                    defaultToken: 'invalid',
                     keywords,
                     tokenizer: {
                         root: [
-                            [/".*?"/, 'string'],
-                            [/\/\/.+$/, 'comment'],
+                            [/《.*?》/, 'ruby'],
+                            [/※?［＃.+?］/, 'command'],
+                            [/〔.+?〕/, 'accent'],
+                            [/^底本：.+$/, 'sokohon'],
                         ],
+                    }
+                });
+
+                monaco.editor.defineTheme('aozoraThemeLight', {
+                    base: 'vs',
+                    inherit: false,
+                    rules: [
+                        { token: 'ruby', foreground: '808080' },
+                        { token: 'command', foreground: '00A000', fontStyle: 'bold' },
+                        { token: 'accent', foreground: '0000A0' },
+                        { token: 'sokohon', foreground: '008000', },
+                    ],
+                    colors: {
+                        'editor.foreground': '#000000'
+                    }
+                });
+
+                monaco.editor.defineTheme('aozoraThemeDark', {
+                    base: 'vs',
+                    inherit: false,
+                    rules: [
+                        { token: 'ruby', foreground: '808080' },
+                        { token: 'command', foreground: '006000', fontStyle: 'bold' },
+                        { token: 'accent', foreground: '000060' },
+                        { token: 'sokohon', foreground: '008800', },
+                    ],
+                    colors: {
+                        'editor.foreground': '#000000'
+                    }
+                });
+
+                monaco.languages.registerCompletionItemProvider('aozora', {
+                    provideCompletionItems: (model, position, context, token) => {
+                        //サジェスト機能は行頭かスペースを入力後しか機能しない。従ってスペースを削除する。半角スペース以外なら削除不要。
+                        let snipetDeleteSpace = [];
+                        if (position.column > 2) { // columnはなぜか1から始まる。また文字入力後なので、2なら行頭。
+                            let rangeEdit = { startLineNumber: position.lineNumber, endLineNumber: position.lineNumber, startColumn: position.column - 2, endColumn: position.column - 1 };
+                            let charEdit = model.getValueInRange(rangeEdit);
+                            if (charEdit == ' ') { snipetDeleteSpace = [{ text: '', range: rangeEdit }]; }
+                        }
+                        var suggestions = [
+                            {
+                                label: 'ruby',
+                                kind: monaco.languages.CompletionItemKind.Snippet,
+                                insertText: '《${1:ruby}》',
+                                insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                additionalTextEdits: snipetDeleteSpace,
+                            },
+                        ];
+                        return { suggestions: suggestions };
                     }
                 });
 
@@ -47,26 +150,38 @@
                     {
                         value: initial_text,
                         language: "aozora",
+                        theme: 'aozoraThemeLight',
+
+                        unicodeHighlight: {
+                            ambiguousCharacters: false,
+                        },
+
+                        folding: true,
+                        wordWrap: true,
+                        automaticLayout: true,
+
+                        suggest: {
+                            snippetsPreventQuickSuggestions: false
+                        }
 
                         // Disable suggestion:
                         //https://github.com/microsoft/monaco-editor/issues/1681
-                        suggest: {
-                            showFields: false,
-                            showFunctions: false,
-
-                        },
-                        quickSuggestions: {
-                            "other": false,
-                            "comments": false,
-                            "strings": false
-                        },
-                        parameterHints: {
-                            enabled: false
-                        },
-                        suggestOnTriggerCharacters: false,
-                        acceptSuggestionOnEnter: "off",
-                        tabCompletion: "off",
-                        wordBasedSuggestions: false,
+                        //suggest: {
+                        //    showFields: false,
+                        //    showFunctions: false,
+                        //},
+                        //quickSuggestions: {
+                        //    "other": false,
+                        //    "comments": false,
+                        //    "strings": false
+                        //},
+                        //parameterHints: {
+                        //    enabled: false
+                        //},
+                        //suggestOnTriggerCharacters: false,
+                        //acceptSuggestionOnEnter: "off",
+                        //tabCompletion: "off",
+                        //wordBasedSuggestions: false,
                     }
                 );
                 editors[editor_id] = editor;

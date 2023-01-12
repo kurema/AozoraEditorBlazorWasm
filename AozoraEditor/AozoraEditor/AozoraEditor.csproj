@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -20,5 +20,7 @@
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4snippets_1json__JsonSchema="https://raw.githubusercontent.com/jfrog/jfrog-cli/v2/schema/filespec-schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>
