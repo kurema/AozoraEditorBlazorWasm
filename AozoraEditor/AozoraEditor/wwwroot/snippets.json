@@ -1,7 +1,325 @@
 [
   {
-    "label": "kaicho",
+    "type": "command",
+    "label": [ "kaicho" ],
     "text": "改丁"
+  },
+  {
+    "type": "command",
+    "label": [ "kaipage", "kaipe-ji" ],
+    "text": "改ページ"
+  },
+  {
+    "type": "command",
+    "label": [ "kaimihiraki" ],
+    "text": "改見開き"
+  },
+  {
+    "type": "command",
+    "label": [ "kaidan" ],
+    "text": "改段"
+  },
+  {
+    "type": "command",
+    "label": [ "jisage" ],
+    "text": "{0}字下げ",
+    "argTypes": [ "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "jisageBlock" ],
+    "labelShort": [ "jisaBlock" ],
+    "text": [ "ここから{0}字下げ", "ここで字下げ終わり" ],
+    "argTypes": [ "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "jisageOrikaeshi" ],
+    "labelShort": [ "jisaOri" ],
+    "text": [ "ここから{0}字下げ、折り返して{1}字下げ", "ここで字下げ終わり" ],
+    "argTypes": [ "number_full", "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "kaigyoTentsukiOrikaeshiJisage" ],
+    "labelShort": [ "jisaTentsuki" ],
+    "text": [ "ここから改行天付き、折り返して{0}字下げ", "ここで字下げ終わり" ],
+    "argTypes": [ "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "chitsuki" ],
+    "text": "地付き"
+  },
+  {
+    "type": "command",
+    "label": [ "chitsukiBlock" ],
+    "labelShort": [ "chitsublock" ],
+    "text": [ "ここから地付き", "ここで地付き終わり" ]
+  },
+  {
+    "type": "command",
+    "label": [ "jiage" ],
+    "text": "地から{0}字上げ",
+    "argTypes": [ "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "jiageBlock" ],
+    "labelShort": [ "jiaBlock" ],
+    "text": [ "ここから地から{0}字上げ", "ここで字上げ終わり" ],
+    "argTypes": [ "number_full" ]
+  },
+  {
+    "type": "command",
+    "label": [ "center", "sayuuChuuou" ],
+    "labelShort": [ "chuo" ],
+    "text": "ページの左右中央"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "{{word}}MidashiRef" ],
+    "text": "「{0}」は{{word}}見出し",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "text": "小",
+        "label": "sho"
+      },
+      {
+        "text": "中",
+        "label": "chu"
+      },
+      {
+        "text": "大",
+        "label": "dai"
+      }
+    ],
+    "wordsId": "size"
+  },
+  {
+    "type": "command",
+    "label": [ "shouMidashiYorimo" ],
+    "labelShort": [ "midaRyaku" ],
+    "text": "小見出しよりもさらに下位の見出しには、注記しませんでした。"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}MidashiParagraph" ],
+    "labelShort": [ "{{word}}MidaPara" ],
+    "text": [ "{{word}}見出し", "{{word}}見出し終わり" ],
+    "wordsRef": "size",
+    "joinMethod": "content"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}MidashiBlock" ],
+    "labelShort": [ "{{word}}MidaBlock" ],
+    "text": [ "ここから{{word}}見出し", "ここで{{word}}見出し終わり" ],
+    "wordsRef": "size"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "dougyou{{word}}MidashiRef" ],
+    "labelShort": [ "{{word}}MidaDogyoRef" ],
+    "text": "「{0}」は同行{{word}}見出し",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "text": "小",
+        "label": "Sho",
+        "labelShort": "sho"
+      },
+      {
+        "text": "中",
+        "label": "Chu",
+        "labelShort": "chu"
+      },
+      {
+        "text": "大",
+        "label": "Dai",
+        "labelShort": "dai"
+      }
+    ],
+    "wordsId": "size2"
+  },
+  {
+    "type": "command",
+    "label": [ "dougyou{{word}}MidashiBlock" ],
+    "labelShort": [ "{{word}}MidaDogyoBlock" ],
+    "text": [ "同行{{word}}見出し", "同行{{word}}見出し終わり" ],
+    "wordsRef": "size2",
+    "joinMethod": "content"
+  },
+  {
+    "type": "command",
+    "label": [ "mado{{word}}MidashiRef" ],
+    "labelShort": [ "mado{{word}}MidaRef" ],
+    "text": "{0}は窓{{word}}見出し",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "text": "小",
+        "label": "Sho"
+      },
+      {
+        "text": "中",
+        "label": "Chu"
+      },
+      {
+        "text": "大",
+        "label": "Dai"
+      }
+    ],
+    "wordsId": "size3"
+  },
+  {
+    "type": "command",
+    "label": [ "mado{{word}}MidashiBlock" ],
+    "labelShort": [ "mado{{word}}MidaBlock" ],
+    "text": [ "窓{{word}}見出し", "窓{{word}}見出し終わり" ],
+    "wordsRef": "size3",
+    "joinMethod": "content"
+  },
+  {
+    "type": "text",
+    "label": [ "gaiji1" ],
+    "text": "※［＃「{0}」、{1}］",
+    "argTypes": [ "any", "any" ]
+  },
+  {
+    "type": "text",
+    "label": [ "gaiji2" ],
+    "text": "※［＃「{1}］",
+    "argTypes": [ "any" ]
+  },
+  {
+    //スペースのルールが複雑なので注意。
+    "type": "text",
+    "label": [ "accent", "akusento" ],
+    "text": "〔{0}〕",
+    "argTypes": [ "any" ]
+  },
+  {
+    "type": "command_ref",
+    "label": [ "{{word}}Ref" ],
+    "labelShort": [ "{{word}}Ref" ],
+    "text": "「{0}」に{{word}}",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "label": "bouten",
+        "text": "傍点"
+      },
+      {
+        "label": "sirogomabouten",
+        "labelShort": "sgbt",
+        "text": "白ゴマ傍点"
+      },
+      {
+        "label": "marubouten",
+        "labelShort": "mbt",
+        "text": "丸傍点"
+      },
+      {
+        "label": "siromarubouten",
+        "labelShort": "smbt",
+        "text": "白丸傍点"
+      },
+      {
+        "label": "kurosankakubouten",
+        "labelShort": "kskbt",
+        "text": "黒三角傍点"
+      },
+      {
+        "label": "sirosankakubouten",
+        "labelShort": "sskbt",
+        "text": "白三角傍点"
+      },
+      {
+        "label": "nijumarubouten",
+        "labelShort": "njmbt",
+        "text": "二重丸傍点"
+      },
+      {
+        "label": "janomebouten",
+        "labelShort": "jnmbt",
+        "text": "蛇の目傍点"
+      },
+      {
+        "label": "batsubouten",
+        "labelShort": "bbt",
+        "text": "ばつ傍点"
+      },
+      {
+        "label": "bousenn",
+        "labelShort": "bs",
+        "text": "傍線"
+      },
+      {
+        "label": "nijubousenn",
+        "labelShort": "njbs",
+        "text": "二重傍線"
+      },
+      {
+        "label": "sasenn",
+        "labelShort": "ss",
+        "text": "鎖線"
+      },
+      {
+        "label": "hasenn",
+        "text": "破線"
+      },
+      {
+        "label": "namisenn",
+        "text": "波線"
+      }
+    ],
+    "wordsId": "boutensen"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Paragraph" ],
+    "labelShort": [ "{{word}}Paragraph" ],
+    "text": [ "{{word}}", "{{word}}終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "boutensen"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "hidari{{word}}Ref", "left{{word}}Ref" ],
+    "labelShort": [ "left{{word}}Ref" ],
+    "text": "「{0}」の左に{{word}}",
+    "argTypes": [ "ref" ],
+    "wordsRef": "boutensen"
+  },
+  {
+    "type": "command",
+    "label": [ "hidari{{word}}Paragraph", "left{{word}}Paragraph" ],
+    "labelShort": [ "left{{word}}Paragraph" ],
+    "text": [ "左に{{word}}", "左に{{word}}終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "boutensen"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}" ],
+    "labelShort": [ "{{word}}" ],
+    "text": "「{0}」に{{word}}",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "label": "futoji",
+        "labelShort": "bold",
+        "text": "太字"
+      },
+      {
+        "label": "shatai",
+        "labelShort": "italic",
+        "text": "斜体"
+      }
+    ],
+    "wordsId": "bolditalic"
   }
 
 ]

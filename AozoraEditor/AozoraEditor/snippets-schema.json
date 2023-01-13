@@ -11,16 +11,15 @@
     "properties": {
       "type": {
         "type": "string",
-        "enum": [ "command", "text" ]
+        "enum": [ "command", "command_ref", "ruby", "text" ]
       },
       "label": {
-        "anyOf": [
-          { "type": "string" },
-          {
-            "type": "array",
-            "items": { "type": "string" }
-          }
-        ]
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "labelShort": {
+        "type": "array",
+        "items": { "type": "string" }
       },
       "text": {
         "anyOf": [
@@ -31,12 +30,31 @@
           }
         ]
       },
-      "argType": {
+      "argTypes": {
         "type": "array",
         "items": {
           "type": "string",
-          "enum": [ "number_full", "number_half", "any" ]
+          "enum": [ "number_full", "number_half", "any", "ref" ]
         }
+      },
+      "words": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [ "text", "label" ],
+          "properties": {
+            "text": { "type": "string" },
+            "label": { "type": "string" },
+            "labelShort": { "type": "string" }
+          }
+        }
+      },
+      "wordsId": { "type": "string" },
+      "wordsRef": { "type": "string" },
+      "joinMethod": {
+        "type": "string",
+        "enum": [ "newline", "content" ]
       }
     }
   }
