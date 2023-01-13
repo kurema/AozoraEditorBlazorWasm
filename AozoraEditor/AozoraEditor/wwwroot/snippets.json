@@ -2,79 +2,92 @@
   {
     "type": "command",
     "label": [ "kaicho" ],
-    "text": "改丁"
+    "text": "改丁",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaicho"
   },
   {
     "type": "command",
     "label": [ "kaipage", "kaipe-ji" ],
-    "text": "改ページ"
+    "text": "改ページ",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaipage"
   },
   {
     "type": "command",
     "label": [ "kaimihiraki" ],
-    "text": "改見開き"
+    "text": "改見開き",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaimihiraki"
   },
   {
     "type": "command",
     "label": [ "kaidan" ],
-    "text": "改段"
+    "text": "改段",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaidan"
   },
   {
     "type": "command",
     "label": [ "jisage" ],
     "text": "{0}字下げ",
-    "argTypes": [ "number_full" ]
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ichigyo"
   },
   {
     "type": "command",
     "label": [ "jisageBlock" ],
     "labelShort": [ "jisaBlock" ],
     "text": [ "ここから{0}字下げ", "ここで字下げ終わり" ],
-    "argTypes": [ "number_full" ]
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#jisage"
   },
   {
     "type": "command",
     "label": [ "jisageOrikaeshi" ],
     "labelShort": [ "jisaOri" ],
     "text": [ "ここから{0}字下げ、折り返して{1}字下げ", "ここで字下げ終わり" ],
-    "argTypes": [ "number_full", "number_full" ]
+    "argTypes": [ "number_full", "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu"
   },
   {
     "type": "command",
     "label": [ "kaigyoTentsukiOrikaeshiJisage" ],
     "labelShort": [ "jisaTentsuki" ],
     "text": [ "ここから改行天付き、折り返して{0}字下げ", "ここで字下げ終わり" ],
-    "argTypes": [ "number_full" ]
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu"
   },
   {
     "type": "command",
     "label": [ "chitsuki" ],
-    "text": "地付き"
+    "text": "地付き",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chitsuki"
   },
   {
     "type": "command",
     "label": [ "chitsukiBlock" ],
     "labelShort": [ "chitsublock" ],
-    "text": [ "ここから地付き", "ここで地付き終わり" ]
+    "text": [ "ここから地付き", "ここで地付き終わり" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chitsuki"
   },
   {
     "type": "command",
     "label": [ "jiage" ],
     "text": "地から{0}字上げ",
-    "argTypes": [ "number_full" ]
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chiyose"
   },
   {
     "type": "command",
     "label": [ "jiageBlock" ],
     "labelShort": [ "jiaBlock" ],
     "text": [ "ここから地から{0}字上げ", "ここで字上げ終わり" ],
-    "argTypes": [ "number_full" ]
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chiyose"
   },
   {
     "type": "command",
     "label": [ "center", "sayuuChuuou" ],
     "labelShort": [ "chuo" ],
-    "text": "ページの左右中央"
+    "text": "ページの左右中央",
+    "documentLink": "https://www.aozora.gr.jp/annotation/layout_3.html#sayu_chuo"
   },
   {
     "type": "command_ref",
@@ -95,13 +108,15 @@
         "label": "dai"
       }
     ],
-    "wordsId": "size"
+    "wordsId": "size",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
   },
   {
     "type": "command",
     "label": [ "shouMidashiYorimo" ],
     "labelShort": [ "midaRyaku" ],
-    "text": "小見出しよりもさらに下位の見出しには、注記しませんでした。"
+    "text": "小見出しよりもさらに下位の見出しには、注記しませんでした。",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
   },
   {
     "type": "command",
@@ -109,14 +124,16 @@
     "labelShort": [ "{{word}}MidaPara" ],
     "text": [ "{{word}}見出し", "{{word}}見出し終わり" ],
     "wordsRef": "size",
-    "joinMethod": "content"
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
   },
   {
     "type": "command",
     "label": [ "{{word}}MidashiBlock" ],
     "labelShort": [ "{{word}}MidaBlock" ],
     "text": [ "ここから{{word}}見出し", "ここで{{word}}見出し終わり" ],
-    "wordsRef": "size"
+    "wordsRef": "size",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
   },
   {
     "type": "command_ref",
@@ -124,32 +141,19 @@
     "labelShort": [ "{{word}}MidaDogyoRef" ],
     "text": "「{0}」は同行{{word}}見出し",
     "argTypes": [ "ref" ],
-    "words": [
-      {
-        "text": "小",
-        "label": "Sho",
-        "labelShort": "sho"
-      },
-      {
-        "text": "中",
-        "label": "Chu",
-        "labelShort": "chu"
-      },
-      {
-        "text": "大",
-        "label": "Dai",
-        "labelShort": "dai"
-      }
-    ],
-    "wordsId": "size2"
+    "wordsId": "size",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi",
+    "wordsLabelAutoCase": true
   },
   {
     "type": "command",
     "label": [ "dougyou{{word}}MidashiBlock" ],
     "labelShort": [ "{{word}}MidaDogyoBlock" ],
     "text": [ "同行{{word}}見出し", "同行{{word}}見出し終わり" ],
-    "wordsRef": "size2",
-    "joinMethod": "content"
+    "wordsRef": "size",
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi",
+    "wordsLabelAutoCase": true
   },
   {
     "type": "command",
@@ -157,48 +161,43 @@
     "labelShort": [ "mado{{word}}MidaRef" ],
     "text": "{0}は窓{{word}}見出し",
     "argTypes": [ "ref" ],
-    "words": [
-      {
-        "text": "小",
-        "label": "Sho"
-      },
-      {
-        "text": "中",
-        "label": "Chu"
-      },
-      {
-        "text": "大",
-        "label": "Dai"
-      }
-    ],
-    "wordsId": "size3"
+    "wordsId": "size",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#mado_midashi",
+    "wordsLabelAutoCase": true
   },
   {
     "type": "command",
     "label": [ "mado{{word}}MidashiBlock" ],
     "labelShort": [ "mado{{word}}MidaBlock" ],
     "text": [ "窓{{word}}見出し", "窓{{word}}見出し終わり" ],
-    "wordsRef": "size3",
-    "joinMethod": "content"
+    "wordsRef": "size",
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#mado_midashi",
+    "wordsLabelAutoCase": true
   },
   {
     "type": "text",
     "label": [ "gaiji1" ],
     "text": "※［＃「{0}」、{1}］",
-    "argTypes": [ "any", "any" ]
+    "argTypes": [ "any", "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/external_character.html"
   },
   {
     "type": "text",
     "label": [ "gaiji2" ],
     "text": "※［＃「{1}］",
-    "argTypes": [ "any" ]
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/external_character.html"
   },
   {
     //スペースのルールが複雑なので注意。
+    //後でsnippets.jsonから除外して手書き実装する。
+    //コメントもなくす(jsonは本来コメント非対応なので)。
     "type": "text",
     "label": [ "accent", "akusento" ],
     "text": "〔{0}〕",
-    "argTypes": [ "any" ]
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/external_character.html#accent"
   },
   {
     "type": "command_ref",
@@ -250,7 +249,47 @@
         "label": "batsubouten",
         "labelShort": "bbt",
         "text": "ばつ傍点"
-      },
+      }
+    ],
+    "wordsId": "bouten",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Paragraph" ],
+    "labelShort": [ "{{word}}Paragraph" ],
+    "text": [ "{{word}}", "{{word}}終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "bouten",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "hidari{{word}}Ref", "left{{word}}Ref" ],
+    "labelShort": [ "left{{word}}Ref" ],
+    "text": "「{0}」の左に{{word}}",
+    "argTypes": [ "ref" ],
+    "wordsRef": "bouten",
+    "wordsLabelAutoCase": true,
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+  },
+  {
+    "type": "command",
+    "label": [ "hidari{{word}}Paragraph", "left{{word}}Paragraph" ],
+    "labelShort": [ "left{{word}}Paragraph" ],
+    "text": [ "左に{{word}}", "左に{{word}}終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "bouten",
+    "wordsLabelAutoCase": true,
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "{{word}}Ref" ],
+    "labelShort": [ "{{word}}Ref" ],
+    "text": "「{0}」に{{word}}",
+    "argTypes": [ "ref" ],
+    "words": [
       {
         "label": "bousenn",
         "labelShort": "bs",
@@ -275,7 +314,8 @@
         "text": "波線"
       }
     ],
-    "wordsId": "boutensen"
+    "wordsId": "bousen",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
   },
   {
     "type": "command",
@@ -283,7 +323,8 @@
     "labelShort": [ "{{word}}Paragraph" ],
     "text": [ "{{word}}", "{{word}}終わり" ],
     "joinMethod": "content",
-    "wordsRef": "boutensen"
+    "wordsRef": "bousen",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
   },
   {
     "type": "command_ref",
@@ -291,7 +332,9 @@
     "labelShort": [ "left{{word}}Ref" ],
     "text": "「{0}」の左に{{word}}",
     "argTypes": [ "ref" ],
-    "wordsRef": "boutensen"
+    "wordsRef": "bousen",
+    "wordsLabelAutoCase": true,
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
   },
   {
     "type": "command",
@@ -299,13 +342,15 @@
     "labelShort": [ "left{{word}}Paragraph" ],
     "text": [ "左に{{word}}", "左に{{word}}終わり" ],
     "joinMethod": "content",
-    "wordsRef": "boutensen"
+    "wordsRef": "bousen",
+    "wordsLabelAutoCase": true,
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
   },
   {
     "type": "command",
     "label": [ "{{word}}" ],
     "labelShort": [ "{{word}}" ],
-    "text": "「{0}」に{{word}}",
+    "text": "「{0}」は{{word}}",
     "argTypes": [ "ref" ],
     "words": [
       {
@@ -319,7 +364,153 @@
         "text": "斜体"
       }
     ],
-    "wordsId": "bolditalic"
+    "wordsId": "bolditalic",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#futoji_gothic,shatai_italic"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Paragraph" ],
+    "labelShort": [ "{{word}}Paragraph" ],
+    "text": [ "{{word}}", "{{word}}終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "bolditalic",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#futoji_gothic,shatai_italic"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Block" ],
+    "labelShort": [ "{{word}}Block" ],
+    "text": [ "ここから{{word}}", "ここで{{word}}終わり" ],
+    "joinMethod": "newline",
+    "wordsRef": "bolditalic",
+    "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#futoji_gothic,shatai_italic"
+  },
+  {
+    "type": "command",
+    "label": [ "gazou", "image" ],
+    "labelShort": [ "img" ],
+    "text": "{0}（fig{1}.png、横{2}×縦{3}）入る",
+    "argTypes": [ "any", "alphabet", "number_half", "number_half" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#gazo_chuki"
+  },
+  {
+    "type": "command",
+    "label": [ "gazouTitle", "imageTitle" ],
+    "labelShort": [ "imgTitle" ],
+    "text": "「{0}」{1}（fig{2}.png、横{3}×縦{4}）入る",
+    "argTypes": [ "any", "any", "alphabet", "number_half", "number_half" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#gazo_chuki"
+  },
+  {
+    "type": "command",
+    "label": [ "gazouOld", "imageOld" ],
+    "labelShort": [ "imgOld" ],
+    "text": "{0}（fig{1}.png）入る",
+    "argTypes": [ "any", "alphabet" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#gazo_chuki",
+    "obsolete": true
+  },
+  {
+    "type": "command",
+    "label": [ "captionRef", "kyapushonRef" ],
+    "labelShort": [ "capRef" ],
+    "text": "「{0}」はキャプション",
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#caption"
+  },
+  {
+    "type": "command",
+    "label": [ "captionParagraph", "kyapushonParagraph" ],
+    "labelShort": [ "capParagraph" ],
+    "text": [ "キャプション", "キャプション終わり" ],
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#caption"
+  },
+  {
+    "type": "command",
+    "label": [ "captionBlock", "kyapushonBlock" ],
+    "labelShort": [ "capBlock" ],
+    "text": [ "ここからキャプション", "ここでキャプション終わり" ],
+    "joinMethod": "newline",
+    "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#caption"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "mamaChuukiRef", "originalNotesRef" ],
+    "labelShort": [ "orgRefLong" ],
+    "text": "「{0}」に「ママ」の注記",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "hidariMamaChuukiRef", "originalLeftRef" ],
+    "labelShort": [ "orgRefLeft" ],
+    "text": "「{0}」の左に「ママ」の注記",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "teiseiRef", "correctionRef" ],
+    "labelShort": [ "teiRef" ],
+    "text": "「{0}」は底本では「{1}」",
+    "argTypes": [ "ref", "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
+  },
+  {
+    "type": "command_ref_ruby",
+    "label": [ "teiseiRubiRef", "correctionRubyRef" ],
+    "labelShort": [ "teiRubyRef" ],
+    "text": "ルビの「{0}」は底本では「{1}」",
+    "argTypes": [ "ref", "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "mamaRef", "originalRef" ],
+    "labelShort": [ "orgRefShort" ],
+    "text": "「{0}」はママ",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
+  },
+  {
+    "type": "command_ref_ruby",
+    "label": [ "mamaRubiRef", "originalRubyRef" ],
+    "labelShort": [ "orgRubyRefShort" ],
+    "text": "ルビの「{0}」はママ",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "hidariRubiRef", "rubyLeftRef" ],
+    "text": "「{0}」の左に「{1}」のルビ",
+    "argTypes": [ "ref", "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+  },
+  {
+    "type": "command",
+    "label": [ "hidariRubiParagraph", "rubyLeftParagraph" ],
+    "text": [ "左にルビ付き", "左に「{0}」のルビ付き終わり" ],
+    "joinMethod": "content",
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+  },
+  {
+    "type": "command",
+    "label": [ "chukitsukiParagraph", "noteParagraph" ],
+    "text": [ "注記付き", "「{0}」の注記付き終わり" ],
+    "joinMethod": "content",
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+  },
+  {
+    "type": "command",
+    "label": [ "hidariChukitsukiParagraph", "noteLeftParagraph" ],
+    "text": [ "左に注記付き", "左に「{0}」の注記付き終わり" ],
+    "joinMethod": "content",
+    "argTypes": [ "any" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
   }
-
 ]

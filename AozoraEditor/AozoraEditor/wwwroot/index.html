@@ -119,7 +119,7 @@
                         { token: 'sokohon', foreground: '008800', },
                     ],
                     colors: {
-                        'editor.foreground': '#000000'
+                        'editor.foreground': '#FFFFFF'
                     }
                 });
 
@@ -144,6 +144,18 @@
                         return { suggestions: suggestions };
                     }
                 });
+
+                //monaco.languages.registerDocumentFormattingEditProvider('aozora', {
+                //    async provideDocumentFormattingEdits(model) {
+                //        const text = model.getValue();
+                //        return [
+                //            {
+                //                range: model.getFullModelRange(),
+                //                text
+                //            }
+                //        ]
+                //    }
+                //});
 
                 const editor = monaco.editor.create(
                     document.getElementById(container_id),

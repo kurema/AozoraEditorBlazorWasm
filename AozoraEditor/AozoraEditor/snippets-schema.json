@@ -11,7 +11,7 @@
     "properties": {
       "type": {
         "type": "string",
-        "enum": [ "command", "command_ref", "ruby", "text" ]
+        "enum": [ "command", "command_ref", "ruby", "text", "command_ref_ruby" ]
       },
       "label": {
         "type": "array",
@@ -34,7 +34,7 @@
         "type": "array",
         "items": {
           "type": "string",
-          "enum": [ "number_full", "number_half", "any", "ref" ]
+          "enum": [ "number_full", "number_half", "any", "ref", "alphabet" ]
         }
       },
       "words": {
@@ -52,10 +52,17 @@
       },
       "wordsId": { "type": "string" },
       "wordsRef": { "type": "string" },
+      "wordsLabelAutoCase": { "type": "boolean" },
       "joinMethod": {
         "type": "string",
         "enum": [ "newline", "content" ]
-      }
+      },
+      "description": { "type": "string" },
+      "documentLink": {
+        "type": "string",
+        "format": "uri"
+      },
+      "obsolete": { "type": "boolean" }
     }
   }
 }
