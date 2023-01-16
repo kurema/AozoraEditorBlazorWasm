@@ -7,7 +7,7 @@
   },
   {
     "type": "command",
-    "label": [ "kaipage", "kaipe-ji" ],
+    "label": [ "kaipage", "kaipeji" ],
     "text": "改ページ",
     "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaipage"
   },
@@ -91,7 +91,8 @@
   },
   {
     "type": "command_ref",
-    "label": [ "{{word}}MidashiRef" ],
+    "label": [ "{{word}}MidashiSansho", "{{word}}MidashiRef" ],
+    "labelShort": [ "{{word}}MidaRef" ],
     "text": "「{0}」は{{word}}見出し",
     "argTypes": [ "ref" ],
     "words": [
@@ -120,7 +121,7 @@
   },
   {
     "type": "command",
-    "label": [ "{{word}}MidashiParagraph" ],
+    "label": [ "{{word}}MidashiParagraph", "{{word}}MidashiHanni" ],
     "labelShort": [ "{{word}}MidaPara" ],
     "text": [ "{{word}}見出し", "{{word}}見出し終わり" ],
     "wordsRef": "size",
@@ -137,7 +138,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "dougyou{{word}}MidashiRef" ],
+    "label": [ "dougyou{{word}}MidashiSansho", "dougyou{{word}}MidashiRef" ],
     "labelShort": [ "{{word}}MidaDogyoRef" ],
     "text": "「{0}」は同行{{word}}見出し",
     "argTypes": [ "ref" ],
@@ -157,7 +158,7 @@
   },
   {
     "type": "command",
-    "label": [ "mado{{word}}MidashiRef" ],
+    "label": [ "mado{{word}}MidashiSansho", "mado{{word}}MidashiRef" ],
     "labelShort": [ "mado{{word}}MidaRef" ],
     "text": "{0}は窓{{word}}見出し",
     "argTypes": [ "ref" ],
@@ -201,7 +202,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "{{word}}Ref" ],
+    "label": [ "{{word}}Ref", "{{word}}Sansho" ],
     "labelShort": [ "{{word}}Ref" ],
     "text": "「{0}」に{{word}}",
     "argTypes": [ "ref" ],
@@ -256,7 +257,7 @@
   },
   {
     "type": "command",
-    "label": [ "{{word}}Paragraph" ],
+    "label": [ "{{word}}Paragraph", "{{word}}Hanni" ],
     "labelShort": [ "{{word}}Paragraph" ],
     "text": [ "{{word}}", "{{word}}終わり" ],
     "joinMethod": "content",
@@ -265,7 +266,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "hidari{{word}}Ref", "left{{word}}Ref" ],
+    "label": [ "hidari{{word}}Sansho", "left{{word}}Ref" ],
     "labelShort": [ "left{{word}}Ref" ],
     "text": "「{0}」の左に{{word}}",
     "argTypes": [ "ref" ],
@@ -275,7 +276,7 @@
   },
   {
     "type": "command",
-    "label": [ "hidari{{word}}Paragraph", "left{{word}}Paragraph" ],
+    "label": [ "hidari{{word}}Hanni", "left{{word}}Paragraph" ],
     "labelShort": [ "left{{word}}Paragraph" ],
     "text": [ "左に{{word}}", "左に{{word}}終わり" ],
     "joinMethod": "content",
@@ -285,7 +286,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "{{word}}Ref" ],
+    "label": [ "{{word}}Ref", "{{word}}Sansho" ],
     "labelShort": [ "{{word}}Ref" ],
     "text": "「{0}」に{{word}}",
     "argTypes": [ "ref" ],
@@ -319,7 +320,7 @@
   },
   {
     "type": "command",
-    "label": [ "{{word}}Paragraph" ],
+    "label": [ "{{word}}Paragraph", "{{word}}Hanni" ],
     "labelShort": [ "{{word}}Paragraph" ],
     "text": [ "{{word}}", "{{word}}終わり" ],
     "joinMethod": "content",
@@ -328,7 +329,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "hidari{{word}}Ref", "left{{word}}Ref" ],
+    "label": [ "hidari{{word}}Sansho", "left{{word}}Ref" ],
     "labelShort": [ "left{{word}}Ref" ],
     "text": "「{0}」の左に{{word}}",
     "argTypes": [ "ref" ],
@@ -338,7 +339,7 @@
   },
   {
     "type": "command",
-    "label": [ "hidari{{word}}Paragraph", "left{{word}}Paragraph" ],
+    "label": [ "hidari{{word}}Hanni", "left{{word}}Paragraph" ],
     "labelShort": [ "left{{word}}Paragraph" ],
     "text": [ "左に{{word}}", "左に{{word}}終わり" ],
     "joinMethod": "content",
@@ -369,7 +370,7 @@
   },
   {
     "type": "command",
-    "label": [ "{{word}}Paragraph" ],
+    "label": [ "{{word}}Hanni", "{{word}}Paragraph" ],
     "labelShort": [ "{{word}}Paragraph" ],
     "text": [ "{{word}}", "{{word}}終わり" ],
     "joinMethod": "content",
@@ -412,7 +413,7 @@
   },
   {
     "type": "command",
-    "label": [ "captionRef", "kyapushonRef" ],
+    "label": [ "captionRef", "kyapushonSansho" ],
     "labelShort": [ "capRef" ],
     "text": "「{0}」はキャプション",
     "argTypes": [ "any" ],
@@ -420,7 +421,7 @@
   },
   {
     "type": "command",
-    "label": [ "captionParagraph", "kyapushonParagraph" ],
+    "label": [ "captionParagraph", "kyapushonHanni" ],
     "labelShort": [ "capParagraph" ],
     "text": [ "キャプション", "キャプション終わり" ],
     "joinMethod": "content",
@@ -436,7 +437,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "mamaChuukiRef", "originalNotesRef" ],
+    "label": [ "mamaChuukiSansho", "originalNotesRef" ],
     "labelShort": [ "orgRefLong" ],
     "text": "「{0}」に「ママ」の注記",
     "argTypes": [ "ref" ],
@@ -444,7 +445,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "hidariMamaChuukiRef", "originalLeftRef" ],
+    "label": [ "hidariMamaChuukiSansho", "originalLeftRef" ],
     "labelShort": [ "orgRefLeft" ],
     "text": "「{0}」の左に「ママ」の注記",
     "argTypes": [ "ref" ],
@@ -452,7 +453,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "teiseiRef", "correctionRef" ],
+    "label": [ "teiseiSansho", "correctionRef" ],
     "labelShort": [ "teiRef" ],
     "text": "「{0}」は底本では「{1}」",
     "argTypes": [ "ref", "any" ],
@@ -460,7 +461,7 @@
   },
   {
     "type": "command_ref_ruby",
-    "label": [ "teiseiRubiRef", "correctionRubyRef" ],
+    "label": [ "teiseiRubiSansho", "correctionRubyRef" ],
     "labelShort": [ "teiRubyRef" ],
     "text": "ルビの「{0}」は底本では「{1}」",
     "argTypes": [ "ref", "any" ],
@@ -468,7 +469,7 @@
   },
   {
     "type": "command_ref",
-    "label": [ "mamaRef", "originalRef" ],
+    "label": [ "mamaSansho", "originalRef" ],
     "labelShort": [ "orgRefShort" ],
     "text": "「{0}」はママ",
     "argTypes": [ "ref" ],
@@ -476,7 +477,7 @@
   },
   {
     "type": "command_ref_ruby",
-    "label": [ "mamaRubiRef", "originalRubyRef" ],
+    "label": [ "mamaRubiSansho", "originalRubyRef" ],
     "labelShort": [ "orgRubyRefShort" ],
     "text": "ルビの「{0}」はママ",
     "argTypes": [ "ref" ],
@@ -484,14 +485,14 @@
   },
   {
     "type": "command_ref",
-    "label": [ "hidariRubiRef", "rubyLeftRef" ],
+    "label": [ "hidariRubiSansho", "rubyLeftRef" ],
     "text": "「{0}」の左に「{1}」のルビ",
     "argTypes": [ "ref", "any" ],
     "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
   },
   {
     "type": "command",
-    "label": [ "hidariRubiParagraph", "rubyLeftParagraph" ],
+    "label": [ "hidariRubiHanni", "rubyLeftParagraph" ],
     "text": [ "左にルビ付き", "左に「{0}」のルビ付き終わり" ],
     "joinMethod": "content",
     "argTypes": [ "any" ],
@@ -499,7 +500,7 @@
   },
   {
     "type": "command",
-    "label": [ "chukitsukiParagraph", "noteParagraph" ],
+    "label": [ "chukitsukiHanni", "noteParagraph" ],
     "text": [ "注記付き", "「{0}」の注記付き終わり" ],
     "joinMethod": "content",
     "argTypes": [ "any" ],
@@ -507,10 +508,196 @@
   },
   {
     "type": "command",
-    "label": [ "hidariChukitsukiParagraph", "noteLeftParagraph" ],
+    "label": [ "hidariChukitsukiHanni", "noteLeftParagraph" ],
     "text": [ "左に注記付き", "左に「{0}」の注記付き終わり" ],
     "joinMethod": "content",
     "argTypes": [ "any" ],
     "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "hinvRef", "tatechuyokoSansho" ],
+    "labelShort": [ "tcyRef" ],
+    "text": "「{0}」は縦中横",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#tatechu_yoko"
+  },
+  {
+    "type": "command",
+    "label": [ "hinvParagraph", "tatechuyokoHanni" ],
+    "labelShort": [ "tcyParagraph" ],
+    "text": [ "縦中横", "縦中横終わり" ],
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#tatechu_yoko"
+  },
+  {
+    "type": "command",
+    "label": [ "warichuHanni", "warichuParagraph" ],
+    "labelShort": [ "wrcParagraph" ],
+    "text": [ "割り注", "割り注終わり" ],
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#warichu"
+  },
+  {
+    "type": "command",
+    "label": [ "kaigyo" ],
+    "text": "改行",
+    "description": "割り注内での使用を想定。",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#warichu"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "gyo{{word}}Sansho" ],
+    "labelShort": [ "gyo{{word}}Ref" ],
+    "text": "「{0}」は行{{word}}小書き",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "label": "migi",
+        "labelShort": "right",
+        "text": "右"
+      },
+      {
+        "label": "hidari",
+        "labelShort": "left",
+        "text": "左"
+      }
+    ],
+    "wordsId": "sayuu",
+    "wordsLabelAutoCase": true,
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#gyomigi_gyohidari"
+  },
+  {
+    "type": "command",
+    "label": [ "gyo{{word}}Hanni" ],
+    "labelShort": [ "gyo{{word}}Paragraph" ],
+    "text": [ "行{{word}}小書き", "行{{word}}小書き終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "sayuu",
+    "wordsLabelAutoCase": true,
+    "description": "縦組み中。",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#gyomigi_gyohidari"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "{{word}}TsukiRef", "{{word}}TsukiSansho" ],
+    "labelShort": [ "{{word}}Ref" ],
+    "text": "「{0}」は{{word}}付き小文字",
+    "argTypes": [ "ref" ],
+    "words": [
+      {
+        "label": "uwa",
+        "labelShort": "sub",
+        "text": "上"
+      },
+      {
+        "label": "shita",
+        "labelShort": "sup",
+        "text": "下"
+      }
+    ],
+    "wordsId": "uwashita",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#uwatsuki_shitatsuki"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}TsukiHanni", "{{word}}TsukiParagraph" ],
+    "labelShort": [ "{{word}}Paragraph" ],
+    "text": [ "{{word}}付き小文字", "{{word}}付き小文字終わり" ],
+    "joinMethod": "content",
+    "wordsRef": "uwashita",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#uwatsuki_shitatsuki"
+  },
+  {
+    "type": "command",
+    "label": [ "jizumeBlock" ],
+    "labelShort": [ "jzmBlock" ],
+    "text": [ "ここから{0}字詰め", "ここで字詰め終わり" ],
+    "joinMethod": "newline",
+    "argTypes": [ "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#jizume"
+  },
+  {
+    "type": "command",
+    "label": [ "kegakomiBlock" ],
+    "text": [ "ここから罫囲み", "ここで罫囲み終わり" ],
+    "joinMethod": "newline",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#keigakomi"
+  },
+  {
+    "type": "command",
+    "label": [ "kegakomiRef" ],
+    "text": "「{0}」は罫囲み",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#keigakomi"
+  },
+  {
+    "type": "command",
+    "label": [ "kegakomiHanni", "kegakomiParagraph" ],
+    "text": [ "罫囲み", "罫囲み終わり" ],
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#keigakomi"
+  },
+  {
+    "type": "command",
+    "label": [ "yokogumiBlock" ],
+    "text": [ "ここから横組み", "ここで横組み終わり" ],
+    "joinMethod": "newline",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#yokogumi"
+  },
+  {
+    "type": "command",
+    "label": [ "yokogumiRef" ],
+    "text": "「{0}」は横組み",
+    "argTypes": [ "ref" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#yokogumi"
+  },
+  {
+    "type": "command",
+    "label": [ "yokogumiHanni", "yokogumiParagraph" ],
+    "text": [ "横組み", "横組み終わり" ],
+    "joinMethod": "content",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#yokogumi"
+  },
+  {
+    "type": "command_ref",
+    "label": [ "{{word}}Sansho" ],
+    "labelShort": [ "{{word}}Ref" ],
+    "text": "「{0}」は{1}段階{{word}}文字",
+    "words": [
+      {
+        "label": "ookina",
+        "labelShort": "big",
+        "text": "大きな"
+      },
+      {
+        "label": "chiisana",
+        "labelShort": "small",
+        "text": "小さな"
+      }
+    ],
+    "wordsId": "mojisize",
+    "argTypes": [ "ref", "number_full" ],
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#moji_size"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Hanni" ],
+    "labelShort": [ "{{word}}Paragraph" ],
+    "text": [ "{0}段階{{word}}文字", "{{word}}文字終わり" ],
+    "argTypes": [ "number_full" ],
+    "joinMethod": "content",
+    "wordsId": "mojisize",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#moji_size"
+  },
+  {
+    "type": "command",
+    "label": [ "{{word}}Block" ],
+    "labelShort": [ "{{word}}Block" ],
+    "text": [ "ここから{0}段階{{word}}文字", "ここで{{word}}文字終わり" ],
+    "argTypes": [ "number_full" ],
+    "joinMethod": "newline",
+    "wordsId": "mojisize",
+    "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#moji_size"
   }
 ]
