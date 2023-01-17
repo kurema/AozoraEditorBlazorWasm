@@ -35,14 +35,16 @@
     "label": [ "jisageBlock" ],
     "labelShort": [ "jisaBlock" ],
     "text": [ "ここから{0}字下げ", "ここで字下げ終わり" ],
+    "joinMethod": "newline",
     "argTypes": [ "number_full" ],
     "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#jisage"
   },
   {
     "type": "command",
-    "label": [ "jisageOrikaeshi" ],
-    "labelShort": [ "jisaOri" ],
+    "label": [ "jisageOrikaeshiBlock" ],
+    "labelShort": [ "jisaOriBlock" ],
     "text": [ "ここから{0}字下げ、折り返して{1}字下げ", "ここで字下げ終わり" ],
+    "joinMethod": "newline",
     "argTypes": [ "number_full", "number_full" ],
     "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu"
   },
@@ -51,6 +53,7 @@
     "label": [ "kaigyoTentsukiOrikaeshiJisage" ],
     "labelShort": [ "jisaTentsuki" ],
     "text": [ "ここから改行天付き、折り返して{0}字下げ", "ここで字下げ終わり" ],
+    "joinMethod": "newline",
     "argTypes": [ "number_full" ],
     "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu"
   },

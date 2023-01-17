@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "JSON Schema for snippets2.json",
+
+  "type": "object",
+
+  "properties": {
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [ "id", "key", "text" ],
+
+        "properties": {
+          "key": { "type": "string" },
+          "id": { "type": "string" },
+          "text": { "type": "string" },
+          "comment": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "templates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalItems": false,
+
+        "required": [ "id", "labels", "text" ],
+
+        "properties": {
+          "id": { "type": "string" },
+          "labels": {
+            "type": "object",
+            "required": [ "en", "jp", "short_en", "short_jp" ],
+            "properties": {
+              "jp": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              },
+              "short_jp": {
+                "type": "string"
+              },
+              "short_en": {
+                "type": "string"
+              },
+              "jp_fully_roman": {
+                "type": "string"
+              }
+            }
+          },
+
+          "text": {
+            "type": "array",
+            "items": { "type": "string" },
+            "comment": {
+              "anyOf": [
+                { "type": "string" },
+                {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "contents": {
+      "type": "array",
+      "additionalItems": false,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [ "labels", "text" ],
+        "properties": {
+          "labels": {
+            "type": "object",
+            "required": ["jp_fully_roman"],
+            "properties": {
+              "jp": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "en": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "short_jp": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "short_en": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "jp_fully_roman": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "text": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "comment": "enumは一時的な入力補助目的。本来は不要。",
+              "enum": [ "command", "command_1line", "command_ref", "command_block" ]
+            }
+          },
+          "argTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [ "number_full", "number_half", "any", "ref", "alphabet" ]
+            }
+          },
+          "words": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [ "text", "label" ],
+              "properties": {
+                "text": { "type": "string" },
+                "label": { "type": "string" },
+                "labelShort": { "type": "string" }
+              }
+            }
+          },
+          "words_id": { "type": "string" },
+          "words_ref": { "type": "string" },
+          "wordsLabelAutoCase": { "type": "boolean" },
+
+          "description": { "type": "string" },
+          "documentLink": {
+            "type": "string",
+            "format": "uri"
+          },
+          "obsolete": { "type": "boolean" },
+
+          "comment": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

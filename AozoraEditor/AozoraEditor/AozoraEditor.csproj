@@ -21,6 +21,6 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties wwwroot_4snippets_1json__JsonSchema="..\snippets-schema.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties snippets_1json__JsonSchema="snippets-schema.json" snippets2_1json__JsonSchema="snippets-schema2.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

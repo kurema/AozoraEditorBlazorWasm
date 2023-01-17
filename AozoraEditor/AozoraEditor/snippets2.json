@@ -1,0 +1,132 @@
+{
+  "$schema": "./snippets-schema2.json",
+  "templates": [
+    {
+      "id": "command",
+      "text": [ "［＃{content[0]}］" ],
+      "labels": {
+        "en": "{0}",
+        "jp": "{0}",
+        "short_en": "{0}",
+        "short_jp": "{0}",
+        "jp_fully_roman": "{0}"
+      }
+    },
+    {
+      "id": "command_1line",
+      "text": [ "［＃{content[0]}］" ],
+      "labels": {
+        "en": "{0}Oneline",
+        "jp": "{0}Ichigyo",
+        "short_en": "{0}Line",
+        "short_jp": "{0}Icgy",
+        "jp_fully_roman": "{0}"
+      }
+    },
+    {
+      "id": "command_ref",
+      "text": [ "{0}［＃「{0}」は{content[0]}］" ],
+      "labels": {
+        "jp": "{0}Sansho",
+        "en": "{0}Refer",
+        "short_jp": "{0}Snsh",
+        "short_en": "{0}Ref",
+        "jp_fully_roman": "ha{content[0]}"
+      }
+    },
+    {
+      "id": "command_block",
+      "text": [ "ここから{content[0]}", "", "ここで{content[1]}終わり" ],
+      "labels": {
+        "jp": "Kokokara",
+        "en": "Block",
+        "short_jp": "Kkkr",
+        "short_en": "Block",
+        "jp_fully_roman": "kokokara{0}Kokode{1}Owari"
+      }
+    }
+  ],
+  "contents": [
+    {
+      "labels": {
+        "jp": [ "kaicho" ],
+        "jp_fully_roman": [ "kaichou" ]
+      },
+      "text": [ "(*改丁*)" ],
+      "templates": [ "command" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaicho"
+    },
+    {
+      "labels": {
+        "jp": [ "kaiPage", "kaiPeji" ],
+        "jp_fully_roman": [ "kaiPe-ji" ]
+      },
+      "text": [ "(*改ページ*)" ],
+      "templates": [ "command" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaipage"
+    },
+    {
+      "labels": {
+        "jp": [ "kaiMihiraki" ],
+        "short_jp": [ "kaiMhrk" ],
+        "jp_fully_roman": [ "kaiMihiraki" ]
+      },
+      "text": [ "(*改見開き*)" ],
+      "templates": [ "command" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaimihiraki"
+    },
+    {
+      "labels": {
+        "jp": [ "kaidan" ],
+        "jp_fully_roman": [ "kaidan" ]
+      },
+      "text": [ "(*改段*)" ],
+      "templates": [ "command" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_1.html#kaidan"
+    },
+    {
+      "labels": {
+        "en": [ "indent{0}" ],
+        "jp": [ "jisage" ],
+        "short_en": [ "idt" ],
+        "short_jp": [ "jsg" ],
+        "jp_fully_roman": [ "jisage", "jisage" ]
+      },
+      "text": [ "{0}(*字下げ*)", "字下げ" ],
+      "argTypes": [ "number_full" ],
+      "templates": [ "command_1line", "command_block" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#jisage_kakushu"
+    },
+    {
+      "labels": {
+        "en": [ "indentWrap" ],
+        "jp": [ "jisageOrikaeshi" ],
+        "short_en": [ "idtWrap" ],
+        "short_jp": [ "jsgOrkes" ],
+        "jp_fully_roman": [ "jisageOrikaeshiJisage", "jisage" ]
+      },
+      "text": [ "{0}(*字下げ、折り返し*)て{1}字下げ", "字下げ" ],
+      "templates": [ "command_block" ],
+      "argTypes": [ "number_full", "number_full" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu"
+    },
+    {
+      "labels": {
+        "en": [ "noSpaceWrap" ],
+        "jp": [ "tentsukiOrikaeshi" ],
+        "short_en": [ "noSpcWrap" ],
+        "short_jp": [ "tntOrkes" ],
+        "jp_fully_roman": [ "kaigyouTentsukiOrikaeshiteJisage", "jisage" ]
+      },
+      "text": [ "改行(*天付き、折り返し*)て{0}字下げ", "字下げ" ],
+      "templates": [ "command_block" ],
+      "argTypes": [ "number_full" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#ototsu",
+      "comment": [
+        "天付きの英語は何なのか？ 機械翻訳だと省略されたりする。",
+        "要するに行頭を半角にしてスペースを省略する処理なのでno spaceにした。",
+        "「天付き＋字下げ」にしないのは「字下げ＋字下げ」が変なのでその一貫性。"
+      ]
+    }
+  ]
+}
