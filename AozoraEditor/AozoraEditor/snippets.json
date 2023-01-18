@@ -116,7 +116,7 @@
     "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
   },
   {
-    "type": "command",
+    "type": "text",
     "label": [ "shouMidashiYorimo" ],
     "labelShort": [ "midaRyaku" ],
     "text": "小見出しよりもさらに下位の見出しには、注記しませんでした。",

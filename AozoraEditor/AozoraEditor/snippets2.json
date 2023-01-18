@@ -24,6 +24,17 @@
       }
     },
     {
+      "id": "command_inline",
+      "text": [ "［＃{content[0]}］{0}［＃{content[0]}終わり］" ],
+      "labels": {
+        "en": "{0}Inline",
+        "jp": "{0}Hanni",
+        "short_en": "{0}Inline",
+        "short_jp": "{0}Hni",
+        "jp_fully_roman": "{0}"
+      }
+    },
+    {
       "id": "command_ref",
       "text": [ "{0}［＃「{0}」は{content[0]}］" ],
       "labels": {
@@ -58,6 +69,7 @@
     },
     {
       "labels": {
+        "en": [ "newPage" ],
         "jp": [ "kaiPage", "kaiPeji" ],
         "jp_fully_roman": [ "kaiPe-ji" ]
       },
@@ -77,6 +89,7 @@
     },
     {
       "labels": {
+        "en": [ "newParagraph" ],
         "jp": [ "kaidan" ],
         "jp_fully_roman": [ "kaidan" ]
       },
@@ -86,7 +99,7 @@
     },
     {
       "labels": {
-        "en": [ "indent{0}" ],
+        "en": [ "indent" ],
         "jp": [ "jisage" ],
         "short_en": [ "idt" ],
         "short_jp": [ "jsg" ],
@@ -127,6 +140,85 @@
         "要するに行頭を半角にしてスペースを省略する処理なのでno spaceにした。",
         "「天付き＋字下げ」にしないのは「字下げ＋字下げ」が変なのでその一貫性。"
       ]
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "chitsuki" ],
+        "jp": [ "chitsuki", "jitsuki" ],
+        "en": [ "ground" ],
+        "short_jp": [ "ctk", "jtk" ],
+        "short_en": [ "gnd" ]
+      },
+      "text": [ "地付き", "地付き" ],
+      "templates": [ "command_1line", "command_block" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chitsuki",
+      "comment": [
+        "検索したところ、地付きの読みは「じつき」。",
+        "ただしドキュメントのページ内リンクやaozora2sharpでは「chitsuki」と表記されてる。",
+        "両方を採用。"
+      ]
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "jikaraJiage" ],
+        "jp": [ "jiage", "chiyose" ],
+        "short_jp": [ "jag", "cys" ]
+      },
+      "text": [ "地から{0}字上げ", "字上げ" ],
+      "templates": [ "command_1line", "command_block" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chiyose"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "sayuuChuuou" ],
+        "jp": [ "sayuChuo" ],
+        "en": [ "center" ],
+        "short_en": [ "ctr" ],
+        "short_jp": [ "chuo" ]
+      },
+      "text": [ "ページの左右中央" ],
+      "templates": [ "command_1line" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/layout_3.html#sayu_chuo"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "{{word}}Midashi" ],
+        "jp": [ "{{word}}Midashi" ],
+        "en": [ "{{word}}Headline" ],
+        "short_jp": [ "{{word}}Mds" ]
+      },
+      "text": [ "{{word}}見出し", "{{word}}見出し" ],
+      "templates": [ "command_ref", "command_inline", "command_block" ],
+      "words": [
+        {
+          "text": "小",
+          "label": "sho"
+        },
+        {
+          "text": "中",
+          "label": "chu"
+        },
+        {
+          "text": "大",
+          "label": "dai"
+        }
+      ],
+      "words_id": "size",
+      "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#tsujyo_midashi"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "dougyou{{word}}Midashi" ],
+        "jp": [ "dogyo{{word}}Midashi" ],
+        "en": [ "inline{{word}}Headline" ],
+        "short_jp": [ "dgy{{word}}Mds" ],
+        "short_en": [ "iln{{word}}Headline" ]
+      },
+      "text": [ "同行{{word}}見出し", "同行{{word}}見出し" ],
+      "templates": [ "command_ref", "command_inline" ],
+      "words_id": "size",
+      "wordsLabelAutoCase": true,
+      "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi"
     }
   ]
 }

@@ -86,7 +86,7 @@
         "properties": {
           "labels": {
             "type": "object",
-            "required": ["jp_fully_roman"],
+            "required": [ "jp_fully_roman" ],
             "properties": {
               "jp": {
                 "type": "array",
@@ -119,7 +119,7 @@
             "items": {
               "type": "string",
               "comment": "enumは一時的な入力補助目的。本来は不要。",
-              "enum": [ "command", "command_1line", "command_ref", "command_block" ]
+              "enum": [ "command", "command_1line", "command_ref", "command_block", "command_inline" ]
             }
           },
           "argTypes": {
