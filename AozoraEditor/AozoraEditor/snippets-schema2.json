@@ -119,7 +119,7 @@
             "items": {
               "type": "string",
               "comment": "enumは一時的な入力補助目的。本来は不要。",
-              "enum": [ "command", "command_1line", "command_ref", "command_block", "command_inline" ]
+              "enum": [ "command", "command_1line", "command_ref", "command_block", "command_inline", "default" ]
             }
           },
           "argTypes": {
@@ -134,17 +134,44 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": [ "text", "label" ],
+              "required": [ "text", "labels" ],
               "properties": {
                 "text": { "type": "string" },
-                "label": { "type": "string" },
-                "labelShort": { "type": "string" }
+                "labels": {
+                  "type": "object",
+                  "required": [ "jp_fully_roman" ],
+                  "properties": {
+                    "jp": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "en": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "short_jp": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "short_en": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "jp_fully_roman": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
               }
             }
           },
           "words_id": { "type": "string" },
           "words_ref": { "type": "string" },
-          "wordsLabelAutoCase": { "type": "boolean" },
+          "wordsLabelAutoCase": {
+            "type": "boolean",
+            "default": true
+          },
 
           "description": { "type": "string" },
           "documentLink": {

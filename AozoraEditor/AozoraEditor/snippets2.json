@@ -149,7 +149,7 @@
         "short_jp": [ "ctk", "jtk" ],
         "short_en": [ "gnd" ]
       },
-      "text": [ "地付き", "地付き" ],
+      "text": [ "(*地付き*)", "地付き" ],
       "templates": [ "command_1line", "command_block" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chitsuki",
       "comment": [
@@ -164,7 +164,7 @@
         "jp": [ "jiage", "chiyose" ],
         "short_jp": [ "jag", "cys" ]
       },
-      "text": [ "地から{0}字上げ", "字上げ" ],
+      "text": [ "地から{0}(*字上げ*)", "字上げ" ],
       "templates": [ "command_1line", "command_block" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chiyose"
     },
@@ -176,7 +176,7 @@
         "short_en": [ "ctr" ],
         "short_jp": [ "chuo" ]
       },
-      "text": [ "ページの左右中央" ],
+      "text": [ "ページの(*左右中央*)" ],
       "templates": [ "command_1line" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/layout_3.html#sayu_chuo"
     },
@@ -187,20 +187,38 @@
         "en": [ "{{word}}Headline" ],
         "short_jp": [ "{{word}}Mds" ]
       },
-      "text": [ "{{word}}見出し", "{{word}}見出し" ],
+      "text": [ "(*{{word}}見出し*)", "{{word}}見出し" ],
       "templates": [ "command_ref", "command_inline", "command_block" ],
       "words": [
         {
           "text": "小",
-          "label": "sho"
+          "labels": {
+            "jp_fully_roman": [ "shou" ],
+            "jp": [ "shou" ],
+            "short_jp": [ "sho" ],
+            "en": [ "small" ],
+            "short_en": [ "s" ]
+          }
         },
         {
           "text": "中",
-          "label": "chu"
+          "labels": {
+            "jp_fully_roman": [ "chuu" ],
+            "jp": [ "chuu" ],
+            "short_jp": [ "chu" ],
+            "en": [ "medium" ],
+            "short_en": [ "m" ]
+          }
         },
         {
           "text": "大",
-          "label": "dai"
+          "labels": {
+            "jp_fully_roman": [ "dai" ],
+            "jp": [ "dai" ],
+            "short_jp": [ "dai" ],
+            "en": [ "large" ],
+            "short_en": [ "l" ]
+          }
         }
       ],
       "words_id": "size",
@@ -214,11 +232,211 @@
         "short_jp": [ "dgy{{word}}Mds" ],
         "short_en": [ "iln{{word}}Headline" ]
       },
-      "text": [ "同行{{word}}見出し", "同行{{word}}見出し" ],
+      "text": [ "(*同行{{word}}見出し*)", "同行{{word}}見出し" ],
       "templates": [ "command_ref", "command_inline" ],
       "words_id": "size",
-      "wordsLabelAutoCase": true,
       "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "mado{{word}}Midashi" ],
+        "jp": [ "mado{{word}}Midashi" ],
+        "en": [ "wide{{word}}Midashi" ],
+        "short_jp": [ "md{{word}}Mds" ],
+        "short_en": [ "wd{{word}}Headline" ]
+      },
+      "text": [ "(*窓{{word}}見出し*)", "窓{{word}}見出し" ],
+      "words_id": "size",
+      "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#mado_midashi",
+      "templates": [ "command_ref", "command_inline" ]
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "" ],
+        "jp": [ "gaiji1" ],
+        "en": [ "externalCharacter1" ],
+        "short_en": [ "ex1" ],
+        "short_jp": [ "gij1" ]
+      },
+      "text": [ "※［＃「{0}」、{1}］" ],
+      "templates": [ "default" ],
+      "argTypes": [ "any", "any" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/external_character.html"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "" ],
+        "jp": [ "gaiji2" ],
+        "en": [ "externalCharacter2" ],
+        "short_en": [ "ex2" ],
+        "short_jp": [ "gij2" ]
+      },
+      "text": [ "※［＃{0}］" ],
+      "templates": [ "default" ],
+      "argTypes": [ "any" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/external_character.html"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "{{word}}" ],
+        "jp": [ "{{word}}" ],
+        "short_jp": [ "{{word}}" ]
+      },
+      "text": [ "{{word}}", "{{word}}" ],
+      "templates": [ "command_ref", "command_inline" ],
+
+      "words": [
+        {
+          "labels": {
+            "jp_fully_roman": [ "bouten" ],
+            "jp": [ "bouten" ],
+            "short_jp": [ "butn" ]
+          },
+          "text": "傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "sirogomaBouten" ],
+            "jp": [ "sirogoma" ],
+            "short_jp": [ "srgmB" ]
+          },
+          "text": "白ゴマ傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "maruBouten" ],
+            "jp": [ "maru" ],
+            "short_jp": [ "mrB" ]
+          },
+          "text": "丸傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "siromaruBouten" ],
+            "jp": [ "siromaru" ],
+            "short_en": [ "srmrB" ]
+          },
+          "text": "白丸傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "kurosankakuBouten" ],
+            "jp": [ "kurosan" ],
+            "short_jp": [ "krsnB" ]
+          },
+          "text": "黒三角傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "sirosankakuBouten" ],
+            "jp": [ "sirosan" ],
+            "short_jp": [ "srsnB" ]
+          },
+          "text": "白三角傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "nijumaruBouten" ],
+            "jp": [ "nijumaru" ],
+            "short_jp": [ "njmrB" ]
+          },
+          "text": "二重丸傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "janomeBouten" ],
+            "jp": [ "janome" ],
+            "short_jp": [ "jnmB" ]
+          },
+          "text": "蛇の目傍点"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "batsuBouten" ],
+            "jp": [ "batsu" ],
+            "short_jp": [ "btB" ]
+          },
+          "text": "ばつ傍点"
+        }
+      ],
+      "words_id": "bouten",
+      "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "hidariNi{{word}}" ],
+        "jp": [ "hidari{{word}}", "left{{word}}" ],
+        "short_jp": [ "hdr{{word}}", "l{{word}}" ]
+      },
+      "text": [ "左に{{word}}", "左に{{word}}" ],
+      "templates": [ "command_ref", "command_inline" ],
+      "words_ref": "bouten",
+      "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#boten_chuki"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "{{word}}" ],
+        "jp": [ "{{word}}" ],
+        "short_jp": [ "{{word}}" ]
+      },
+      "text": [ "{{word}}", "{{word}}" ],
+      "templates": [ "command_ref", "command_inline" ],
+
+      "words": [
+        {
+          "labels": {
+            "jp_fully_roman": [ "bousen" ],
+            "jp": [ "bousen" ],
+            "short_jp": [ "busn" ]
+          },
+          "text": "傍線"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "nijuBousen" ],
+            "jp": [ "niju" ],
+            "short_jp": [ "njBs" ]
+          },
+          "text": "二重傍線"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "sasen" ],
+            "jp": [ "sasen" ],
+            "short_jp": [ "ssn" ]
+          },
+          "text": "鎖線"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "hasen" ],
+            "jp": [ "hasen" ],
+            "short_jp": [ "hsn" ]
+          },
+          "text": "破線"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "namisen" ],
+            "jp": [ "namisen" ],
+            "short_jp": [ "nmsn" ]
+          },
+          "text": "波線"
+        }
+      ],
+      "words_id": "bousen",
+      "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "hidariNi{{word}}" ],
+        "jp": [ "hidari{{word}}", "left{{word}}" ],
+        "short_jp": [ "hdr{{word}}", "l{{word}}" ]
+      },
+      "text": [ "左に{{word}}", "左に{{word}}" ],
+      "templates": [ "command_ref", "command_inline" ],
+      "words_ref": "bousen",
+      "documentLink": "https://www.aozora.gr.jp/annotation/emphasis.html#bosen_chuki"
     }
   ]
 }
