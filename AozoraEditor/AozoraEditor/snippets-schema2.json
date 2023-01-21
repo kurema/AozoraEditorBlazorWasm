@@ -82,7 +82,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [ "labels", "text" ],
+        "required": [ "labels", "text", "templates" ],
         "properties": {
           "labels": {
             "type": "object",
@@ -119,10 +119,21 @@
             "items": {
               "type": "string",
               "comment": "enumは一時的な入力補助目的。本来は不要。",
-              "enum": [ "command", "command_1line", "command_ref", "command_block", "command_inline", "default" ]
+              "enum": [
+                "command",
+                "command_1line",
+                "command_inline",
+                "command_inline_hidari",
+                "command_block",
+                "command_ref",
+                "command_ref_ni",
+                "command_ref_hidari",
+                "command_ref_ruby",
+                "default"
+              ]
             }
           },
-          "argTypes": {
+          "arg_types": {
             "type": "array",
             "items": {
               "type": "string",
