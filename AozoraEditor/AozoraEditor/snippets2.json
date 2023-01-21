@@ -538,13 +538,13 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "kyapushon" ],
+        "jp_fully_roman": [ "kyapushon", "kyapushon" ],
         "en": [ "caption" ],
         "short_en": [ "cpt" ],
         "jp": [ "kyapushon" ],
         "short_jp": [ "kpsn" ]
       },
-      "text": [ "キャプション", "キャプション" ],
+      "text": [ "(*キャプション*)", "キャプション" ],
       "templates": [ "command_ref", "command_inline", "command_block" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/graphics.html#caption"
     },
@@ -554,7 +554,7 @@
         "jp": [ "mamaChuki" ],
         "short_jp": [ "mmCuk" ]
       },
-      "text": [ "「ママ」の注記" ],
+      "text": [ "「(*ママ*)」の(*注記*)" ],
       "templates": [ "command_ref_ni", "command_ref_hidari" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
     },
@@ -566,7 +566,7 @@
         "short_jp": [ "skhn" ],
         "short_en": [ "org" ]
       },
-      "text": [ "底本では「{1}」" ],
+      "text": [ "(*底本*)では「{1}」" ],
       "arg_types": [ "any" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama",
       "templates": [ "command_ref", "command_ref_ruby" ],
@@ -581,64 +581,66 @@
         "jp": [ "mama" ],
         "short_jp": [ "mm" ]
       },
-      "text": [ "ママ" ],
+      "text": [ "(*ママ*)" ],
       "templates": [ "command_ref", "command_ref_ruby" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "rubi" ],
+        "jp_fully_roman": [ "noRubi" ],
         "jp": [ "rubi" ],
         "en": [ "ruby" ],
         "short_jp": [ "rb" ]
       },
-      "text": [ "「{1}」のルビ" ],
+      "text": [ "「{1}」の(*ルビ*)" ],
       "arg_types": [ "any" ],
       "templates": [ "command_ref_hidari" ],
-      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby",
+
+      "comment": "label名が被って見えるが、テンプレート適用後は別になる。"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "rubi" ],
+        "jp_fully_roman": [ "rubiTsuki", "noRubiTsuki" ],
         "jp": [ "rubi" ],
         "en": [ "ruby" ],
         "short_jp": [ "rb" ]
       },
-      "text": [ "ルビ付き", "「{0}」のルビ付き" ],
+      "text": [ "(*ルビ*)付き", "「{0}」のルビ付き" ],
       "arg_types": [ "any" ],
       "templates": [ "command_inline_hidari" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "chuuki" ],
+        "jp_fully_roman": [ "chuukiTsuki", "noChuukiTsuki" ],
         "jp": [ "chuki" ],
         "short_jp": [ "cuk" ],
         "en": [ "note" ]
       },
-      "text": [ "注記付き", "「{0}」の注記付き" ],
+      "text": [ "(*注記*)付き", "「{0}」の注記付き" ],
       "templates": [ "command_inline", "command_inline_hidari" ],
       "arg_types": [ "any" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "tatechuyoko" ],
+        "jp_fully_roman": [ "tatechuyoko", "tatechuyoko" ],
         "jp": [ "tatechuyoko" ],
         "short_jp": [ "ttcyk", "tcy" ],
         "short_en": [ "hinv" ]
       },
-      "text": [ "縦中横", "縦中横" ],
+      "text": [ "(*縦中横*)", "縦中横" ],
       "templates": [ "command_ref", "command_inline" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#tatechu_yoko"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "warichuu" ],
+        "jp_fully_roman": [ "warichuu", "warichuu" ],
         "jp": [ "warichu" ],
         "short_jp": [ "wrcu" ]
       },
-      "text": [ "割り注", "割り注" ],
+      "text": [ "(*割り注*)", "割り注" ],
       "templates": [ "command_inline" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#warichu"
     },
@@ -648,10 +650,149 @@
         "jp": [ "kaigyo" ],
         "en": [ "newLine" ]
       },
-      "text": [ "改行" ],
+      "text": [ "(*改行*)" ],
       "templates": [ "command" ],
       "description": "割り注内での使用を想定。",
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#warichu"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "gyo{{word}}Kogaki", "gyo{{word}}Kogaki" ],
+        "jp": [ "gyo{{word}}" ],
+        "short_jp": [ "gyo{{word}}" ],
+        "en": [ "{{word}}Vertical" ],
+        "short_en": [ "{{word}}Vert" ]
+      },
+      "text": [ "(*行{{word}}*)小書き", "行{{word}}小書き" ],
+      "templates": [ "command_ref", "command_inline" ],
+
+      "words": [
+        {
+          "labels": {
+            "jp_fully_roman": [ "migi" ],
+            "jp": [ "migi" ],
+            "short_jp": [ "mg" ],
+            "en": [ "sup" ],
+            "short_en": [ "sup" ]
+          },
+          "text": "右"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "hidari" ],
+            "jp": [ "hidari" ],
+            "short_jp": [ "hdr" ],
+            "en": [ "sub" ],
+            "short_en": [ "sub" ]
+          },
+          "text": "左"
+        }
+      ],
+
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#gyomigi_gyohidari"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "{{word}}TsukiKomoji", "{{word}}TsukiKomoji" ],
+        "jp": [ "{{word}}Tsuki" ],
+        "short_jp": [ "{{word}}Tk" ],
+        "en": [ "{{word}}Horizontal" ],
+        "short_en": [ "{{word}}Hz" ]
+      },
+      "text": [ "(*{{word}}付き*)小文字", "{{word}}付き小文字" ],
+      "templates": [ "command_ref", "command_inline" ],
+
+      "words": [
+        {
+          "labels": {
+            "jp_fully_roman": [ "uwa" ],
+            "jp": [ "uwa" ],
+            "short_jp": [ "uw" ],
+            "en": [ "sup" ],
+            "short_en": [ "sup" ]
+          },
+          "text": "上"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "shita" ],
+            "jp": [ "shita" ],
+            "short_jp": [ "st" ],
+            "en": [ "sub" ],
+            "short_en": [ "sub" ]
+          },
+          "text": "下"
+        }
+      ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#uwatsuki_shitatsuki"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "jizume", "jizume" ],
+        "jp": [ "jizume" ],
+        "short_jp": [ "jzm" ]
+      },
+      "text": [ "{0}字詰め", "字詰め" ],
+      "arg_types": [ "number_full" ],
+      "templates": [ "command_block" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#jizume"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "kegakomi", "kegakomi" ],
+        "jp": [ "kegakomi" ],
+        "short_jp": [ "kgkm" ],
+        "en": [ "border" ]
+      },
+      "text": [ "罫囲み", "罫囲み" ],
+      "templates": [ "command_block", "command_ref", "command_inline" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#keigakomi"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "yokogumi", "yokogumi" ],
+        "jp": [ "yokogumi" ],
+        "short_jp": [ "ykgm" ]
+      },
+      "text": [ "横組み", "横組み" ],
+      "templates": [ "command_block", "command_ref", "command_inline" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#yokogumi"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "dankai{{word}}Moji", "{{word}}Moji" ],
+        "jp": [ "{{word}}" ],
+        "short_jp": [ "{{word}}" ],
+        "en": [ "{{word}}" ],
+        "short_en": [ "{{word}}" ]
+      },
+      "text": [ "{0}段階{{word}}文字", "{{word}}文字" ],
+      "arg_types": [ "number_full" ],
+      "templates": [ "command_ref", "command_inline", "command_block" ],
+
+      "words": [
+        {
+          "labels": {
+            "jp_fully_roman": [ "ookina" ],
+            "jp": [ "dai", "ookina" ],
+            "short_jp": [ "di", "ookn" ],
+            "en": [ "big" ],
+            "short_en": [ "b" ]
+          },
+          "text": "(*大*)きな"
+        },
+        {
+          "labels": {
+            "jp_fully_roman": [ "tiisana" ],
+            "jp": [ "shou", "chiisana" ],
+            "short_jp": [ "su", "cisn" ],
+            "en": [ "small" ],
+            "short_en": [ "s" ]
+          },
+          "text": "(*小*)さな"
+        }
+      ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#moji_size"
     }
   ]
 }
