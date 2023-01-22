@@ -732,7 +732,7 @@
         "jp": [ "jizume" ],
         "short_jp": [ "jzm" ]
       },
-      "text": [ "{0}字詰め", "字詰め" ],
+      "text": [ "{0}(*字詰め*)", "字詰め" ],
       "arg_types": [ "number_full" ],
       "templates": [ "command_block" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#jizume"
@@ -744,7 +744,7 @@
         "short_jp": [ "kgkm" ],
         "en": [ "border" ]
       },
-      "text": [ "罫囲み", "罫囲み" ],
+      "text": [ "(*罫囲み*)", "罫囲み" ],
       "templates": [ "command_block", "command_ref", "command_inline" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#keigakomi"
     },
@@ -754,7 +754,7 @@
         "jp": [ "yokogumi" ],
         "short_jp": [ "ykgm" ]
       },
-      "text": [ "横組み", "横組み" ],
+      "text": [ "(*横組み*)", "横組み" ],
       "templates": [ "command_block", "command_ref", "command_inline" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#yokogumi"
     },
