@@ -2,6 +2,17 @@
   "$schema": "./snippets-schema2.json",
   "templates": [
     {
+      "id": "default",
+      "text": [ "{content[0]}" ],
+      "labels": {
+        "en": "{0}",
+        "jp": "{0}",
+        "short_en": "{0}",
+        "short_jp": "{0}",
+        "jp_fully_roman": "{0}"
+      }
+    },
+    {
       "id": "command",
       "text": [ "［＃{content[0]}］" ],
       "labels": {
@@ -226,12 +237,12 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{{word}}Midashi", "{{word}}Midashi" ],
-        "jp": [ "{{word}}Midashi" ],
-        "en": [ "{{word}}Headline" ],
-        "short_jp": [ "{{word}}Mds" ]
+        "jp_fully_roman": [ "{word}Midashi", "{word}Midashi" ],
+        "jp": [ "{word}Midashi" ],
+        "en": [ "{word}Headline" ],
+        "short_jp": [ "{word}Mds" ]
       },
-      "text": [ "(*{{word}}見出し*)", "{{word}}見出し" ],
+      "text": [ "(*{word}見出し*)", "{word}見出し" ],
       "templates": [ "command_ref", "command_inline", "command_block" ],
       "words": [
         {
@@ -270,26 +281,26 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "dougyou{{word}}Midashi", "dougyou{{word}}Midashi" ],
-        "jp": [ "dogyo{{word}}Midashi" ],
-        "en": [ "inline{{word}}Headline" ],
-        "short_jp": [ "dgy{{word}}Mds" ],
-        "short_en": [ "iln{{word}}Headline" ]
+        "jp_fully_roman": [ "dougyou{word}Midashi", "dougyou{word}Midashi" ],
+        "jp": [ "dogyo{word}Midashi" ],
+        "en": [ "inline{word}Headline" ],
+        "short_jp": [ "dgy{word}Mds" ],
+        "short_en": [ "iln{word}Headline" ]
       },
-      "text": [ "(*同行{{word}}見出し*)", "同行{{word}}見出し" ],
+      "text": [ "(*同行{word}見出し*)", "同行{word}見出し" ],
       "templates": [ "command_ref", "command_inline" ],
       "words_id": "size",
       "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "mado{{word}}Midashi", "mado{{word}}Midashi" ],
-        "jp": [ "mado{{word}}Midashi" ],
-        "en": [ "wide{{word}}Midashi" ],
-        "short_jp": [ "md{{word}}Mds" ],
-        "short_en": [ "wd{{word}}Headline" ]
+        "jp_fully_roman": [ "mado{word}Midashi", "mado{word}Midashi" ],
+        "jp": [ "mado{word}Midashi" ],
+        "en": [ "wide{word}Midashi" ],
+        "short_jp": [ "md{word}Mds" ],
+        "short_en": [ "wd{word}Headline" ]
       },
-      "text": [ "(*窓{{word}}見出し*)", "窓{{word}}見出し" ],
+      "text": [ "(*窓{word}見出し*)", "窓{word}見出し" ],
       "words_id": "size",
       "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#mado_midashi",
       "templates": [ "command_ref", "command_inline" ]
@@ -322,11 +333,11 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{{word}}", "{{word}}" ],
-        "jp": [ "{{word}}" ],
-        "short_jp": [ "{{word}}" ]
+        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp": [ "{word}" ],
+        "short_jp": [ "{word}" ]
       },
-      "text": [ "(*{{word}}*)", "{{word}}" ],
+      "text": [ "(*{word}*)", "{word}" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -408,11 +419,11 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{{word}}", "{{word}}" ],
-        "jp": [ "{{word}}" ],
-        "short_jp": [ "{{word}}" ]
+        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp": [ "{word}" ],
+        "short_jp": [ "{word}" ]
       },
-      "text": [ "(*{{word}}*)", "{{word}}" ],
+      "text": [ "(*{word}*)", "{word}" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -462,13 +473,13 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{{word}}", "{{word}}" ],
-        "jp": [ "{{word}}" ],
-        "short_jp": [ "{{word}}" ],
-        "en": [ "{{word}}" ],
-        "short_en": [ "{{word}}" ]
+        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp": [ "{word}" ],
+        "short_jp": [ "{word}" ],
+        "en": [ "{word}" ],
+        "short_en": [ "{word}" ]
       },
-      "text": [ "(*{{word}}*)", "{{word}}" ],
+      "text": [ "(*{word}*)", "{word}" ],
       "templates": [ "command_ref", "command_inline", "command_block" ],
 
       "words": [
@@ -657,13 +668,13 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "gyo{{word}}Kogaki", "gyo{{word}}Kogaki" ],
-        "jp": [ "gyo{{word}}" ],
-        "short_jp": [ "gyo{{word}}" ],
-        "en": [ "{{word}}Vertical" ],
-        "short_en": [ "{{word}}Vert" ]
+        "jp_fully_roman": [ "gyo{word}Kogaki", "gyo{word}Kogaki" ],
+        "jp": [ "gyo{word}" ],
+        "short_jp": [ "gyo{word}" ],
+        "en": [ "{word}Vertical" ],
+        "short_en": [ "{word}Vert" ]
       },
-      "text": [ "(*行{{word}}*)小書き", "行{{word}}小書き" ],
+      "text": [ "(*行{word}*)小書き", "行{word}小書き" ],
       "templates": [ "command_ref", "command_inline" ],
 
       "words": [
@@ -693,13 +704,13 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{{word}}TsukiKomoji", "{{word}}TsukiKomoji" ],
-        "jp": [ "{{word}}Tsuki" ],
-        "short_jp": [ "{{word}}Tk" ],
-        "en": [ "{{word}}Horizontal" ],
-        "short_en": [ "{{word}}Hz" ]
+        "jp_fully_roman": [ "{word}TsukiKomoji", "{word}TsukiKomoji" ],
+        "jp": [ "{word}Tsuki" ],
+        "short_jp": [ "{word}Tk" ],
+        "en": [ "{word}Horizontal" ],
+        "short_en": [ "{word}Hz" ]
       },
-      "text": [ "(*{{word}}付き*)小文字", "{{word}}付き小文字" ],
+      "text": [ "(*{word}付き*)小文字", "{word}付き小文字" ],
       "templates": [ "command_ref", "command_inline" ],
 
       "words": [
@@ -760,13 +771,13 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "dankai{{word}}Moji", "{{word}}Moji" ],
-        "jp": [ "{{word}}" ],
-        "short_jp": [ "{{word}}" ],
-        "en": [ "{{word}}" ],
-        "short_en": [ "{{word}}" ]
+        "jp_fully_roman": [ "dankai{word}Moji", "{word}Moji" ],
+        "jp": [ "{word}" ],
+        "short_jp": [ "{word}" ],
+        "en": [ "{word}" ],
+        "short_en": [ "{word}" ]
       },
-      "text": [ "{0}段階{{word}}文字", "{{word}}文字" ],
+      "text": [ "{0}段階{word}文字", "{word}文字" ],
       "arg_types": [ "number_full" ],
       "templates": [ "command_ref", "command_inline", "command_block" ],
 
