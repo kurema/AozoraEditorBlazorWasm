@@ -126,6 +126,7 @@
       "labels": {
         "en": [ "newPage" ],
         "jp": [ "kaiPage", "kaiPeji" ],
+        "short_jp": [ "kiPj" ],
         "jp_fully_roman": [ "kaiPe-ji" ]
       },
       "text": [ "(*改ページ*)" ],
@@ -135,7 +136,7 @@
     {
       "labels": {
         "jp": [ "kaiMihiraki" ],
-        "short_jp": [ "kaiMhrk" ],
+        "short_jp": [ "kiMhrk" ],
         "jp_fully_roman": [ "kaiMihiraki" ]
       },
       "text": [ "(*改見開き*)" ],
@@ -146,6 +147,7 @@
       "labels": {
         "en": [ "newParagraph" ],
         "jp": [ "kaidan" ],
+        "short_jp": [ "kddn" ],
         "jp_fully_roman": [ "kaidan" ]
       },
       "text": [ "(*改段*)" ],
@@ -183,7 +185,7 @@
         "en": [ "noSpaceWrap" ],
         "jp": [ "tentsukiOrikaeshi" ],
         "short_en": [ "noSpcWrap" ],
-        "short_jp": [ "tntOrkes" ],
+        "short_jp": [ "tntkOrkes" ],
         "jp_fully_roman": [ "kaigyouTentsukiOrikaeshiteJisage", "jisage" ]
       },
       "text": [ "改行(*天付き、折り返し*)て{0}字下げ", "字下げ" ],
@@ -220,18 +222,19 @@
         "short_jp": [ "jag", "cys" ]
       },
       "text": [ "地から{0}(*字上げ*)", "字上げ" ],
+      "arg_types": [ "number_full" ],
       "templates": [ "command_1line", "command_block" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/layout_2.html#chiyose"
     },
     {
       "labels": {
         "jp_fully_roman": [ "sayuuChuuou" ],
-        "jp": [ "sayuChuo" ],
+        "jp": [ "chuo" ],
         "en": [ "center" ],
         "short_en": [ "ctr" ],
-        "short_jp": [ "chuo" ]
+        "short_jp": [ "co" ]
       },
-      "text": [ "ページの(*左右中央*)" ],
+      "text": [ "ページの左右(*中央*)" ],
       "templates": [ "command_1line" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/layout_3.html#sayu_chuo"
     },
@@ -248,9 +251,9 @@
         {
           "text": "小",
           "labels": {
-            "jp_fully_roman": [ "shou" ],
-            "jp": [ "shou" ],
-            "short_jp": [ "sho" ],
+            "jp_fully_roman": [ "sho" ],
+            "jp": [ "sho" ],
+            "short_jp": [ "su" ],
             "en": [ "small" ],
             "short_en": [ "s" ]
           }
@@ -259,8 +262,8 @@
           "text": "中",
           "labels": {
             "jp_fully_roman": [ "chuu" ],
-            "jp": [ "chuu" ],
-            "short_jp": [ "chu" ],
+            "jp": [ "chu" ],
+            "short_jp": [ "cu" ],
             "en": [ "medium" ],
             "short_en": [ "m" ]
           }
@@ -270,7 +273,7 @@
           "labels": {
             "jp_fully_roman": [ "dai" ],
             "jp": [ "dai" ],
-            "short_jp": [ "dai" ],
+            "short_jp": [ "di" ],
             "en": [ "large" ],
             "short_en": [ "l" ]
           }
@@ -284,7 +287,7 @@
         "jp_fully_roman": [ "dougyou{word}Midashi", "dougyou{word}Midashi" ],
         "jp": [ "dogyo{word}Midashi" ],
         "en": [ "inline{word}Headline" ],
-        "short_jp": [ "dgy{word}Mds" ],
+        "short_jp": [ "dg{word}Mds" ],
         "short_en": [ "iln{word}Headline" ]
       },
       "text": [ "(*同行{word}見出し*)", "同行{word}見出し" ],
@@ -337,7 +340,7 @@
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ]
       },
-      "text": [ "(*{word}*)", "{word}" ],
+      "text": [ "{word}", "{word}" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -347,71 +350,71 @@
             "jp": [ "bouten" ],
             "short_jp": [ "butn" ]
           },
-          "text": "傍点"
+          "text": "(*傍点*)"
         },
         {
           "labels": {
             "jp_fully_roman": [ "sirogomaBouten" ],
             "jp": [ "sirogoma" ],
-            "short_jp": [ "srgmB" ]
+            "short_jp": [ "srgm" ]
           },
-          "text": "白ゴマ傍点"
+          "text": "(*白ゴマ*)傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "maruBouten" ],
             "jp": [ "maru" ],
-            "short_jp": [ "mrB" ]
+            "short_jp": [ "mr" ]
           },
-          "text": "丸傍点"
+          "text": "(*丸*)傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "siromaruBouten" ],
             "jp": [ "siromaru" ],
-            "short_en": [ "srmrB" ]
+            "short_en": [ "srmr" ]
           },
-          "text": "白丸傍点"
+          "text": "(*白丸*)傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "kurosankakuBouten" ],
             "jp": [ "kurosan" ],
-            "short_jp": [ "krsnB" ]
+            "short_jp": [ "krsn" ]
           },
-          "text": "黒三角傍点"
+          "text": "(*黒三*)角傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "sirosankakuBouten" ],
             "jp": [ "sirosan" ],
-            "short_jp": [ "srsnB" ]
+            "short_jp": [ "srsn" ]
           },
-          "text": "白三角傍点"
+          "text": "(*白三*)角傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "nijumaruBouten" ],
             "jp": [ "nijumaru" ],
-            "short_jp": [ "njmrB" ]
+            "short_jp": [ "njmr" ]
           },
-          "text": "二重丸傍点"
+          "text": "(*二重丸*)傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "janomeBouten" ],
             "jp": [ "janome" ],
-            "short_jp": [ "jnmB" ]
+            "short_jp": [ "jnm" ]
           },
-          "text": "蛇の目傍点"
+          "text": "(*蛇の目*)傍点"
         },
         {
           "labels": {
             "jp_fully_roman": [ "batsuBouten" ],
             "jp": [ "batsu" ],
-            "short_jp": [ "btB" ]
+            "short_jp": [ "bt" ]
           },
-          "text": "ばつ傍点"
+          "text": "(*ばつ*)傍点"
         }
       ],
       "words_id": "bouten",
@@ -423,7 +426,7 @@
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ]
       },
-      "text": [ "(*{word}*)", "{word}" ],
+      "text": [ "{word}", "{word}" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -433,15 +436,15 @@
             "jp": [ "bousen" ],
             "short_jp": [ "busn" ]
           },
-          "text": "傍線"
+          "text": "(*傍線*)"
         },
         {
           "labels": {
             "jp_fully_roman": [ "nijuBousen" ],
             "jp": [ "niju" ],
-            "short_jp": [ "njBs" ]
+            "short_jp": [ "nj" ]
           },
-          "text": "二重傍線"
+          "text": "(*二重*)傍線"
         },
         {
           "labels": {
@@ -449,7 +452,7 @@
             "jp": [ "sasen" ],
             "short_jp": [ "ssn" ]
           },
-          "text": "鎖線"
+          "text": "(*鎖線*)"
         },
         {
           "labels": {
@@ -457,7 +460,7 @@
             "jp": [ "hasen" ],
             "short_jp": [ "hsn" ]
           },
-          "text": "破線"
+          "text": "(*破線*)"
         },
         {
           "labels": {
@@ -465,7 +468,7 @@
             "jp": [ "namisen" ],
             "short_jp": [ "nmsn" ]
           },
-          "text": "波線"
+          "text": "(*波線*)"
         }
       ],
       "words_id": "bousen",
@@ -795,7 +798,7 @@
         {
           "labels": {
             "jp_fully_roman": [ "tiisana" ],
-            "jp": [ "shou", "chiisana" ],
+            "jp": [ "sho", "chiisana" ],
             "short_jp": [ "su", "cisn" ],
             "en": [ "small" ],
             "short_en": [ "s" ]
