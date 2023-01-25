@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "JSON Schema for snippets.json",
+
+  "type": "array",
+
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [ "type", "label", "text" ],
+    "properties": {
+      "type": {
+        "type": "string",
+        "enum": [ "command", "command_ref", "ruby", "text", "command_ref_ruby" ]
+      },
+      "label": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "labelShort": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "text": {
+        "anyOf": [
+          { "type": "string" },
+          {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        ]
+      },
+      "argTypes": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [ "number_full", "number_half", "any", "ref", "alphabet" ]
+        }
+      },
+      "words": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [ "text", "label" ],
+          "properties": {
+            "text": { "type": "string" },
+            "label": { "type": "string" },
+            "labelShort": { "type": "string" }
+          }
+        }
+      },
+      "wordsId": { "type": "string" },
+      "wordsRef": { "type": "string" },
+      "wordsLabelAutoCase": { "type": "boolean" },
+      "joinMethod": {
+        "type": "string",
+        "enum": [ "newline", "content" ]
+      },
+      "description": { "type": "string" },
+      "documentLink": {
+        "type": "string",
+        "format": "uri"
+      },
+      "obsolete": { "type": "boolean" }
+    }
+  }
+}
