@@ -25,7 +25,7 @@
 #pragma warning disable CS8601
 #pragma warning disable CS8603
 
-namespace AozoraEditor.Shared.Snippets
+namespace AozoraEditor.Shared.Snippets.Schema
 {
 	using System;
 	using System.Collections.Generic;
@@ -210,12 +210,12 @@ namespace AozoraEditor.Shared.Snippets
 
 	public partial class Snippets
 	{
-		public static Snippets FromJson(string json) => JsonSerializer.Deserialize<Snippets>(json, AozoraEditor.Shared.Snippets.Converter.Settings);
+		public static Snippets FromJson(string json) => JsonSerializer.Deserialize<Snippets>(json, AozoraEditor.Shared.Snippets.Schema.Converter.Settings);
 	}
 
 	public static class Serialize
 	{
-		public static string ToJson(this Snippets self) => JsonSerializer.Serialize(self, AozoraEditor.Shared.Snippets.Converter.Settings);
+		public static string ToJson(this Snippets self) => JsonSerializer.Serialize(self, AozoraEditor.Shared.Snippets.Schema.Converter.Settings);
 	}
 
 	internal static class Converter

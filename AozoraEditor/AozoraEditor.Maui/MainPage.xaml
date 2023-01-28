@@ -5,6 +5,12 @@
              x:Class="AozoraEditor.Maui.MainPage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File">
+            <MenuFlyoutItem Text="Exit"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
     <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
         <BlazorWebView.RootComponents>
             <RootComponent Selector="#app" ComponentType="{x:Type local:Main}" />
