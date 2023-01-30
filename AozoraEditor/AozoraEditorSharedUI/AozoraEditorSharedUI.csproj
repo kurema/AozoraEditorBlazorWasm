@@ -30,4 +30,8 @@
     <Folder Include="Shared\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj" />
+  </ItemGroup>
+
 </Project>

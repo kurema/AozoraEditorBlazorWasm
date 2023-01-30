@@ -72,7 +72,9 @@
                 }
               ]
             }
-          }
+          },
+
+          "arg_types": { "$ref": "#/properties/contents/items/properties/arg_types" }
         }
       }
     },
@@ -118,20 +120,6 @@
             "type": "array",
             "items": {
               "type": "string"
-              //,
-              //"comment": "enumは一時的な入力補助目的。本来は不要。",
-              //"enum": [
-              //  "command",
-              //  "command_1line",
-              //  "command_inline",
-              //  "command_inline_hidari",
-              //  "command_block",
-              //  "command_ref",
-              //  "command_ref_ni",
-              //  "command_ref_hidari",
-              //  "command_ref_ruby",
-              //  "default"
-              //]
             }
           },
           "arg_types": {

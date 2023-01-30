@@ -9,7 +9,7 @@
         "jp": "{0}",
         "short_en": "{0}",
         "short_jp": "{0}",
-        "jp_fully_roman": "{0}"
+        "jp_fully_roman": "{content[0]}"
       }
     },
     {
@@ -20,7 +20,7 @@
         "jp": "{0}",
         "short_en": "{0}",
         "short_jp": "{0}",
-        "jp_fully_roman": "{0}"
+        "jp_fully_roman": "{content[0]}"
       }
     },
     {
@@ -31,7 +31,7 @@
         "jp": "{0}Ichigyo",
         "short_en": "{0}Line",
         "short_jp": "{0}Icgy",
-        "jp_fully_roman": "{0}"
+        "jp_fully_roman": "{content[0]}"
       }
     },
     {
@@ -42,8 +42,9 @@
         "jp": "{0}Hanni",
         "short_en": "{0}Inline",
         "short_jp": "{0}Hni",
-        "jp_fully_roman": "{0}"
-      }
+        "jp_fully_roman": "{content[0]}"
+      },
+      "arg_types": [ "any" ]
     },
     {
       "id": "command_inline_hidari",
@@ -53,8 +54,9 @@
         "jp": "hidari{0}Hanni",
         "short_en": "l{0}Inline",
         "short_jp": "hdr{0}Hni",
-        "jp_fully_roman": "hidarini{0}"
-      }
+        "jp_fully_roman": "hidarini{content[0]}"
+      },
+      "arg_types": [ "any" ]
     },
     {
       "id": "command_ref",
@@ -65,7 +67,8 @@
         "short_jp": "{0}Snsh",
         "short_en": "{0}Ref",
         "jp_fully_roman": "ha{content[0]}"
-      }
+      },
+      "arg_types": [ "ref" ]
     },
     {
       "id": "command_ref_ni",
@@ -76,7 +79,8 @@
         "short_jp": "{0}Snsh",
         "short_en": "{0}Ref",
         "jp_fully_roman": "ni{content[0]}"
-      }
+      },
+      "arg_types": [ "ref" ]
     },
     {
       "id": "command_ref_hidari",
@@ -87,7 +91,8 @@
         "short_jp": "hdr{0}Snsh",
         "short_en": "l{0}Ref",
         "jp_fully_roman": "noHidariNi{content[0]}"
-      }
+      },
+      "arg_types": [ "ref" ]
     },
     {
       "id": "command_ref_ruby",
@@ -98,7 +103,8 @@
         "short_jp": "{0}SnshRb",
         "short_en": "{0}RefRb",
         "jp_fully_roman": "rubiNo{content[0]}"
-      }
+      },
+      "arg_types": [ "ref" ]
     },
     {
       "id": "command_block",
@@ -284,7 +290,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "dougyou{word}Midashi", "dougyou{word}Midashi" ],
+        "jp_fully_roman": [ "dougyou{word[0]}Midashi", "dougyou{word[0]}Midashi" ],
         "jp": [ "dogyo{word}Midashi" ],
         "en": [ "inline{word}Headline" ],
         "short_jp": [ "dg{word}Mds" ],
@@ -292,19 +298,19 @@
       },
       "text": [ "(*同行{word}見出し*)", "同行{word}見出し" ],
       "templates": [ "command_ref", "command_inline" ],
-      "words_id": "size",
+      "words_ref": "size",
       "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#dogyo_midashi"
     },
     {
       "labels": {
-        "jp_fully_roman": [ "mado{word}Midashi", "mado{word}Midashi" ],
+        "jp_fully_roman": [ "mado{word[0]}Midashi", "mado{word[0]}Midashi" ],
         "jp": [ "mado{word}Midashi" ],
         "en": [ "wide{word}Midashi" ],
         "short_jp": [ "md{word}Mds" ],
         "short_en": [ "wd{word}Headline" ]
       },
       "text": [ "(*窓{word}見出し*)", "窓{word}見出し" ],
-      "words_id": "size",
+      "words_ref": "size",
       "documentLink": "https://www.aozora.gr.jp/annotation/heading.html#mado_midashi",
       "templates": [ "command_ref", "command_inline" ]
     },
@@ -336,11 +342,11 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp_fully_roman": [ "{word[0]}", "{word[1]}" ],
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ]
       },
-      "text": [ "{word}", "{word}" ],
+      "text": [ "{word}", "(*/{word}/*)" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -422,11 +428,11 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp_fully_roman": [ "{word[0]}", "{word[0]}" ],
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ]
       },
-      "text": [ "{word}", "{word}" ],
+      "text": [ "{word}", "(*/{word}/*)" ],
       "templates": [ "command_ref_ni", "command_inline", "command_ref_hidari", "command_inline_hidari" ],
 
       "words": [
@@ -476,7 +482,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{word}", "{word}" ],
+        "jp_fully_roman": [ "{word[0]}", "{word[0]}" ],
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ],
         "en": [ "{word}" ],
@@ -671,7 +677,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "gyo{word}Kogaki", "gyo{word}Kogaki" ],
+        "jp_fully_roman": [ "gyo{word[0]}Kogaki", "gyo{word[0]}Kogaki" ],
         "jp": [ "gyo{word}" ],
         "short_jp": [ "gyo{word}" ],
         "en": [ "{word}Vertical" ],
@@ -707,7 +713,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "{word}TsukiKomoji", "{word}TsukiKomoji" ],
+        "jp_fully_roman": [ "{word[0]}TsukiKomoji", "{word[0]}TsukiKomoji" ],
         "jp": [ "{word}Tsuki" ],
         "short_jp": [ "{word}Tk" ],
         "en": [ "{word}Horizontal" ],
@@ -774,7 +780,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [ "dankai{word}Moji", "{word}Moji" ],
+        "jp_fully_roman": [ "dankai{word[0]}Moji", "{word[0]}Moji" ],
         "jp": [ "{word}" ],
         "short_jp": [ "{word}" ],
         "en": [ "{word}" ],

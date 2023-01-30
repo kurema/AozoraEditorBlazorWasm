@@ -16,10 +16,9 @@
 //
 // To parse this JSON data, add NuGet 'System.Text.Json' then do:
 //
-//    using AozoraEditor;
+//    using AozoraEditor.Shared.Snippets.Schema;
 //
 //    var snippets = Snippets.FromJson(jsonString);
-
 #nullable enable
 #pragma warning disable CS8618
 #pragma warning disable CS8601
@@ -168,6 +167,10 @@ namespace AozoraEditor.Shared.Snippets.Schema
 
 	public partial class Template
 	{
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		[JsonPropertyName("arg_types")]
+		public List<ArgType> ArgTypes { get; set; }
+
 		[JsonPropertyName("id")]
 		public string Id { get; set; }
 
