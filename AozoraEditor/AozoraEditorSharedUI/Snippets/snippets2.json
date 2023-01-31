@@ -36,7 +36,7 @@
     },
     {
       "id": "command_inline",
-      "text": [ "［＃{content[0]}］{0}［＃{content[0]}終わり］" ],
+      "text": [ "［＃{content[0]}］{0}［＃(*/{content[0]}/*)終わり］" ],
       "labels": {
         "en": "{0}Inline",
         "jp": "{0}Hanni",
@@ -48,7 +48,7 @@
     },
     {
       "id": "command_inline_hidari",
-      "text": [ "［＃左に{content[0]}］{0}［＃左に{content[0]}終わり］" ],
+      "text": [ "［＃左に{content[0]}］{0}［＃左に(*/{content[0]}/*)終わり］" ],
       "labels": {
         "en": "left{0}Inline",
         "jp": "hidari{0}Hanni",
@@ -108,7 +108,7 @@
     },
     {
       "id": "command_block",
-      "text": [ "ここから{content[0]}", "", "ここで{content[1]}終わり" ],
+      "text": [ "ここから{content[0]}", "", "ここで(*/{content[1]}/*)終わり" ],
       "labels": {
         "jp": "{0}Kokokara",
         "en": "{0}Block",
@@ -179,7 +179,7 @@
         "jp": [ "jisageOrikaeshi" ],
         "short_en": [ "idtWrap" ],
         "short_jp": [ "jsgOrkes" ],
-        "jp_fully_roman": [ "jisageOrikaeshiJisage", "jisage" ]
+        "jp_fully_roman": [ "jisageOrikaeshiteJisage", "jisage" ]
       },
       "text": [ "{0}(*字下げ、折り返し*)て{1}字下げ", "字下げ" ],
       "templates": [ "command_block" ],
@@ -586,7 +586,7 @@
         "short_jp": [ "skhn" ],
         "short_en": [ "org" ]
       },
-      "text": [ "(*底本*)では「{1}」" ],
+      "text": [ "(*底本*)では「{0}」" ],
       "arg_types": [ "any" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#teisei_mama",
       "templates": [ "command_ref", "command_ref_ruby" ],
@@ -612,7 +612,7 @@
         "en": [ "ruby" ],
         "short_jp": [ "rb" ]
       },
-      "text": [ "「{1}」の(*ルビ*)" ],
+      "text": [ "「{0}」の(*ルビ*)" ],
       "arg_types": [ "any" ],
       "templates": [ "command_ref_hidari" ],
       "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby",

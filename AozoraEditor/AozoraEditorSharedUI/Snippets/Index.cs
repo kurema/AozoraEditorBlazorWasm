@@ -76,25 +76,39 @@ public class Index
 							"word" => word.Labels?.JpFullyRoman[0] ?? string.Empty,
 							_ when keyWords.TryGetValue(key, out var kw) => kw,
 							_ => string.Empty,
-						}, true, content.WordsLabelAutoCase ?? true) };
+						}, out _,true, content.WordsLabelAutoCase ?? true) };
 
-					toAdd.Text = template.Text.Select(text => Interpolate(
-						text, (_, _) => null, new Dictionary<string, Func<int, string>>()
-						{
-							{"content",i=>content.Text[i] },
-						}, key => key switch
-						{
-							"word" => word.Text,
-							_ when keyWords.TryGetValue(key, out var kw) => kw,
-							_ => string.Empty,
-						}, true, false)).ToList();
+					(int, int)[]? argInfo = null;
+					toAdd.Text = template.Text.Select(text =>
+					{
+						var result = Interpolate(
+							text, (_, _) => null, new Dictionary<string, Func<int, string>>()
+							{
+								{"content",i=>content.Text[i] },
+							}, key => key switch
+							{
+								"word" => word.Text,
+								_ when keyWords.TryGetValue(key, out var kw) => kw,
+								_ => string.Empty,
+							}, out var argInfoTemp, true, false);
+						argInfo ??= argInfoTemp;
+						return result;
+					}).ToList();
+					toAdd.ArgTypes = argInfo?.Select(a =>
+					a.Item1 switch
+					{
+						0 => template.ArgTypes[a.Item2],
+						1 => content.ArgTypes[a.Item2],
+						_ => ArgType.Any,
+					}
+					).ToList() ?? new();
 
 					result.Add(toAdd);
 				}
 			}
 		}
 
-		var json= Schema.Serialize.ToJson(new Schema.Snippets() { Contents = result });
+		var json = Schema.Serialize.ToJson(new Schema.Snippets() { Contents = result });
 
 		return result.ToArray().AsMemory();
 	}
@@ -121,57 +135,112 @@ public class Index
 						_ when keywords.TryGetValue(key, out var kw) => kw,
 						_ => string.Empty,
 					},
+					out _,
 					true, content.WordsLabelAutoCase ?? true
 					);
 			}
 		}
 	}
 
-	public static void Test(Schema.Snippets snip, IDictionary<string, Schema.Template> templateDic)
+	public static string InterpolateFinal(string text, Func<int, string?> argProvider, string boldStart, string boldEnd)
 	{
-		Dictionary<string, Schema.Content> dic = new();
-		Dictionary<string, List<Schema.Word>> wordsCache = new();
-
-		foreach (var item in snip.Contents)
+		var span = text.AsSpan();
+		var sb = new StringBuilder();
+		int boldDisabledLevel = 0;
+		while (true)
 		{
-			if (item is null) continue;
-			List<Schema.Word>? words = item.Words;
-			if (item.Words is not null && !string.IsNullOrEmpty(item.WordsId)) wordsCache.Add(item.WordsId, item.Words);
-			if (item.Words is null && !string.IsNullOrEmpty(item.WordsRef))
+			int index = span.IndexOfAny('{', '(', ')');
+
+			if (index < 0)
 			{
-				if (!wordsCache.ContainsKey(item.WordsRef)) throw new Exception($"Invalid key: {item.WordsRef}");
-				words = wordsCache[item.WordsRef];
+				sb.Append(span);
+				return sb.ToString();
 			}
-			//if (!string.IsNullOrEmpty(item.WordsRef)) continue;
-			foreach (var item2 in item.Templates)
+
+			switch (span[index])
 			{
-				if (item2 is null) continue;
-				if (!templateDic.ContainsKey(item2)) throw new Exception($"Template invalid {item2}");
-				var template = templateDic[item2];
-				if (template is null) continue;
-				foreach (var item3 in item.Labels.Jp)
-				{
-					if (words is null) dic.Add(Interpolate(template.Labels.Jp, (a, _) => item3, new() { }, _ => string.Empty, true, item.WordsLabelAutoCase ?? true), item);
-					else
-						foreach (var item4 in words)
-							foreach (var item5 in item4.Labels.Jp)
-								dic.Add(Interpolate(template.Labels.Jp, (a, _) => item3, new(), a => a switch { "word" => item5, _ => string.Empty }, true, item.WordsLabelAutoCase ?? true), item);
-				}
+				case '(':
+					{
+						var spanSliced = span[index..];
+						if (spanSliced.StartsWith("(*/"))
+						{
+							sb.Append(span.Slice(0, index));
+							boldDisabledLevel++;
+							span = span.Slice(index + 3);
+							continue;
+						}
+						else if (spanSliced.StartsWith("(*"))
+						{
+							sb.Append(span.Slice(0, index));
+							if (boldDisabledLevel <= 0) sb.Append(boldStart);
+							span = span.Slice(index + 2);
+							continue;
+						}
+
+						else goto default;
+					}
+				case ')':
+					{
+						var spanSliced = span[..(index + 1)];
+						if (spanSliced.EndsWith("/*)"))
+						{
+							sb.Append(span.Slice(0, index - 2));
+							boldDisabledLevel--;
+							span = span.Slice(index + 1);
+							continue;
+						}
+						else if (spanSliced.EndsWith("*)"))
+						{
+							sb.Append(span.Slice(0, index - 1));
+							if (boldDisabledLevel <= 0) sb.Append(boldEnd);
+							span = span.Slice(index + 1);
+							continue;
+						}
+						else goto default;
+					}
+				case '{':
+					{
+						var len = span.Slice(index).IndexOf('}');
+						if (len <= 0) goto default;
+						var command = span.Slice(index + 1, len - 1);
+						if (!int.TryParse(command, out var num)) goto default;
+						sb.Append(span.Slice(0, index));
+						sb.Append(argProvider(num));
+						span = span.Slice(index + len + 1);
+					}
+					break;
+				default:
+					{
+						sb.Append(span[..(index + 1)]);
+						span = span[(index + 1)..];
+						continue;
+					}
 			}
 		}
 	}
 
-
-	public static string Interpolate(string text, Func<int, int, string?> argProvider, Dictionary<string, Func<int, string>>? dicProvider, Func<string, string> simpleProvider, bool shiftNum = true, bool autoCap = true)
+	public static string Interpolate(string text, Func<int, int, string?> argProvider, Dictionary<string, Func<int, string>>? dicProvider, Func<string, string> simpleProvider, out (int, int)[] argsInfo, bool shiftNum = true, bool autoCap = true)
 	{
 		StringBuilder sb = new();
-		InterpolateAppend(sb, text, argProvider, dicProvider ?? new Dictionary<string, Func<int, string>>(), simpleProvider, shiftNum, autoCap);
+		Dictionary<int, (int, int)> argTypesDic = new();
+		InterpolateAppend(sb, text, argProvider, dicProvider ?? new Dictionary<string, Func<int, string>>(), simpleProvider, argTypesDic, shiftNum, autoCap);
+		argsInfo = new (int, int)[(argTypesDic.Count == 0 ? 0 : argTypesDic.Keys.Max() + 1)];
+		for (int i = 0; i < argsInfo.Length; i++) argsInfo[i] = (-1, 0);
+		foreach (var item in argTypesDic) argsInfo[item.Key] = item.Value;
 		return sb.ToString();
 	}
 
-	private static int InterpolateAppend(StringBuilder sb, string text, Func<int, int, string?> argProvider, Dictionary<string, Func<int, string>> dicProvider, Func<string, string> simpleProvider, bool shiftNum = true, bool autoCap = true, bool isInitial = true, int shiftNumCnt = 0, int callDepth = 0)
+	private static int InterpolateAppend(StringBuilder sb, string text, Func<int, int, string?> argProvider, Dictionary<string, Func<int, string>> dicProvider, Func<string, string> simpleProvider, Dictionary<int, (int, int)> argTypes, bool shiftNum = true, bool autoCap = true, bool isInitial = true, int shiftNumCnt = 0, int callDepth = 0)
 	{
 		//正規表現で書けばシンプルになるけれど、せっかくなのでSpanとかを使って書いてみる。
+
+		//処理内容：
+		//・テンプレートの展開。例："{0} {content[0]} {word}"。
+		//・その際、入れ子にも対応する。"{0}"タイプの場合のみ入れ子階層によって挙動が変わる。
+		//・また例えば"{0} {content[0]}"で"{content[0]}"が"content {0}"だった場合、"{0} content {1}"のように数字をずらす設定もある。
+		//・さらに途中で展開されたアルファベットの1文字目を大文字に変換するオプションもある。
+		//・arg_typesのテンプレート展開上、どれがどの階層にシフトしたのかも出力する。
+
 		var span = text.AsSpan();
 		int maxNum = 0;
 		bool start = true;
@@ -182,9 +251,19 @@ public class Index
 			// 0123
 
 			var index = span.IndexOf('{');
+			bool capFirst = autoCap && (!isInitial || !(start && index <= 0));
 			if (index < 0)
 			{
-				sb.Append(span);
+				if (span.Length == 0) { }
+				else if (capFirst)
+				{
+					sb.Append(char.ToUpperInvariant(span[0]));
+					sb.Append(span[1..]);
+				}
+				else
+				{
+					sb.Append(span);
+				}
 				return maxNum;
 			}
 			var index2 = span.IndexOf('}');
@@ -192,7 +271,6 @@ public class Index
 			if (index >= index2) throw new Exception("Illegal interpolation");
 			var command = span.Slice(index + 1, index2 - index - 1);
 			var commandString = command.ToString();
-			bool capFirst = autoCap && (!isInitial || !(start && index == 0));
 			span = span[(index2 + 1)..];
 			start = false;
 
@@ -204,16 +282,18 @@ public class Index
 			else if (char.IsNumber(command[0]))
 			{
 				if (!int.TryParse(command, out int num)) throw new Exception($"Invalid: {{{command}}}");
-				try { result = argProvider.Invoke(num + (shiftNum ? shiftNumCnt : 0), callDepth); }
+				int numShifted = num + (shiftNum ? shiftNumCnt : 0);
+				try { result = argProvider.Invoke(numShifted, callDepth); }
 				catch (Exception e) { throw new Exception($"Invalid: {{{command}}}", e); }
 				if (result is null)
 				{
 					sb.Append($"{{{command}}}");
+					argTypes[numShifted] = (callDepth, num);
 				}
 				else
 				{
 					maxNum = Math.Max(maxNum, num + 1);
-					maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, shiftNum, autoCap, !capFirst, 0, callDepth + 1);
+					maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, argTypes, shiftNum, autoCap, !capFirst, 0, callDepth + 1);
 				}
 				continue;
 			}
@@ -227,7 +307,7 @@ public class Index
 				catch (Exception e) { throw new Exception($"Invalid: {{{command}}}", e); }
 				int maxNumTemp = maxNumCache.TryGetValue(commandString, out int value) ? value : maxNum;
 				maxNumCache[commandString] = maxNumTemp;
-				maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, shiftNum, autoCap, !capFirst, maxNumTemp);
+				maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, argTypes, shiftNum, autoCap, !capFirst, maxNumTemp, callDepth + 1);
 				continue;
 			}
 			else

@@ -8,7 +8,7 @@ public class UnitTest1
 	[Fact]
 	public void TestInterpolate()
 	{
-		Assert.Equal("0_0 hi test", AozoraEditor.Shared.Snippets.Index.Interpolate("{0} {word[0]} {any}", (a, b) => $"{a}_{b}", new() { { "word", _ => "hi" } }, (w) => "test", false, false));
+		Assert.Equal("0_0 hi test", AozoraEditor.Shared.Snippets.Index.Interpolate("{0} {word[0]} {any}", (a, b) => $"{a}_{b}", new() { { "word", _ => "hi" } }, (w) => "test", out _, false, false));
 		Assert.Equal("0_1 word[0] test", AozoraEditor.Shared.Snippets.Index.Interpolate("{0} {word[000]} {word}",
 			(a, b) => b switch
 			{
@@ -20,7 +20,14 @@ public class UnitTest1
 			{
 				"word" => "test",
 				_ => string.Empty
-			}, false, false));
+			}, out _, false, false));
+	}
+
+	[Fact]
+	public void TestInterpolateFinal()
+	{
+		Assert.Equal("text <item num=0/> normal <b>bold</b>", AozoraEditor.Shared.Snippets.Index.InterpolateFinal("text {0} (*/(*normal*)/*) (*bold*)", i => $"<item num={i}/>", "<b>", "</b>"));
+		Assert.Equal("text {0} normal bold", AozoraEditor.Shared.Snippets.Index.InterpolateFinal("text {0} (*/(*normal*)/*) (*bold*)", i => $"{{{i}}}", string.Empty, string.Empty));
 	}
 
 	[Fact]
@@ -32,6 +39,6 @@ public class UnitTest1
 		Assert.Equal("{content[0]}", Loader.Content.Templates[0].Text[0]);
 		Assert.Equal("(*‰ü’š*)", Loader.Content.Contents[0].Text[0]);
 		Assert.Equal("{content[0]}", Loader.ContentIndex?.Templates["default"].Text[0]);
-		
+
 	}
 }
