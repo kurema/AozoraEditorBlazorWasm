@@ -142,11 +142,19 @@ public class Index
 		}
 	}
 
-	public static string InterpolateFinal(string text, Func<int, string?> argProvider, string boldStart, string boldEnd)
+	public static string InterpolateFinal(string text, Func<int, string?> argProvider, string boldStart = "", string boldEnd = "")
 	{
+		//ここはTemplate展開後のContentのTextをさらに展開する処理です。
+		//やることは、
+		//・"{0}"みたいなのを変換する
+		//・"(*"→"<b>"(指定可能)
+		//・"*)"→"</b>"(指定可能)
+		//・"(*/","/*)"内では上記の太字タグを無視する
+		//これだけ。正規表現の方が手軽だし、(?=)みたいなの使えば速度も同程度だと思う。
 		var span = text.AsSpan();
 		var sb = new StringBuilder();
 		int boldDisabledLevel = 0;
+		int boldLevel = 0;
 		while (true)
 		{
 			int index = span.IndexOfAny('{', '(', ')');
@@ -172,11 +180,11 @@ public class Index
 						else if (spanSliced.StartsWith("(*"))
 						{
 							sb.Append(span.Slice(0, index));
-							if (boldDisabledLevel <= 0) sb.Append(boldStart);
+							if (boldDisabledLevel <= 0 && boldLevel <= 0) sb.Append(boldStart);
+							boldLevel++;
 							span = span.Slice(index + 2);
 							continue;
 						}
-
 						else goto default;
 					}
 				case ')':
@@ -192,7 +200,8 @@ public class Index
 						else if (spanSliced.EndsWith("*)"))
 						{
 							sb.Append(span.Slice(0, index - 1));
-							if (boldDisabledLevel <= 0) sb.Append(boldEnd);
+							boldLevel--;
+							if (boldDisabledLevel <= 0 && boldLevel <= 0) sb.Append(boldEnd);
 							span = span.Slice(index + 1);
 							continue;
 						}
