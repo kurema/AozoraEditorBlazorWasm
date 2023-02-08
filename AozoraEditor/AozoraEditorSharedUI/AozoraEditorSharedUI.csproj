@@ -23,11 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorMonaco" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Shared\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

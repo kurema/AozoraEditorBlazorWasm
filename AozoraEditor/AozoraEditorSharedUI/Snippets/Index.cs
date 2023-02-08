@@ -10,7 +10,6 @@ namespace AozoraEditor.Shared.Snippets;
 
 public class Index
 {
-
 	public Index(Schema.Snippets content)
 	{
 		if (content is null) throw new ArgumentNullException(nameof(content));
@@ -172,17 +171,17 @@ public class Index
 						var spanSliced = span[index..];
 						if (spanSliced.StartsWith("(*/"))
 						{
-							sb.Append(span.Slice(0, index));
+							sb.Append(span[..index]);
 							boldDisabledLevel++;
-							span = span.Slice(index + 3);
+							span = span[(index + 3)..];
 							continue;
 						}
 						else if (spanSliced.StartsWith("(*"))
 						{
-							sb.Append(span.Slice(0, index));
+							sb.Append(span[..index]);
 							if (boldDisabledLevel <= 0 && boldLevel <= 0) sb.Append(boldStart);
 							boldLevel++;
-							span = span.Slice(index + 2);
+							span = span[(index + 2)..];
 							continue;
 						}
 						else goto default;
@@ -192,30 +191,30 @@ public class Index
 						var spanSliced = span[..(index + 1)];
 						if (spanSliced.EndsWith("/*)"))
 						{
-							sb.Append(span.Slice(0, index - 2));
+							sb.Append(span[..(index - 2)]);
 							boldDisabledLevel--;
-							span = span.Slice(index + 1);
+							span = span[(index + 1)..];
 							continue;
 						}
 						else if (spanSliced.EndsWith("*)"))
 						{
-							sb.Append(span.Slice(0, index - 1));
+							sb.Append(span[..(index - 1)]);
 							boldLevel--;
 							if (boldDisabledLevel <= 0 && boldLevel <= 0) sb.Append(boldEnd);
-							span = span.Slice(index + 1);
+							span = span[(index + 1)..];
 							continue;
 						}
 						else goto default;
 					}
 				case '{':
 					{
-						var len = span.Slice(index).IndexOf('}');
+						var len = span[index..].IndexOf('}');
 						if (len <= 0) goto default;
 						var command = span.Slice(index + 1, len - 1);
 						if (!int.TryParse(command, out var num)) goto default;
-						sb.Append(span.Slice(0, index));
+						sb.Append(span[..index]);
 						sb.Append(argProvider(num));
-						span = span.Slice(index + len + 1);
+						span = span[(index + len + 1)..];
 					}
 					break;
 				default:
