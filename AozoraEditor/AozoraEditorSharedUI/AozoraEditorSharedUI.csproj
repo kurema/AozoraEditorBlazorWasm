@@ -28,11 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Shared\" />
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj" />
   </ItemGroup>
 

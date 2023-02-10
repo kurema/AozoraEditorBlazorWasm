@@ -1,0 +1,31 @@
+﻿@inject IJSRuntime JSRuntime;
+
+<StandaloneCodeEditor Id="main-editor" ConstructionOptions="EditorConstructionOptions" />
+
+<style>
+	.monaco-editor-container {
+		height: 500px;
+		border: 1px solid gray;
+	}
+</style>
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (JSRuntime is not null) await JSRuntime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
+		await MonacoEditor.Setup.InitTheme();
+		await base.OnInitializedAsync();
+	}
+
+	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+	{
+
+		return new StandaloneEditorConstructionOptions
+			{
+				AutomaticLayout = true,
+				Language = "aozora",
+				Value = "",
+			};
+	}
+}
