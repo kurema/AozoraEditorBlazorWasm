@@ -13,8 +13,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (JSRuntime is not null) await JSRuntime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
-		await MonacoEditor.Setup.InitTheme();
+		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime);
 		await base.OnInitializedAsync();
 	}
 

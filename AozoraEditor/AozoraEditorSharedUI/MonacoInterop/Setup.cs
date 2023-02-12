@@ -7,10 +7,34 @@ using System.Threading.Tasks;
 using BlazorMonaco;
 using BlazorMonaco.Editor;
 
-namespace AozoraEditor.Shared.MonacoEditor;
+using Microsoft.JSInterop;
+
+namespace AozoraEditor.Shared.MonacoInterop;
 
 internal static partial class Setup
 {
+	public async static Task<bool> IsAozoraRegistered(IJSRuntime runtime)
+	{
+		if (runtime is null) return false;
+		var langs = await runtime.InvokeAsync<System.Text.Json.JsonElement>("window.blazorMonaco.kurema.getLanguages");
+		if (langs.ValueKind is not System.Text.Json.JsonValueKind.Array) return false;
+		foreach (var item in langs.EnumerateArray())
+		{
+			if (item.ValueKind is not System.Text.Json.JsonValueKind.Object) continue;
+			if (!item.TryGetProperty("id", out var id)) continue;
+			if (id.GetString() == "aozora") return true;
+		}
+		return false;
+	}
+
+	public async static Task RegisterAozoraOnDemand(IJSRuntime runtime)
+	{
+		if (runtime is null) return;
+		if (await MonacoInterop.Setup.IsAozoraRegistered(runtime)) return;
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
+		await InitTheme();
+	}
+
 	public async static Task InitTheme()
 	{
 		await Global.DefineTheme("aozora-theme", new StandaloneThemeData()
@@ -26,14 +50,13 @@ internal static partial class Setup
 			Colors = new Dictionary<string, string>()
 			{
 				["editor.foreground"] = "#000000",
-				//["editor.background"] = "#FFFFFF",
 			}
 		});
 
 		await Global.DefineTheme("aozora-theme-dark", new StandaloneThemeData()
 		{
 			Base = "vs-dark",
-			Inherit = true,
+			Inherit = false,
 			Rules = new()
 			{
 				new TokenThemeRule{Token="ruby",Foreground="808080"},

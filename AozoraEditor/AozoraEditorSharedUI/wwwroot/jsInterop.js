@@ -1,4 +1,8 @@
 ﻿window.blazorMonaco.kurema = {
+    getLanguages: function () {
+        return monaco.languages.getLanguages();
+    },
+
     registerAozora: function () {
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
