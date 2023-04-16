@@ -6,6 +6,7 @@
     <title>青空文庫形式エディタ by kurema</title>
     <base href="/" />
     <link href="css/app.css" rel="stylesheet" />
+    <link href="_content/AozoraEditorSharedUI/loading.css" rel="stylesheet" />
     <link href="manifest.json" rel="manifest" />
 
     <!-- If you add any scoped CSS files, uncomment the following to load them
@@ -14,10 +15,11 @@
     <script src="_content/BlazorMonaco/jsInterop.js"></script>
     <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
     <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script src="_content/AozoraEditorSharedUI/jsInterop.js"></script>
 </head>
 
 <body>
-    <div id="app">Loading...</div>
+    <div id="app"><div class="loader">Loading...</div><p style="text-align:center;">青空文庫形式エディタ by kurema</p></div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.

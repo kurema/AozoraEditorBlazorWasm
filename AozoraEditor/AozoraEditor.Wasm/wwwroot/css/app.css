@@ -30,3 +30,7 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+body, html {
+    margin: 0;
+}
