@@ -4,8 +4,14 @@
 	</ButtonMini>
 </div>
 
-<article>@Content</article>
+<iframe style="width:100%;height:100%;border:none;" srcdoc="@htmlPreview"></iframe>
+
+<article style="overflow:scroll;">
+	
+</article>
 
 @code {
 	public RenderFragment? Content{ get; set; }
+
+	string htmlPreview = "<html><body>プレビューボタンはここに表示されます。</body></html>";
 }

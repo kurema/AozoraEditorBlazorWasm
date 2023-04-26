@@ -1,8 +1,35 @@
-﻿<div class="PanelMain">@Main</div>
-<div class="PanelSub">@Sub</div>
+﻿<div class="ContainerMain">
+	<div class="@ClassMain">@Main</div>
+	<div class="@ClassSub">@Sub</div>
+</div>
 
+<style>
+	.ContainerMain {
+		display: flex;
+		flex: 1 0 0;
+	}
+
+	.PanelHalf {
+		flex: 1 0 50%;
+		min-width:0;
+	}
+
+	.PanelFull {
+		flex: 1 0 100%;
+		min-width: 0;
+	}
+
+	.PanelNone {
+		display: none;
+		min-width: 0;
+	}
+</style>
 @code {
+	[Parameter]
 	public RenderFragment? Main { get; set; }
+	[Parameter]
 	public RenderFragment? Sub { get; set; }
 
+	string ClassMain { get; set; } = "PanelHalf";
+	string ClassSub { get; set; } = "PanelHalf";
 }

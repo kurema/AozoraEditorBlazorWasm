@@ -31,6 +31,23 @@ h1:focus {
         content: "An error has occurred."
     }
 
-body, html {
+html, body {
+    width: 100%;
+    height: 100%;
     margin: 0;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#app, #app > main {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex: 1 0 0;
+}
+

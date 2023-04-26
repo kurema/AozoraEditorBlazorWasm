@@ -4,13 +4,13 @@
 
 <style>
 	.monaco-editor-container {
-		height: 500px;
-		border: 1px solid gray;
+		height: 100%;
+		width:100%;
+		border: none;
 	}
 </style>
 
 @code {
-
 	protected override async Task OnInitializedAsync()
 	{
 		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime);
