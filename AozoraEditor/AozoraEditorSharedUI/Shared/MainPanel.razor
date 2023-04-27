@@ -1,4 +1,6 @@
-﻿<div class="ContainerMain">
+﻿<button value="ハロー" @onclick="@ToggleDisplayMode" />
+
+<div class="ContainerMain">
 	<div class="@ClassMain">@Main</div>
 	<div class="@ClassSub">@Sub</div>
 </div>
@@ -11,7 +13,7 @@
 
 	.PanelHalf {
 		flex: 1 0 50%;
-		min-width:0;
+		min-width: 0;
 	}
 
 	.PanelFull {
@@ -30,6 +32,40 @@
 	[Parameter]
 	public RenderFragment? Sub { get; set; }
 
-	string ClassMain { get; set; } = "PanelHalf";
-	string ClassSub { get; set; } = "PanelHalf";
+	string ClassMain { get; set; } = "PanelFull";
+	string ClassSub { get; set; } = "PanelNone";
+
+	DisplayModes _DisplayMode = DisplayModes.MainFull;
+	public DisplayModes DisplayMode
+	{
+		get => _DisplayMode;
+		set
+		{
+			if (_DisplayMode == value) return;
+			switch (value)
+			{
+				case DisplayModes.MainFull:
+					ClassMain = "PanelFull";
+					ClassSub = "PanelNone";
+					break;
+				case DisplayModes.Separated:
+					ClassMain = "PanelHalf";
+					ClassSub = "PanelHalf";
+					break;
+			}
+			_DisplayMode = value;
+		}
+	}
+
+	public void ToggleDisplayMode() => DisplayMode = DisplayMode switch
+	{
+		DisplayModes.MainFull => DisplayModes.Separated,
+		DisplayModes.Separated => DisplayModes.MainFull,
+		_ => DisplayModes.MainFull,
+	};
+
+	public enum DisplayModes
+	{
+		MainFull, Separated,
+	}
 }
