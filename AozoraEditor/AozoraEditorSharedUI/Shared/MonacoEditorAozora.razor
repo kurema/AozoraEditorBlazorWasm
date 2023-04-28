@@ -5,7 +5,7 @@
 <style>
 	.monaco-editor-container {
 		height: 100%;
-		width:100%;
+		width: 100%;
 		border: none;
 	}
 </style>
@@ -24,7 +24,17 @@
 			{
 				AutomaticLayout = true,
 				Language = "aozora",
-				Value = "",
+				Value = "テスト",
+				Theme = "aozora-theme-dark",
+				Folding = true,
+				Suggest = new SuggestOptions()
+				{
+					SnippetsPreventQuickSuggestions = false,
+				},
+				UnicodeHighlight = new UnicodeHighlightOptions()
+				{
+					AmbiguousCharacters = false
+				}
 			};
 	}
 }
