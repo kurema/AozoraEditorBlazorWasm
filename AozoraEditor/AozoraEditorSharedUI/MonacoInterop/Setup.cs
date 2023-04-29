@@ -31,8 +31,8 @@ internal static partial class Setup
 	{
 		if (runtime is null) return;
 		if (await IsAozoraRegistered(runtime)) return;
-		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
 		await InitTheme();
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
 	}
 
 	public async static Task InitTheme()

@@ -1,12 +1,12 @@
 ﻿
-<iframe style="width:100%;height:100%;border:none;" srcdoc="@htmlPreview"></iframe>
+<iframe style="width:100%;height:100%;border:none;" srcdoc="@PreviewDocument"></iframe>
 
 <article style="overflow:scroll;">
-	
 </article>
 
 @code {
-	public RenderFragment? Content{ get; set; }
+	public RenderFragment? Content { get; set; }
 
-	string htmlPreview = "<html><body>プレビューはここに表示されます。</body></html>";
+	[Parameter]
+	public string PreviewDocument { get; set; } = "<html><body>プレビューはここに表示されます。</body></html>";
 }

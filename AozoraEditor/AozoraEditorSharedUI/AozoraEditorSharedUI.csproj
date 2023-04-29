@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\aozora2htmlSharp\aozora2html\aozora2html\aozora2html.csproj" />
     <ProjectReference Include="..\..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj" />
   </ItemGroup>
 

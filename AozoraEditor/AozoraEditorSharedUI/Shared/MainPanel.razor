@@ -1,14 +1,15 @@
-﻿@*<button value="ハロー" @onclick="@ToggleDisplayMode">こんちゃ</button>*@
-
-<div class="ContainerMain">
+﻿<div class="ContainerMain">
 	<div class="PanelTop">
-		<button class="ButtonMini" @onclick="@ToggleDisplayMode">
+		<button class="ButtonMini" @onclick="@ShowPreview">
 			<span class="material-symbols-outlined">preview</span>
 		</button>
-		<Microsoft.AspNetCore.Components.Forms.InputFile />
+		<div class="FileInputButton ButtonMini">
+			<span class="material-symbols-outlined">file_open</span>
+			<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="FileUpload" />
+		</div>
 	</div>
-	<div class="@ClassMain">@Main</div>
-	<div class="@ClassSub">@Sub</div>
+	<div class="@ClassMain"><MonacoEditorAozora @ref="editor" /></div>
+	<div class="@ClassSub"><SubPanel PreviewDocument="@PreviewHtml" /></div>
 </div>
 
 <style>
@@ -60,15 +61,29 @@
 		.ButtonMini:hover {
 			background-color: #7F7F7F22;
 		}
+
+	.FileInputButton {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		position: relative;
+	}
+
+		.FileInputButton input[type=file] {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			/* このやり方はちょっと良くない(コメントアウトすれば分かるが隙間は押せない)。けどほぼ問題なし。 */
+			opacity: 0;
+			cursor: pointer;
+		}
 </style>
 @code {
-	[Parameter]
-	public RenderFragment? Main { get; set; }
-	[Parameter]
-	public RenderFragment? Sub { get; set; }
-
 	string ClassMain { get; set; } = "PanelFull";
 	string ClassSub { get; set; } = "PanelNone";
+
+	private MonacoEditorAozora editor;
 
 	DisplayModes _DisplayMode = DisplayModes.MainFull;
 	public DisplayModes DisplayMode
@@ -99,8 +114,49 @@
 		_ => DisplayModes.MainFull,
 	};
 
+	public string PreviewHtml { get; set; } = "<html><body>プレビューはここに表示されます。</body></html>";
+
+	public async Task ShowPreview()
+	{
+		PreviewHtml = "<html><body><p>プレビュー作成中です<br />この間、UIがフリーズすることがあります。</p></body></html>";
+		DisplayMode = DisplayModes.Separated;
+		if (editor is null)
+		{
+			Console.WriteLine("Null!");
+			return;
+		}
+		var text = await editor.Content.GetValue();
+		var js = new Aozora.JstreamString(text);
+		var output = new Aozora.Helpers.OutputString();
+		var aozora = new Aozora.Aozora2Html(js, output)
+			{
+				UseJisx0213Accent = true,
+				UseJisx0214EmbedGaiji = true,
+				UseUnicodeEmbedGaiji = true,
+			}; ;
+		try{
+			aozora.Process();
+			PreviewHtml = output.ToString();
+		}
+		catch
+		{
+			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
+		}
+	}
+
 	public enum DisplayModes
 	{
 		MainFull, Separated,
+	}
+
+	private async Task FileUpload(Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs e)
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
+		{
+			var ext = Path.GetExtension(e.File.Name);
+			var s = e.File.OpenReadStream();
+		}
+		catch { }
 	}
 }

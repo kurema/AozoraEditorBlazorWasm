@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime;
 
-<StandaloneCodeEditor Id="main-editor" ConstructionOptions="EditorConstructionOptions" />
+<StandaloneCodeEditor Id="main-editor" ConstructionOptions="EditorConstructionOptions" @ref="Content" />
 
 <style>
 	.monaco-editor-container {
@@ -11,21 +11,28 @@
 </style>
 
 @code {
-	protected override async Task OnInitializedAsync()
+	public StandaloneCodeEditor Content;
+
+	protected override async Task OnParametersSetAsync()
 	{
 		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime);
-		await base.OnInitializedAsync();
+		await base.OnParametersSetAsync();
 	}
+
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime);
+	//	await base.OnInitializedAsync();
+	//}
 
 	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
 	{
-
 		return new StandaloneEditorConstructionOptions
 			{
 				AutomaticLayout = true,
 				Language = "aozora",
 				Value = "テスト",
-				Theme = "aozora-theme-dark",
+				//テーマはこの後変更されるので設定しません。
 				Folding = true,
 				Suggest = new SuggestOptions()
 				{
