@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using AozoraEditor.Shared.Snippets.Schema;
 using BlazorMonaco;
 using BlazorMonaco.Editor;
 
@@ -24,6 +24,7 @@ internal static partial class Setup
 			if (!item.TryGetProperty("id", out var id)) continue;
 			if (id.GetString() == "aozora") return true;
 		}
+
 		return false;
 	}
 
@@ -32,7 +33,8 @@ internal static partial class Setup
 		if (runtime is null) return;
 		if (await IsAozoraRegistered(runtime)) return;
 		await InitTheme();
-		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
+		var (_, index) = Snippets.Loader.LoadFromResouce();
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora", index.ContentsFlat.ToArray());
 	}
 
 	public async static Task InitTheme()

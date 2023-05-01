@@ -83,7 +83,7 @@
 	string ClassMain { get; set; } = "PanelFull";
 	string ClassSub { get; set; } = "PanelNone";
 
-	private MonacoEditorAozora editor;
+	private MonacoEditorAozora? editor;
 
 	DisplayModes _DisplayMode = DisplayModes.MainFull;
 	public DisplayModes DisplayMode
@@ -125,6 +125,7 @@
 			Console.WriteLine("Null!");
 			return;
 		}
+		if (editor?.Content is null) return;
 		var text = await editor.Content.GetValue();
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
@@ -134,7 +135,8 @@
 				UseJisx0214EmbedGaiji = true,
 				UseUnicodeEmbedGaiji = true,
 			}; ;
-		try{
+		try
+		{
 			aozora.Process();
 			PreviewHtml = output.ToString();
 		}
@@ -152,11 +154,58 @@
 	private async Task FileUpload(Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs e)
 	{
 		if (e.FileCount != 1 || e.File?.Name == null) return;
+		var ext = Path.GetExtension(e.File.Name);
 		try
 		{
-			var ext = Path.GetExtension(e.File.Name);
-			var s = e.File.OpenReadStream();
+			var ms = new MemoryStream();
+			await e.File.OpenReadStream().CopyToAsync(ms);
+			if (ext.Equals(".zip", StringComparison.InvariantCultureIgnoreCase))
+			{
+				Console.WriteLine("zip!");
+				using var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Read);
+				var f = zip.Entries.FirstOrDefault(a => System.IO.Path.GetExtension(a.Name)?.Equals(".txt", StringComparison.InvariantCultureIgnoreCase) == true);
+				Console.WriteLine(f);
+				if (f is null) return;
+				var s2 = f.Open();
+				Console.WriteLine(s2);
+				if (s2 is null) return;
+				var text = await LoadText(s2);
+				Console.WriteLine(text);
+				if (text is null) return;
+				if (editor?.Content is null) return;
+				await editor.Content.SetValue(text);
+			}
+			else
+			{
+				var text = await LoadText(ms);
+				if (text is null) return;
+				if (editor?.Content is null) return;
+				await editor.Content.SetValue(text);
+			}
+		}
+		catch (Exception e2)
+		{
+			Console.WriteLine($"Loading file failed:\n{e2}");
+
+		}
+	}
+
+	private async Task<string?> LoadText(Stream stream)
+	{
+		try
+		{
+			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
+			if (sjis is null) throw new Exception();
+			using var sr = new StreamReader(stream, sjis);
+			return await sr.ReadToEndAsync();
 		}
 		catch { }
+		try
+		{
+			using var sr = new StreamReader(stream, true);
+			return await sr.ReadToEndAsync();
+		}
+		catch { }
+		return null;
 	}
 }

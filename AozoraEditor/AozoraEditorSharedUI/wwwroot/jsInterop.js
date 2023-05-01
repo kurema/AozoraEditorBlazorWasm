@@ -3,7 +3,9 @@
         return monaco.languages.getLanguages();
     },
 
-    registerAozora: function () {
+    registerAozora: function (index) {
+        console.log(index);
+
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
         monaco.languages.setMonarchTokensProvider('aozora', {
