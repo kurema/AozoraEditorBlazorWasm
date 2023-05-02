@@ -4,7 +4,7 @@
     },
 
     registerAozora: function (index) {
-        console.log(index);
+        //console.log(index);
 
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
@@ -42,4 +42,16 @@
             }
         });
     }
+}
+
+window.DownloadFileFromStream = async (fileName, contentStreamReference) => {
+    const arrayBuffer = await contentStreamReference.arrayBuffer();
+    const blob = new Blob([arrayBuffer]);
+    const url = URL.createObjectURL(blob);
+    const anchorElement = document.createElement('a');
+    anchorElement.href = url;
+    anchorElement.download = fileName ?? '';
+    anchorElement.click();
+    anchorElement.remove();
+    URL.revokeObjectURL(url);
 }

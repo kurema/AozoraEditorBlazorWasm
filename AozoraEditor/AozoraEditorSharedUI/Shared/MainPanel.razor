@@ -1,4 +1,6 @@
-﻿<div class="ContainerMain">
+﻿@inject IJSRuntime JSRuntime;
+
+<div class="ContainerMain">
 	<div class="PanelTop">
 		<button class="ButtonMini" @onclick="@ShowPreview">
 			<span class="material-symbols-outlined">preview</span>
@@ -7,6 +9,10 @@
 			<span class="material-symbols-outlined">file_open</span>
 			<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="FileUpload" />
 		</div>
+		<button class="ButtonMini" @onclick="@DownloadText">
+			<span class="material-symbols-outlined">save</span>
+		</button>
+
 	</div>
 	<div class="@ClassMain"><MonacoEditorAozora @ref="editor" /></div>
 	<div class="@ClassSub"><SubPanel PreviewDocument="@PreviewHtml" /></div>
@@ -151,6 +157,8 @@
 		MainFull, Separated,
 	}
 
+	const long MaxFileSize = 256 * 1024 * 1024;//256 MB. This should be enough.
+
 	private async Task FileUpload(Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs e)
 	{
 		if (e.FileCount != 1 || e.File?.Name == null) return;
@@ -158,36 +166,35 @@
 		try
 		{
 			var ms = new MemoryStream();
-			await e.File.OpenReadStream().CopyToAsync(ms);
+			await e.File.OpenReadStream(MaxFileSize).CopyToAsync(ms);
 			if (ext.Equals(".zip", StringComparison.InvariantCultureIgnoreCase))
 			{
-				Console.WriteLine("zip!");
 				using var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Read);
 				var f = zip.Entries.FirstOrDefault(a => System.IO.Path.GetExtension(a.Name)?.Equals(".txt", StringComparison.InvariantCultureIgnoreCase) == true);
-				Console.WriteLine(f);
-				if (f is null) return;
+				if (f is null) goto fail;
 				var s2 = f.Open();
-				Console.WriteLine(s2);
-				if (s2 is null) return;
+				if (s2 is null) goto fail;
 				var text = await LoadText(s2);
-				Console.WriteLine(text);
-				if (text is null) return;
-				if (editor?.Content is null) return;
+				if (text is null) goto fail;
+				if (editor?.Content is null) goto fail;
 				await editor.Content.SetValue(text);
 			}
 			else
 			{
 				var text = await LoadText(ms);
-				if (text is null) return;
-				if (editor?.Content is null) return;
+				if (text is null) goto fail;
+				if (editor?.Content is null) goto fail;
 				await editor.Content.SetValue(text);
 			}
 		}
 		catch (Exception e2)
 		{
 			Console.WriteLine($"Loading file failed:\n{e2}");
-
 		}
+		return;
+	fail:
+		Console.WriteLine($"Loading file failed.");
+		return;
 	}
 
 	private async Task<string?> LoadText(Stream stream)
@@ -207,5 +214,54 @@
 		}
 		catch { }
 		return null;
+	}
+
+	private async Task DownloadText()
+	{
+		using var ms = new MemoryStream();
+		if (editor?.Content is null) goto fail;
+		var text = await editor.Content.GetValue();
+
+		async Task saveMs(Stream ms)
+		{
+			ms.Seek(0, SeekOrigin.Begin);
+			using var streamRef = new DotNetStreamReference(ms);
+			await JSRuntime.InvokeVoidAsync("window.DownloadFileFromStream", "aozora.txt", streamRef);
+		}
+
+		try
+		{
+			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
+			if (sjis is null) throw new Exception();
+			var sw = new StreamWriter(ms, sjis);
+			await sw.WriteAsync(text);
+			await sw.FlushAsync();
+			await saveMs(ms);
+			sw.Close();
+			//await sw.DisposeAsync();
+		}
+		catch (Exception e2)
+		{
+			Console.WriteLine(e2);
+			try
+			{
+				var sw = new StreamWriter(ms, System.Text.Encoding.UTF8);
+				await sw.WriteAsync(text);
+				await sw.FlushAsync();
+				await saveMs(ms);
+				sw.Close();
+				//await sw.DisposeAsync();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				goto fail;
+			}
+		}
+
+		return;
+	fail:
+		Console.WriteLine("Saving file failed.");
+		return;
 	}
 }
