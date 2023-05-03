@@ -113,6 +113,8 @@
 		}
 	}
 
+	public string FileName { get; set; } = "aozora.txt";
+
 	public void ToggleDisplayMode() => DisplayMode = DisplayMode switch
 	{
 		DisplayModes.MainFull => DisplayModes.Separated,
@@ -178,6 +180,7 @@
 				if (text is null) goto fail;
 				if (editor?.Content is null) goto fail;
 				await editor.Content.SetValue(text);
+				FileName = Path.GetFileName(f.FullName);
 			}
 			else
 			{
@@ -185,6 +188,7 @@
 				if (text is null) goto fail;
 				if (editor?.Content is null) goto fail;
 				await editor.Content.SetValue(text);
+				FileName = Path.GetFileName(e.File.Name);
 			}
 		}
 		catch (Exception e2)
@@ -226,7 +230,7 @@
 		{
 			ms.Seek(0, SeekOrigin.Begin);
 			using var streamRef = new DotNetStreamReference(ms);
-			await JSRuntime.InvokeVoidAsync("window.DownloadFileFromStream", "aozora.txt", streamRef);
+			await JSRuntime.InvokeVoidAsync("window.DownloadFileFromStream", FileName, streamRef);
 		}
 
 		try
@@ -250,7 +254,6 @@
 				await sw.FlushAsync();
 				await saveMs(ms);
 				sw.Close();
-				//await sw.DisposeAsync();
 			}
 			catch (Exception e)
 			{
