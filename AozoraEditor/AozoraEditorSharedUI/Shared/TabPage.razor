@@ -21,6 +21,7 @@
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
+	[Parameter]
 	public string Title { get; set; } = String.Empty;
 
 	public string GetContainerClass() => (Parent?.ActivePage == this) ? "tab_page_container_active" : "tab_page_container_hidden";
@@ -28,6 +29,8 @@
 	protected override void OnInitialized()
 	{
 		if (Parent == null) throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabPages");
+		Parent.AddPage(this);
+		Console.WriteLine(this.Title);
 		base.OnInitialized();
 	}
 }
