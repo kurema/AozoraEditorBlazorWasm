@@ -1,0 +1,47 @@
+﻿<div class="tab_pages_container">
+	<div class="tab_pages_controller">
+		@foreach (TabPage tabPage in Pages)
+		{
+			<button type="button" class="tab_button" >
+				@tabPage.Title
+			</button>
+		}
+	</div>
+
+	<div class="tab_pages_body">
+		@foreach (var item in Pages)
+		{
+			<CascadingValue Value="this">
+				@item?.ChildContent
+			</CascadingValue>
+		}
+	</div>
+</div>
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		if (Pages.Count == 0)
+		{
+			//var page = new TabPage();
+			//RenderFragment r =@<EditorPage />;
+			//await page.SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?>()
+			//{
+			//	{nameof(TabPage.ChildContent),r},
+			//}));
+			//AddPage(page);
+		}
+	}
+
+	System.Collections.ObjectModel.ObservableCollection<TabPage> Pages = new();
+	public TabPage? ActivePage { get; set; }
+
+	internal void AddPage(TabPage page)
+	{
+		Pages.Add(page);
+		if (Pages.Count == 1) ActivePage = page;
+		StateHasChanged();
+	}
+
+}

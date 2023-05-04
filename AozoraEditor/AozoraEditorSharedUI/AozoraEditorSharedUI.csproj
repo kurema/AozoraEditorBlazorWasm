@@ -32,4 +32,8 @@
     <ProjectReference Include="..\..\..\AozoraGaijiChukiXml\lib\dotnet\AozoraGaijiChuki\AozoraGaijiChuki.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\kentenbosen\" />
+  </ItemGroup>
+
 </Project>

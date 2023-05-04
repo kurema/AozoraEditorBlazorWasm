@@ -137,7 +137,7 @@
 		var text = await editor.Content.GetValue();
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
-		var aozora = new Aozora.Aozora2Html(js, output)
+		var aozora = new Aozora.Aozora2Html(js, output, css_files: new[] { "_content/AozoraEditorSharedUI/aozora.css" })
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,
@@ -145,7 +145,7 @@
 			}; ;
 		try
 		{
-			aozora.Process();
+			await Task.Run(() => aozora.Process());
 			PreviewHtml = output.ToString();
 		}
 		catch
