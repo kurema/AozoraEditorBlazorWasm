@@ -1,4 +1,5 @@
 ﻿@inject IJSRuntime JSRuntime;
+@implements ITabPage
 
 <div class="ContainerMain">
 	<div class="PanelTop">
@@ -86,6 +87,8 @@
 		}
 </style>
 @code {
+	public RenderFragment Title =>@<div>@FileName</div>;
+
 	string ClassMain { get; set; } = "PanelFull";
 	string ClassSub { get; set; } = "PanelNone";
 
@@ -113,7 +116,12 @@
 		}
 	}
 
-	public string FileName { get; set; } = "aozora.txt";
+	private string _FileName = "new.txt";
+	public string FileName
+	{
+		get => _FileName;
+		set { _FileName = value; TitleChanged?.Invoke(this, new()); }
+	}
 
 	public void ToggleDisplayMode() => DisplayMode = DisplayMode switch
 	{
@@ -267,4 +275,6 @@
 		Console.WriteLine("Saving file failed.");
 		return;
 	}
+
+	public event EventHandler? TitleChanged;
 }

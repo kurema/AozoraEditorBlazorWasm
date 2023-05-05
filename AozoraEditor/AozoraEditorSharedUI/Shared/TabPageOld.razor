@@ -4,6 +4,8 @@
 
 <style>
 	.tab_page_container {
+		display:flex;
+		flex: 1 0 0;
 	}
 
 	.tab_page_container_hidden {
@@ -16,7 +18,7 @@
 
 @code {
 	[CascadingParameter]
-	private TabPages? Parent { get; set; }
+	private TabPagesOld? Parent { get; set; }
 
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
@@ -30,7 +32,6 @@
 	{
 		if (Parent == null) throw new ArgumentNullException(nameof(Parent), "TabPage must exist within a TabPages");
 		Parent.AddPage(this);
-		Console.WriteLine(this.Title);
 		base.OnInitialized();
 	}
 }

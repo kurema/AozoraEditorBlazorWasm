@@ -1,6 +1,6 @@
 ﻿<div class="tab_pages_container">
 	<div class="tab_pages_controller">
-		@foreach (TabPage tabPage in Pages)
+		@foreach (TabPageOld tabPage in Pages)
 		{
 			<button type="button" class="tab_button">
 				@tabPage.Title
@@ -22,18 +22,40 @@
 	</div>
 </div>
 
+<style>
+	.tab_pages_container {
+		display: grid;
+		grid-template-rows: auto 1fr;
+		grid-template-columns: 1fr;
+		flex: 1 0 0;
+	}
+
+	.tab_pages_controller {
+		grid-row: 1/2;
+		grid-column: 1/2;
+		min-width: 0;
+	}
+
+	.tab_pages_body {
+		grid-row: 2/3;
+		grid-column: 1/2;
+		min-width: 0;
+		display: flex;
+	}
+
+</style>
+
 @code {
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
-	System.Collections.ObjectModel.ObservableCollection<TabPage> Pages = new();
-	public TabPage? ActivePage { get; set; }
+	System.Collections.ObjectModel.ObservableCollection<TabPageOld> Pages = new();
+	public TabPageOld? ActivePage { get; set; }
 
-	internal void AddPage(TabPage page)
+	internal void AddPage(TabPageOld page)
 	{
 		Pages.Add(page);
 		if (Pages.Count == 1) ActivePage = page;
 		StateHasChanged();
 	}
-
 }
