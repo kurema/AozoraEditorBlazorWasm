@@ -22,13 +22,30 @@
 		}
 	</div>
 
+	<div class="tab_control_background" />
+
 	<div class="tab_control_controller">
 		@foreach (var item in Pages)
 		{
-			<button @onclick="()=>ActivateTab(item)">
-				@item.Title
-			</button>
+			var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
+
+			<div @onclick="()=>ActivateTab(item)" class="@cl">
+				<p class="tab_control_controller_tab_title">@item.Title</p>
+				<button class="ButtonMini tab_control_controller_tab_close" @onclick="()=>{CloseTab(item);}">
+					<span class="material-symbols-outlined">
+						close
+					</span>
+				</button>
+			</div>
 		}
+		<div class="tab_control_controller_add">
+			<button class="ButtonMini tab_control_controller_add_button" @onclick="()=>{AddEditorTab();}">
+				<span class="material-symbols-outlined">
+					add
+				</span>
+			</button>
+		</div>
+
 	</div>
 
 	<div class="tab_control_panel_switch_buttons">
@@ -79,6 +96,70 @@
 		grid-column: 1/2;
 		min-width: 0;
 		min-height: 0;
+	}
+
+	.tab_control_background {
+		background: #f8f8f8;
+		grid-row: 2/3;
+		grid-column: 1/3;
+		min-width: 0;
+		min-height: 0;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.tab_control_controller_tab, .tab_control_controller_tab_active {
+		min-width: 6em;
+		display: inline-grid;
+		grid-template-columns: 1fr auto;
+		margin: 0 4px;
+	}
+
+	.tab_control_controller_tab {
+		background: #f8f8f8;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.tab_control_controller_tab_active {
+		background: white;
+		border-right: 1px solid rgba(0, 0, 0, 0.1);
+		border-left: 1px solid rgba(0, 0, 0, 0.1);
+		border-top: 1px solid #005fb8;
+		border-bottom: 1px solid white;
+	}
+
+	.tab_control_controller_tab_title {
+		margin: 4px;
+		display: inline-block;
+		grid-row: 1/2;
+		grid-column: 1/2;
+		vertical-align: central;
+		font-size: 13px;
+		/*line-height: 22px;*/
+		font-family: Segoe WPC,Segoe UI,sans-serif;
+		user-select: none;
+	}
+
+	.tab_control_controller_add {
+		background: white;
+		display: inline-grid;
+		vertical-align: bottom;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.tab_control_controller_add_button {
+		flex: 1 0 0;
+	}
+
+	.tab_control_controller_tab:hover .tab_control_controller_tab_close, .tab_control_controller_tab_active .tab_control_controller_tab_close {
+		opacity: 100%;
+	}
+
+	.tab_control_controller_tab_close {
+		display: inline-block;
+		grid-row: 1/2;
+		grid-column: 2/3;
+		vertical-align: bottom;
+		opacity: 0;
 	}
 
 	.tab_control_panel_switch_buttons {
@@ -163,6 +244,27 @@
 		ActivePage = page;
 		page.Parent = this;
 		StateHasChanged();
+	}
+
+	public void CloseTab(ITabPage page)
+	{
+		//ToDo: Confirm save.
+		if (!Pages.Contains(page)) return;
+		if (ActivePage == page)
+		{
+			int count = Pages.IndexOf(page);
+			count = count == 0 ? 1 : count - 1;
+			if (Pages.Count > count) ActivateTab(Pages[count]);
+		}
+		Pages.Remove(page);
+		StateHasChanged();
+	}
+
+	public void AddEditorTab()
+	{
+		var page = new TabPages.EditorTab();
+		Pages.Add(page);
+		ActivateTab(page);
 	}
 
 	public static RenderFragment GetMaterialSymbolOutlined(string name)
