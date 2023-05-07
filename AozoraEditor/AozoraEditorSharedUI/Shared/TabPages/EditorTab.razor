@@ -6,7 +6,7 @@
 	{
 	}
 
-	public RenderFragment Title =>@<div>@Content?.FileName</div>;
+	public RenderFragment Title =>@<span>@Content?.FileName</span>;
 
 	public RenderFragment Body =>@<EditorPage @ref="Content" />;
 
@@ -30,13 +30,22 @@
 				PanelSwitchCommands.Clear();
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("preview", "プレビュー");
-					com.Clicked += async (_, _) =>
+					com.Clicked += (_, _) =>
 					{
-						if (currentContent is null) return;
-						await currentContent.ShowPreview();
+						currentContent.SubPanelSwitchToPreview();
 					};
 					PanelSwitchCommands.Add(com);
 				}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("close", "閉じる");
+					com.Clicked += (_, _) =>
+					{
+						currentContent.DisplayMode = EditorPage.DisplayModes.MainFull;
+					};
+					PanelSwitchCommands.Add(com);
+				}
+
+				MainCommands.Clear();
 				{
 					var com = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					com.FileChanged += async (_, e) =>
@@ -58,8 +67,15 @@
 					var com = CommandEntry.FromMaterialSymbolOutlined("save", "ファイルを保存");
 					com.Clicked += async (_, _) =>
 					{
-						if (currentContent is null) return;
 						await currentContent.DownloadText();
+					};
+					MainCommands.Add(com);
+				}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("play_arrow", "プレビューを作成");
+					com.Clicked += async (_, _) =>
+					{
+						await currentContent.ShowPreview();
 					};
 					MainCommands.Add(com);
 				}

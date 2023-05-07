@@ -66,6 +66,7 @@
 					break;
 			}
 			_DisplayMode = value;
+			StateHasChanged();
 		}
 	}
 
@@ -83,7 +84,13 @@
 		_ => DisplayModes.MainFull,
 	};
 
-	public string PreviewHtml { get; set; } = "<html><body>プレビューはここに表示されます。</body></html>";
+	public string PreviewHtml { get; set; } = @"<html><link href=""_content/AozoraEditorSharedUI/emoji/MaterialSymbols.css"" rel=""stylesheet"" /><body>プレビューの作成には<span class=""material-symbols-outlined"">play_arrow</span>を押してください。</body></html>";
+
+	public void SubPanelSwitchToPreview()
+	{
+		DisplayMode = DisplayModes.Separated;
+		StateHasChanged();
+	}
 
 	public async Task ShowPreview()
 	{

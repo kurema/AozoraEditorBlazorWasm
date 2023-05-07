@@ -1,0 +1,31 @@
+﻿@implements IMenuParent
+
+<CascadingValue Value="this" Name="Parent">
+	@ChildContent
+</CascadingValue>
+
+@code {
+	[CascadingParameter]
+	private IMenuParent? Parent { get; set; }
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public string Title { get; set; } = string.Empty;
+
+	System.Collections.ObjectModel.ObservableCollection<MenuItem> ChildMenus { get; } = new();
+
+	public void AddPage(MenuItem menuItem)
+	{
+		ChildMenus.Add(menuItem);
+		StateHasChanged();
+	}
+
+	protected override void OnInitialized()
+	{
+		if (Parent == null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		Parent.AddPage(this);
+		base.OnInitialized();
+	}
+}

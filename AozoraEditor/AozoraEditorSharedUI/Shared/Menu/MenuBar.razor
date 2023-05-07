@@ -1,0 +1,35 @@
+﻿@implements IMenuParent
+
+<div class="menubar">
+	@foreach (var item in ChildMenus)
+	{
+		<div class="menubar-menu-button">@item.Title</div>
+	}
+</div>
+
+<style>
+	.menubar {
+		display: flex;
+		flex-shrink: 1;
+		box-sizing: border-box;
+		height: 100%;
+		overflow: hidden;
+	}
+</style>
+
+<CascadingValue Value="this" Name="Parent">
+	@ChildContent
+</CascadingValue>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	System.Collections.ObjectModel.ObservableCollection<MenuItem> ChildMenus { get; } = new();
+
+	public void AddPage(MenuItem menuItem)
+	{
+		ChildMenus.Add(menuItem);
+		StateHasChanged();
+	}
+}
