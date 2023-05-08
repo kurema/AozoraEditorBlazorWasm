@@ -23,6 +23,8 @@
 
 	private string? _Text;
 
+	public string OriginalText { get; set; } = string.Empty;
+
 	public async Task<string> GetText()
 	{
 		if (Content is null) return _Text ?? string.Empty;

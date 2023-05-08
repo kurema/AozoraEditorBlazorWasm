@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AozoraEditor.Shared.Shared.Menu
+namespace AozoraEditor.Shared.Shared.Menu;
+
+public interface IMenuParent
 {
-	public interface IMenuParent
-	{
-		void AddPage(MenuItem menuItem);
-	}
+	void AddPage(IMenuItem menuItem);
+}
+
+public interface IMenuItem
+{
+	Task InvokeAsync();
+	string Title { get; }
 }

@@ -1,6 +1,7 @@
 ﻿@implements IMenuParent
+@implements IMenuItem
 
-<CascadingValue Value="this" Name="Parent">
+<CascadingValue Value="this">
 	@ChildContent
 </CascadingValue>
 
@@ -14,18 +15,25 @@
 	[Parameter]
 	public string Title { get; set; } = string.Empty;
 
-	System.Collections.ObjectModel.ObservableCollection<MenuItem> ChildMenus { get; } = new();
+	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
-	public void AddPage(MenuItem menuItem)
+	public void AddPage(IMenuItem menuItem)
 	{
 		ChildMenus.Add(menuItem);
 		StateHasChanged();
 	}
 
+	public bool HasChild => ChildMenus.Any();
+
 	protected override void OnInitialized()
 	{
-		if (Parent == null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
 		Parent.AddPage(this);
 		base.OnInitialized();
+	}
+
+	public Task InvokeAsync()
+	{
+		return Task.CompletedTask;
 	}
 }
