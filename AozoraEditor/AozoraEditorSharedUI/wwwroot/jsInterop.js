@@ -55,3 +55,7 @@ window.DownloadFileFromStream = async (fileName, contentStreamReference) => {
     anchorElement.remove();
     URL.revokeObjectURL(url);
 }
+
+window.GetBoundingClientRect = (element, parm) => { return element.getBoundingClientRect(); };
+
+window.GetWindowSize = (parm) => { return { Width: document.body.clientWidth, Height: document.body.clientHeight }; };

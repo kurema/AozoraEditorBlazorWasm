@@ -1,11 +1,34 @@
 ﻿@implements IMenuParent
 @implements IMenuItem
+@inject IJSRuntime JSRuntime;
+
+<div class="menubox @HiddenClass" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
+	@foreach (var item in ChildMenus)
+	{
+		<p @ref="@item.ElementHeader" @onclick="async ()=>{await item.InvokeAsync();}">@item.Title</p>
+	}
+</div>
 
 <CascadingValue Value="this">
 	@ChildContent
 </CascadingValue>
 
+<style>
+	.menubox {
+		display: flex;
+		flex-direction: column;
+		position: fixed;
+		background: white;
+		border: solid 1px gray;
+		z-index: 1000;
+		top: 0;
+		left: 0;
+	}
+</style>
+
 @code {
+	public ElementReference? ElementBox { get; set; }
+
 	[CascadingParameter]
 	private IMenuParent? Parent { get; set; }
 
@@ -15,9 +38,19 @@
 	[Parameter]
 	public string Title { get; set; } = string.Empty;
 
+	public int ZIndex => (Parent?.ZIndex ?? 256) + 1;
+
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
-	public void AddPage(IMenuItem menuItem)
+	public bool IsVisible { get; set; }
+
+	string HiddenClass => IsVisible ? "" : "hidden";
+
+	//string GridRowCss => string.Join(' ', ChildMenus.Select(_ => "auto"));
+
+	string BoxStyle { get; set; } = string.Empty;
+
+	public void AddItem(IMenuItem menuItem)
 	{
 		ChildMenus.Add(menuItem);
 		StateHasChanged();
@@ -28,12 +61,52 @@
 	protected override void OnInitialized()
 	{
 		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
-		Parent.AddPage(this);
+		Parent.AddItem(this);
 		base.OnInitialized();
 	}
 
-	public Task InvokeAsync()
+	public async Task InvokeAsync()
 	{
-		return Task.CompletedTask;
+		if (HasChild) IsVisible = true;
+		StateHasChanged();
+		var s1 = await InterOp.Functions.GetWindowSize(JSRuntime);
+		var r1 = await InterOp.Functions.GetElementRect(JSRuntime, Parent?.ElementBox);
+		var r2 = await InterOp.Functions.GetElementRect(JSRuntime, ElementHeader);
+		var r3 = await InterOp.Functions.GetElementRect(JSRuntime, ElementBox);
+		double x = 0;
+		double y = 0;
+		Console.WriteLine($"{r2?.Y} {ElementHeader}");
+		switch (Parent?.ChildPosition)
+		{
+			case MenuPosition.Bottom:
+				x = r2?.X ?? 0;
+				y = (r1?.Y + r1?.Height) ?? 0;
+				break;
+			case MenuPosition.Right:
+				x = (r1?.X + r1?.Width) ?? 0;
+				y = r2?.Y ?? 0;
+				break;
+		}
+		x = Math.Max(0, Math.Min(x, s1.Width - r3?.Width ?? 0));
+		y = Math.Max(0, Math.Min(y, s1.Height - r3?.Height ?? 0));
+
+		BoxStyle = $""""
+		top: {y}px;
+		left: {x}px;
+		"""";
+		StateHasChanged();
 	}
+
+	public void Hide()
+	{
+		IsVisible = false;
+		foreach (var item in ChildMenus)
+		{
+			item.Hide();
+		}
+	}
+
+	public ElementReference? ElementHeader { get; set; }
+
+	public MenuPosition ChildPosition => MenuPosition.Right;
 }

@@ -1,15 +1,30 @@
 ﻿<div class="tab_control_container">
 	<div class="tab_control_top_container">
-		<AozoraEditor.Shared.Shared.Menu.MenuBar>
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル" />
+		<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
+			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト">
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+				</AozoraEditor.Shared.Shared.Menu.MenuItem>
+			</AozoraEditor.Shared.Shared.Menu.MenuItem>
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集" />
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="選択" />
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ" />
 		</AozoraEditor.Shared.Shared.Menu.MenuBar>
 		<div class="tab_control_main_buttons">
-			@if (ActivePage?.MainCommands is not null)
-			{
-				foreach (var item in ActivePage.MainCommands)
+			@{
+				IEnumerable<ICommandEntry> commands = CommonCommands;
+
+				if (commands.Any())
+				{
+					// ここでSeparatorを入れるべきか？
+				}
+				if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
+
+				foreach (var item in commands)
 				{
 					switch (item)
 					{
@@ -83,14 +98,13 @@
 		@foreach (var item in Pages)
 		{
 			bool active = item == ActivePage;
-			string additonalClass = active ? "tab_page_container_active" : "tab_page_container_hidden";
+			string additonalClass = active ? "tab_page_container_active" : "hidden";
 			<div class="tab_page_container @additonalClass">
 				@item.Body
 			</div>
 		}
 	</div>
 
-	<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
 </div>
 
 <style>
@@ -117,7 +131,7 @@
 		display: flex;
 		flex-direction: row;
 		/*border-bottom: 1px solid rgba(0, 0, 0, 0.1);*/
-		align-items:center;
+		align-items: center;
 	}
 
 		.tab_control_top_container > .menubar {
@@ -150,9 +164,9 @@
 		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 	}
 
-	.tab_control_controller_tab:hover {
-		background: #e8e8e8;
-	}
+		.tab_control_controller_tab:hover {
+			background: #e8e8e8;
+		}
 
 
 	.tab_control_controller_tab_active {
@@ -222,7 +236,8 @@
 	.tab_page_container_active {
 	}
 
-	.tab_page_container_hidden {
+	.hidden {
+		/*ToDo: どっかに統合。*/
 		display: none;
 	}
 
@@ -260,6 +275,23 @@
 </style>
 
 @code {
+	[CascadingParameter]
+	public FullEditor? Parent { get; set; }
+
+	AozoraEditor.Shared.Shared.Menu.MenuBar? MenuBar { get; set; }
+
+	ICommandEntry[] CommonCommands
+	{
+		get
+		{
+			return new ICommandEntry[0];
+		}
+	}
+
+	public void HideMenuBar()
+	{
+		MenuBar?.Hide();
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -269,7 +301,6 @@
 
 	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab() };
 	public ITabPage? ActivePage { get; set; }
-	Dialogs.Dialog? Dialog { get; set; }
 
 	public void ActivateTab(MouseEventArgs e, ITabPage page)
 	{
@@ -285,8 +316,8 @@
 
 	public async Task CloseTab(ITabPage page)
 	{
-		if (Dialog is null) return;
-		var result = await Dialog.ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+		if (Parent?.Dialog is null) return;
+		var result = await Parent.Dialog.ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
 		if (result.Id is string and "no") return;
 		if (!Pages.Contains(page)) return;
 		if (ActivePage == page)

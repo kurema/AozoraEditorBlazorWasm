@@ -1,9 +1,14 @@
 ﻿@implements IMenuParent
+@inject IJSRuntime JSRuntime;
 
-<div class="menubar">
+<div class="menubar" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="()=>{}" @ref="ElementBox">
+	@{
+		int i = 0;
+	}
 	@foreach (var item in ChildMenus)
 	{
-		<div class="menubar_menu_button" @onclick="async ()=>{await item.InvokeAsync();}">@item.Title</div>
+		i++;
+		<div class="menubar_menu_button" @onclick="async ()=>{Hide(); await item.InvokeAsync();}" @ref="@item.ElementHeader">@item.Title</div>
 	}
 </div>
 
@@ -42,11 +47,25 @@
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
+	public ElementReference? ElementBox { get; set; }
+
+	public int ZIndex => 256;
+
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
-	public void AddPage(IMenuItem menuItem)
+	public void AddItem(IMenuItem menuItem)
 	{
 		ChildMenus.Add(menuItem);
 		StateHasChanged();
 	}
+
+	public void Hide()
+	{
+		foreach (var item in ChildMenus)
+		{
+			item.Hide();
+		}
+	}
+
+	public MenuPosition ChildPosition => MenuPosition.Bottom;
 }

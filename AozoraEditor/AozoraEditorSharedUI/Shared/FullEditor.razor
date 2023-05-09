@@ -1,0 +1,19 @@
+﻿<div @onclick="()=>{MainTabControl?.HideMenuBar();}" class="aozora_editor_top">
+	<CascadingValue Value="this">
+		<TabControl @ref="MainTabControl" />
+	</CascadingValue>
+	<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
+</div>
+
+<style>
+	.aozora_editor_top{
+		display: flex;
+		flex: 1 0 0;
+	}
+</style>
+
+@code {
+	public Dialogs.Dialog? Dialog { get; set; }
+	TabControl? MainTabControl { get; set; }
+
+}
