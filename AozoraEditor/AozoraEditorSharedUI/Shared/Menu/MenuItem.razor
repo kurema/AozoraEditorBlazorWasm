@@ -5,7 +5,18 @@
 <div class="menubox @HiddenClass" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
 	@foreach (var item in ChildMenus)
 	{
-		<p @ref="@item.ElementHeader" @onclick="async ()=>{await item.InvokeAsync();}">@item.Title</p>
+		<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}">
+			<div class="mebubox_entry_icon">@item.Icon</div>
+			<div class="mebubox_entry_text">@item.Title</div>
+			@if (item.HasChild)
+			{
+				<div class="mebubox_entry_arrow">
+					<span class="material-symbols-outlined">
+						arrow_right
+					</span>
+				</div>
+			}
+		</div>
 	}
 </div>
 
@@ -19,18 +30,59 @@
 		flex-direction: column;
 		position: fixed;
 		background: white;
-		border: solid 1px gray;
+		border: solid 1px #d4d4d4;
 		z-index: 1000;
 		top: 0;
 		left: 0;
+		padding: 4px 0;
 	}
+
+		.menubox > .mebubox_entry {
+			display: grid;
+			grid-template-columns: 24px 1fr 24px;
+			margin: 0 4px;
+			cursor: pointer;
+			user-select: none;
+			height: 28px;
+			align-items: center;
+		}
+
+			.menubox > .mebubox_entry:hover {
+				background: #e8e8e8;
+			}
+
+			.menubox > .mebubox_entry > .mebubox_entry_icon {
+				display: inline;
+				grid-column: 1/2;
+			}
+
+				.menubox > .mebubox_entry > .mebubox_entry_icon > * {
+					vertical-align: middle;
+				}
+
+			.menubox > .mebubox_entry > .mebubox_entry_text {
+				display: inline;
+				grid-column: 2/3;
+				font-size: 13px;
+				font-family: Segoe WPC,Segoe UI,sans-serif;
+			}
+
+			.menubox > .mebubox_entry > .mebubox_entry_arrow {
+				display: inline;
+				grid-column: 3/4;
+			}
+
+				.menubox > .mebubox_entry > .mebubox_entry_arrow > span {
+					vertical-align: middle;
+				}
+
 </style>
 
 @code {
-	public ElementReference? ElementBox { get; set; }
+	public ElementReference? ElementBox { get; private set; }
 
 	[CascadingParameter]
-	private IMenuParent? Parent { get; set; }
+	public IMenuParent? Parent { get; private set; }
 
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
@@ -42,9 +94,9 @@
 
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
-	public bool IsVisible { get; set; }
+	public bool IsChildrenVisible { get; set; }
 
-	string HiddenClass => IsVisible ? "" : "hidden";
+	string HiddenClass => IsChildrenVisible ? "" : "hidden";
 
 	//string GridRowCss => string.Join(' ', ChildMenus.Select(_ => "auto"));
 
@@ -65,9 +117,47 @@
 		base.OnInitialized();
 	}
 
+	RenderFragment? _Icon;
+	[Parameter]
+	public RenderFragment? Icon
+	{
+		get => _Icon; set
+		{
+			_IconMaterialSymbols = null;
+			_Icon = value;
+
+		}
+	}
+	string? _IconMaterialSymbols;
+	[Parameter]
+	public string? IconMaterialSymbols
+	{
+		get => _IconMaterialSymbols;
+		set
+		{
+			_IconMaterialSymbols = value;
+			if (value is not null) _Icon = TabControl.GetMaterialSymbolOutlined(value);
+		}
+	}
+
 	public async Task InvokeAsync()
 	{
-		if (HasChild) IsVisible = true;
+		if (HasChild)
+		{
+			await ShowAsync();
+			return;
+		}
+		await OnHeaderSelected.InvokeAsync(null);
+		IMenuParent parent = this;
+		while ((parent as IMenuItem)?.Parent is { } p) parent = p;
+		parent.Hide();
+
+		StateHasChanged();
+	}
+
+	public async Task ShowAsync()
+	{
+		if (HasChild) IsChildrenVisible = true;
 		StateHasChanged();
 		var s1 = await InterOp.Functions.GetWindowSize(JSRuntime);
 		var r1 = await InterOp.Functions.GetElementRect(JSRuntime, Parent?.ElementBox);
@@ -80,26 +170,27 @@
 		{
 			case MenuPosition.Bottom:
 				x = r2?.X ?? 0;
-				y = (r1?.Y + r1?.Height) ?? 0;
+				y = (r1?.Y + r1?.Height - 1) ?? 0;
 				break;
 			case MenuPosition.Right:
-				x = (r1?.X + r1?.Width) ?? 0;
-				y = r2?.Y ?? 0;
+				x = (r1?.X + r1?.Width - 1) ?? 0;
+				y = (r2?.Y - 5) ?? 0;//margin: 4px + 1px;
 				break;
 		}
 		x = Math.Max(0, Math.Min(x, s1.Width - r3?.Width ?? 0));
 		y = Math.Max(0, Math.Min(y, s1.Height - r3?.Height ?? 0));
 
 		BoxStyle = $""""
-		top: {y}px;
-		left: {x}px;
-		"""";
+	top: {y}px;
+	left: {x}px;
+	z-index: {this.ZIndex};
+	"""";
 		StateHasChanged();
 	}
 
 	public void Hide()
 	{
-		IsVisible = false;
+		IsChildrenVisible = false;
 		foreach (var item in ChildMenus)
 		{
 			item.Hide();
@@ -109,4 +200,21 @@
 	public ElementReference? ElementHeader { get; set; }
 
 	public MenuPosition ChildPosition => MenuPosition.Right;
+
+	public async Task MouseOverItem(IMenuItem item)
+	{
+		if (item.IsChildrenVisible) return;
+		foreach (var item2 in ChildMenus)
+		{
+			item2.Hide();
+		}
+		if (!item.HasChild) return;
+		await item.ShowAsync();
+		StateHasChanged();
+	}
+
+	[Parameter]
+	public EventCallback OnHeaderSelected { get; set; }
+
+	public void NotifyStateHasChanged() => StateHasChanged();
 }

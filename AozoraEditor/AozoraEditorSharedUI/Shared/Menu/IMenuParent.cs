@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ public interface IMenuParent
 	void Hide();
 	ElementReference? ElementBox { get; }
 	MenuPosition ChildPosition { get; }
-
+	void NotifyStateHasChanged();
 }
 
 public enum MenuPosition
@@ -29,4 +30,10 @@ public interface IMenuItem
 	string Title { get; }
 	void Hide();
 	ElementReference? ElementHeader { get; set; }
+	bool IsChildrenVisible { get; }
+	bool HasChild { get; }
+	Task ShowAsync();
+	EventCallback OnHeaderSelected { get; set; }
+	IMenuParent? Parent { get; }
+	RenderFragment? Icon { get; }
 }

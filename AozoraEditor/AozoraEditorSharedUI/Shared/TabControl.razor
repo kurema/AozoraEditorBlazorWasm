@@ -1,18 +1,28 @@
-﻿<div class="tab_control_container">
+﻿@inject IJSRuntime jsRuntime
+
+<div class="tab_control_container">
 	<div class="tab_control_top_container">
 		<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="最近使ったファイル">
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト1.txt" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト2.txt" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト3.txt" />
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
 			</AozoraEditor.Shared.Shared.Menu.MenuItem>
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集" />
+			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集">
+			</AozoraEditor.Shared.Shared.Menu.MenuItem>
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="選択" />
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ" />
+			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ">
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヒント" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="アプリについて">
+					<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="プライバシーポリシー" />
+				</AozoraEditor.Shared.Shared.Menu.MenuItem>
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" />
+			</AozoraEditor.Shared.Shared.Menu.MenuItem>
 		</AozoraEditor.Shared.Shared.Menu.MenuBar>
 		<div class="tab_control_main_buttons">
 			@{
@@ -324,7 +334,7 @@
 		{
 			int count = Pages.IndexOf(page);
 			count = count == 0 ? 1 : count - 1;
-			if (Pages.Count > count) ActivateTab(Pages[count]);
+			if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
 		}
 		Pages.Remove(page);
 		StateHasChanged();
@@ -345,5 +355,10 @@
 	public void NotifyStateChanged()
 	{
 		StateHasChanged();
+	}
+
+	public async Task OpenInNewTab(string url)
+	{
+		await jsRuntime.InvokeVoidAsync("open", url, "_blank");
 	}
 }

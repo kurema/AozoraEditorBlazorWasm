@@ -8,7 +8,7 @@
 	@foreach (var item in ChildMenus)
 	{
 		i++;
-		<div class="menubar_menu_button" @onclick="async ()=>{Hide(); await item.InvokeAsync();}" @ref="@item.ElementHeader">@item.Title</div>
+		<div class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(item);}" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}">@item.Title</div>
 	}
 </div>
 
@@ -65,7 +65,34 @@
 		{
 			item.Hide();
 		}
+		StateHasChanged();
 	}
 
 	public MenuPosition ChildPosition => MenuPosition.Bottom;
+
+	public async Task ItemClicked(IMenuItem item)
+	{
+		if (item.HasChild && item.IsChildrenVisible)
+		{
+			Hide();
+			StateHasChanged();
+			return;
+		}
+		Hide();
+		await item.InvokeAsync();
+		StateHasChanged();
+		return;
+	}
+
+	public async Task MouseOverItem(IMenuItem item)
+	{
+		if (!ChildMenus.Any(a => a.IsChildrenVisible)) return;
+		if (item.IsChildrenVisible) return;
+		if (!item.HasChild) return;
+		Hide();
+		await item.ShowAsync();
+		StateHasChanged();
+	}
+
+	public void NotifyStateHasChanged() => StateHasChanged();
 }
