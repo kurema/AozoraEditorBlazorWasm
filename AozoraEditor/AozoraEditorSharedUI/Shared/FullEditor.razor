@@ -1,4 +1,4 @@
-﻿<div @onclick="()=>{MainTabControl?.HideMenuBar();}" class="aozora_editor_top">
+﻿<div @onclick="()=>{MainTabControl?.HideMenuBar();}" class="aozora_editor_main">
 	<CascadingValue Value="this">
 		<TabControl @ref="MainTabControl" />
 	</CascadingValue>
@@ -6,7 +6,7 @@
 </div>
 
 <style>
-	.aozora_editor_top{
+	.aozora_editor_main {
 		display: flex;
 		flex: 1 0 0;
 	}

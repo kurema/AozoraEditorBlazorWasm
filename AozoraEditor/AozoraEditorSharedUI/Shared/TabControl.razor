@@ -4,7 +4,7 @@
 	<div class="tab_control_top_container">
 		<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
 			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}"  IconMaterialSymbols="note_add" />
 				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
 				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="最近使ったファイル">
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト1.txt" />
@@ -21,7 +21,7 @@
 					<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="プライバシーポリシー" />
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
 			</AozoraEditor.Shared.Shared.Menu.MenuItem>
 		</AozoraEditor.Shared.Shared.Menu.MenuBar>
 		<div class="tab_control_main_buttons">
@@ -360,5 +360,11 @@
 	public async Task OpenInNewTab(string url)
 	{
 		await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+	}
+
+	public async Task ShowVersionInfo()
+	{
+		if (Parent?.Dialog is null) return;
+		await Parent.Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" });
 	}
 }
