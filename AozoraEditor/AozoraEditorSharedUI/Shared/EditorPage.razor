@@ -52,7 +52,8 @@
 		var text = await editor.Content.GetValue();
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
-		var aozora = new Aozora.Aozora2Html(js, output, css_files: new[] { "_content/AozoraEditorSharedUI/aozora.css" })
+		var message = new Aozora.Helpers.OutputString();
+		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: new[] { "_content/AozoraEditorSharedUI/aozora.css" })
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,
@@ -62,13 +63,16 @@
 		{
 			await Task.Run(() => aozora.Process());
 			PreviewHtml = output.ToString();
+			if (Parent?.Parent is not null) Parent.Parent.SetMessage(message.ToString());
 		}
 		catch
 		{
+			if (Parent?.Parent is not null) Parent.Parent.SetMessage(message.ToString());
 			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
 		}
 		StateHasChanged();
 	}
+
 
 	public async Task LoadFile(Stream stream, string fileName)
 	{
@@ -177,4 +181,5 @@
 	}
 
 	public event EventHandler? TitleChanged;
+	public TabControl? Parent { get; set; }
 }

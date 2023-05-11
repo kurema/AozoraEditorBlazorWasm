@@ -19,6 +19,7 @@
 			_Content = value;
 			if (_Content is not null)
 			{
+				_Content.Parent = this.Parent;
 				var currentContent = _Content;
 				currentContent.TitleChanged += (_, e) =>
 				{

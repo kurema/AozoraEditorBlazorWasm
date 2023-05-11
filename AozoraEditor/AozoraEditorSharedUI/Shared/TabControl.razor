@@ -2,56 +2,65 @@
 
 <div class="tab_control_container">
 	<div class="tab_control_top_container">
-		<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}"  IconMaterialSymbols="note_add" />
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="最近使ったファイル">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト1.txt" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト2.txt" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト3.txt" />
+		<div class="tab_control_top_left">
+			<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="最近使ったファイル">
+						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト1.txt" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト2.txt" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト3.txt" />
+					</AozoraEditor.Shared.Shared.Menu.MenuItem>
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-			</AozoraEditor.Shared.Shared.Menu.MenuItem>
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集">
-			</AozoraEditor.Shared.Shared.Menu.MenuItem>
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="選択" />
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヒント" />
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="アプリについて">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="プライバシーポリシー" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集">
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
-			</AozoraEditor.Shared.Shared.Menu.MenuItem>
-		</AozoraEditor.Shared.Shared.Menu.MenuBar>
-		<div class="tab_control_main_buttons">
-			@{
-				IEnumerable<ICommandEntry> commands = CommonCommands;
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="選択" />
+				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ">
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヒント" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="アプリについて">
+						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="プライバシーポリシー" />
+					</AozoraEditor.Shared.Shared.Menu.MenuItem>
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
+				</AozoraEditor.Shared.Shared.Menu.MenuItem>
+			</AozoraEditor.Shared.Shared.Menu.MenuBar>
+			<div class="tab_control_main_buttons">
+				@{
+					IEnumerable<ICommandEntry> commands = CommonCommands;
 
-				if (commands.Any())
-				{
-					// ここでSeparatorを入れるべきか？
-				}
-				if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
-
-				foreach (var item in commands)
-				{
-					switch (item)
+					if (commands.Any())
 					{
-						case CommandEntry itemC:
-							<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
-								@item.Icon
-							</button>
-							break;
-						case CommandEntryFile itemF:
-							<div class="FileInputButton ButtonMini">
-								@item.Icon
-								<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
-							</div>
-							break;
+						// ここでSeparatorを入れるべきか？
+					}
+					if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
+
+					foreach (var item in commands)
+					{
+						switch (item)
+						{
+							case CommandEntry itemC:
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
+									@item.Icon
+								</button>
+								break;
+							case CommandEntryFile itemF:
+								<div class="FileInputButton ButtonMini">
+									@item.Icon
+									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
+								</div>
+								break;
+						}
 					}
 				}
-			}
+			</div>
+		</div>
+		<div class="tab_control_top_right">
+			<button class="ButtonMini" @onclick="async ()=>{if(Parent is not null) {Parent.OutputVisible=!Parent.OutputVisible;StateHasChanged();}}">
+				<span class="material-symbols-outlined">
+					@(Parent?.OutputVisible == true ? "bottom_panel_close" : "bottom_panel_open")
+				</span>
+			</button>
 		</div>
 	</div>
 
@@ -133,9 +142,15 @@
 	}
 
 	.tab_control_top_container {
-		background: #f8f8f8;
 		grid-row: 1/2;
 		grid-column: 1/3;
+		display: grid;
+		grid-template-columns: 1fr auto;
+	}
+
+	.tab_control_top_left {
+		grid-column: 1/2;
+		background: #f8f8f8;
 		min-width: 0;
 		min-height: 0;
 		display: flex;
@@ -144,13 +159,20 @@
 		align-items: center;
 	}
 
-		.tab_control_top_container > .menubar {
+		.tab_control_top_left > .menubar {
 		}
 
-		.tab_control_top_container > .tab_control_main_buttons {
+		.tab_control_top_left > .tab_control_main_buttons {
 			display: flex;
 			align-items: center;
 		}
+
+	.tab_control_top_right {
+		grid-column: 2/3;
+		background: #f8f8f8;
+		min-width: 0;
+		min-height: 0;
+	}
 
 
 	.tab_control_background {
@@ -365,6 +387,6 @@
 	public async Task ShowVersionInfo()
 	{
 		if (Parent?.Dialog is null) return;
-		await Parent.Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" });
+		await Parent.Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
 	}
 }
