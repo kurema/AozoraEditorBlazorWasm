@@ -63,11 +63,11 @@
 		{
 			await Task.Run(() => aozora.Process());
 			PreviewHtml = output.ToString();
-			if (Parent?.Parent is not null) Parent.Parent.SetMessage(message.ToString());
+			if (Parent is not null) Parent.SetMessage(message.ToString());
 		}
 		catch
 		{
-			if (Parent?.Parent is not null) Parent.Parent.SetMessage(message.ToString());
+			if (Parent is not null) Parent.SetMessage(message.ToString());
 			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
 		}
 		StateHasChanged();

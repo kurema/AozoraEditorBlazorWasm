@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime jsRuntime
 
-<div class="tab_control_container">
+<div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 	<div class="tab_control_top_container">
 		<div class="tab_control_top_left">
 			<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
@@ -56,75 +56,133 @@
 			</div>
 		</div>
 		<div class="tab_control_top_right">
-			<button class="ButtonMini" @onclick="async ()=>{if(Parent is not null) {Parent.OutputVisible=!Parent.OutputVisible;StateHasChanged();}}">
+			<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}">
 				<span class="material-symbols-outlined">
-					@(Parent?.OutputVisible == true ? "bottom_panel_close" : "bottom_panel_open")
+					@(OutputVisible ? "bottom_panel_close" : "bottom_panel_open")
 				</span>
 			</button>
 		</div>
 	</div>
+	<div class="aozora_editor_main">
+		<div class="tab_control_container">
 
-	<div class="tab_control_background" />
+			<div class="tab_control_background" />
 
-	<div class="tab_control_controller">
-		@foreach (var item in Pages)
-		{
-			var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
-
-			<div @onclick="(e)=>ActivateTab(e,item)" class="@cl">
-				<p class="tab_control_controller_tab_title">@item.Title</p>
-				<button @onclick:preventDefault @onclick:stopPropagation="true" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
-					<span class="material-symbols-outlined">
-						close
-					</span>
-				</button>
-			</div>
-		}
-		<div class="tab_control_controller_add">
-			<button class="ButtonMini tab_control_controller_add_button" @onclick="()=>{AddEditorTab();}">
-				<span class="material-symbols-outlined">
-					add
-				</span>
-			</button>
-		</div>
-
-	</div>
-
-	<div class="tab_control_panel_switch_buttons">
-		@if (ActivePage?.PanelSwitchCommands is not null)
-		{
-			foreach (var item in ActivePage.PanelSwitchCommands)
-			{
-				switch (item)
+			<div class="tab_control_controller">
+				@foreach (var item in Pages)
 				{
-					case CommandEntry itemC:
-						<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
-							@item.Icon
+					var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
+
+					<div @onclick="(e)=>ActivateTab(e,item)" class="@cl">
+						<p class="tab_control_controller_tab_title">@item.Title</p>
+						<button @onclick:preventDefault @onclick:stopPropagation="true" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
+							<span class="material-symbols-outlined">
+								close
+							</span>
 						</button>
-						break;
-					case CommandEntryFile itemF:
-						<div class="FileInputButton ButtonMini">
-							@item.Icon
-							<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
-						</div>
-						break;
+					</div>
 				}
-			}
-		}
-	</div>
+				<div class="tab_control_controller_add">
+					<button class="ButtonMini tab_control_controller_add_button" @onclick="()=>{AddEditorTab();}">
+						<span class="material-symbols-outlined">
+							add
+						</span>
+					</button>
+				</div>
 
-	<div class="tab_control_body">
-		@foreach (var item in Pages)
-		{
-			bool active = item == ActivePage;
-			string additonalClass = active ? "tab_page_container_active" : "hidden";
-			<div class="tab_page_container @additonalClass">
-				@item.Body
 			</div>
-		}
-	</div>
 
+			<div class="tab_control_panel_switch_buttons">
+				@if (ActivePage?.PanelSwitchCommands is not null)
+				{
+					foreach (var item in ActivePage.PanelSwitchCommands)
+					{
+						switch (item)
+						{
+							case CommandEntry itemC:
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
+									@item.Icon
+								</button>
+								break;
+							case CommandEntryFile itemF:
+								<div class="FileInputButton ButtonMini">
+									@item.Icon
+									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
+								</div>
+								break;
+						}
+					}
+				}
+			</div>
+
+			<div class="tab_control_body">
+				@foreach (var item in Pages)
+				{
+					bool active = item == ActivePage;
+					string additonalClass = active ? "tab_page_container_active" : "hidden";
+					<div class="tab_page_container @additonalClass">
+						@item.Body
+					</div>
+				}
+			</div>
+
+		</div>
+		<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
+	</div>
+	<div class="aozora_editor_bottom">
+		@OutputMessage
+	</div>
 </div>
+
+<style>
+	.aozora_editor_top {
+		flex: 1 0 0;
+		display: grid;
+		min-width: 0;
+		min-height: 0;
+	}
+
+		.aozora_editor_top:not(.aozoa_editor_top_show_output) {
+			grid-template-rows: auto 1fr 0;
+			grid-template-columns: 0 1fr;
+		}
+
+		.aozora_editor_top.aozoa_editor_top_show_output {
+			grid-template-rows: auto 7fr 3fr;
+			grid-template-columns: 0 1fr;
+		}
+
+	.tab_control_top_container {
+		grid-row: 1/2;
+		grid-column: 1/3;
+		display: grid;
+		grid-template-columns: 1fr auto;
+	}
+
+
+	.aozora_editor_main {
+		grid-row: 2/3;
+		grid-column: 2/3;
+		display: flex;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.aozora_editor_bottom {
+		grid-row: 3/4;
+		grid-column: 2/3;
+		display: flex;
+		min-width: 0;
+		min-height: 0;
+		white-space: pre;
+		background: #f8f8f8;
+	}
+
+	.aozora_editor_top:not(.aozoa_editor_top_show_output) .aozora_editor_bottom {
+		display: none;
+	}
+
+</style>
 
 <style>
 	.tab_control_container {
@@ -139,13 +197,6 @@
 		grid-column: 1/2;
 		min-width: 0;
 		min-height: 0;
-	}
-
-	.tab_control_top_container {
-		grid-row: 1/2;
-		grid-column: 1/3;
-		display: grid;
-		grid-template-columns: 1fr auto;
 	}
 
 	.tab_control_top_left {
@@ -307,9 +358,6 @@
 </style>
 
 @code {
-	[CascadingParameter]
-	public FullEditor? Parent { get; set; }
-
 	AozoraEditor.Shared.Shared.Menu.MenuBar? MenuBar { get; set; }
 
 	ICommandEntry[] CommonCommands
@@ -348,8 +396,8 @@
 
 	public async Task CloseTab(ITabPage page)
 	{
-		if (Parent?.Dialog is null) return;
-		var result = await Parent.Dialog.ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+		if (Dialog is null) return;
+		var result = await Dialog.ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
 		if (result.Id is string and "no") return;
 		if (!Pages.Contains(page)) return;
 		if (ActivePage == page)
@@ -386,7 +434,24 @@
 
 	public async Task ShowVersionInfo()
 	{
-		if (Parent?.Dialog is null) return;
-		await Parent.Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+		if (Dialog is null) return;
+		await Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+	}
+}
+
+@code {
+	public Dialogs.Dialog? Dialog { get; set; }
+
+	string _OutputMessage = string.Empty;
+	public string OutputMessage { get; set; } = "出力はここに表示されます。";
+
+	bool _OutputVisible;
+	public bool OutputVisible { get; set; } = false;
+
+	public void SetMessage(string message)
+	{
+		OutputMessage = message;
+		if (!string.IsNullOrWhiteSpace(message)) OutputVisible = true;
+		StateHasChanged();
 	}
 }
