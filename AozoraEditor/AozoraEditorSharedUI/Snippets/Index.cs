@@ -4,38 +4,64 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AozoraEditor.Shared.Snippets;
 
-public class Index
+public partial class Index
 {
 	public Index(Schema.Snippets content)
 	{
 		if (content is null) throw new ArgumentNullException(nameof(content));
-		Templates = new SortedList<string, Schema.Template>(GetTemplates(content)).AsReadOnly();
+		Templates = new SortedList<string, Template>(GetTemplates(content)).AsReadOnly();
 		KeyWords = content.Keywords is null ? new(new Dictionary<string, string>()) : new SortedDictionary<string, string>(content.Keywords.ToDictionary(a => a.Id, a => a.Text)).AsReadOnly();
-		ContentsFlat = ApplyTemplates(content, Templates, KeyWords);
+		var flat = ApplyTemplates(content, Templates, KeyWords);
+		ContentsFlat = flat.AsMemory();
+		Suggestions = GetSuggestions(flat).ToArray().AsMemory();
 	}
 
 	public readonly ReadOnlyDictionary<string, string> KeyWords;
-	public readonly ReadOnlyDictionary<string, Schema.Template> Templates;
-	public static Dictionary<string, Schema.Template> GetTemplates(Schema.Snippets content) => content?.Templates?.ToDictionary(a => a.Id, a => a) ?? new();
+	public readonly ReadOnlyDictionary<string, Template> Templates;
+	public static Dictionary<string, Template> GetTemplates(Schema.Snippets content) => content?.Templates?.ToDictionary(a => a.Id, a => a) ?? new();
 
-	public readonly ReadOnlyMemory<Schema.Content> ContentsFlat;
+	public readonly ReadOnlyMemory<Content> ContentsFlat;
 
-	public static ReadOnlyMemory<Schema.Content> ApplyTemplates(Schema.Snippets snippets, IDictionary<string, Schema.Template> templates, ReadOnlyDictionary<string, string> keyWords)
+	public readonly ReadOnlyMemory<Suggestion> Suggestions;
+
+	public static IEnumerable<Suggestion> GetSuggestions(IEnumerable<Content> contents)
 	{
-		List<Schema.Content> result = new();
-		Dictionary<string, List<Schema.Word>> wordsCache = new();
+		foreach (var content in contents)
+		{
+			var text = GetNormalText(content.Text);
 
-		var wordsPlaceholder = (IEnumerable<Schema.Word>)new Schema.Word[1] { new Schema.Word() };
-		var wordLabelPlaceholder = (IEnumerable<string>)new[] { "" };
+			var labels = content.Labels.JpFullyRoman.Concat(content.Labels.Jp).Concat(content.Labels.ShortJp).Concat(content.Labels.En).Concat(content.Labels.ShortEn);
+			foreach (var item in labels)
+			{
+				yield return new Suggestion(item, text, content.Labels.JpFullyRoman.FirstOrDefault() ?? item);
+			}
+		}
+	}
+
+	private static string GetNormalText(IEnumerable<string> strings)
+	{
+		var text = string.Join("\n", strings);
+		text = AllBoldRegex().Replace(text, string.Empty);
+		return text;
+	}
+
+	public static Content[] ApplyTemplates(Schema.Snippets snippets, IDictionary<string, Template> templates, ReadOnlyDictionary<string, string> keyWords)
+	{
+		List<Content> result = new();
+		Dictionary<string, List<Word>> wordsCache = new();
+
+		var wordsPlaceholder = (IEnumerable<Word>)new Word[1] { new Word() };
+		var wordLabelPlaceholder = (IEnumerable<string>)new[] { string.Empty };
 
 		foreach (var content in snippets.Contents)
 		{
 			if (content is null) continue;
-			List<Schema.Word>? words = content.Words;
+			List<Word>? words = content.Words;
 			if (content.Words is not null && !string.IsNullOrEmpty(content.WordsId)) wordsCache.Add(content.WordsId, content.Words);
 			if (content.Words is null && !string.IsNullOrEmpty(content.WordsRef))
 			{
@@ -51,14 +77,14 @@ public class Index
 
 				foreach (var word in words ?? wordsPlaceholder)
 				{
-					var toAdd = new Schema.Content()
+					var toAdd = new Content()
 					{
 						ArgTypes = content.ArgTypes,
 						Comment = content.Comment,
 						//Description = content.Description,
 						Obsolete = content.Obsolete ?? false,
 						DocumentLink = content.DocumentLink,
-						Labels = new Schema.ContentLabels(),
+						Labels = new ContentLabels(),
 					};
 					toAdd.Labels.Jp = GetLabelsGeneral(content, content.Labels.Jp, word.Labels?.Jp ?? wordLabelPlaceholder, template.Labels.Jp, keyWords).ToList();
 					toAdd.Labels.En = GetLabelsGeneral(content, content.Labels.En, word.Labels?.En ?? wordLabelPlaceholder, template.Labels.En, keyWords).ToList();
@@ -107,12 +133,12 @@ public class Index
 			}
 		}
 
-		var json = Schema.Serialize.ToJson(new Schema.Snippets() { Contents = result });
+		var json = new Schema.Snippets() { Contents = result }.ToJson();
 
-		return result.ToArray().AsMemory();
+		return result.ToArray();
 	}
 
-	private static IEnumerable<string> GetLabelsGeneral(Schema.Content content, IEnumerable<string>? contentLabels, IEnumerable<string> wordLabels, string templateLabel, IDictionary<string, string> keywords)
+	private static IEnumerable<string> GetLabelsGeneral(Content content, IEnumerable<string>? contentLabels, IEnumerable<string> wordLabels, string templateLabel, IDictionary<string, string> keywords)
 	{
 		if (contentLabels is null) yield break;
 		foreach (var contentLabel in contentLabels)
@@ -335,5 +361,6 @@ public class Index
 		}
 	}
 
-
+	[GeneratedRegex("\\(\\*/?|/?\\*\\)")]
+	private static partial Regex AllBoldRegex();
 }

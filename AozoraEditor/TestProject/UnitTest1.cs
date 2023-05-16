@@ -42,6 +42,8 @@ public class UnitTest1
 		Assert.Equal("{content[0]}", Loader.Content.Templates[0].Text[0]);
 		Assert.Equal("(*‰ü’š*)", Loader.Content.Contents[0].Text[0]);
 		Assert.Equal("{content[0]}", Loader.ContentIndex?.Templates["default"].Text[0]);
-
+		//For break point debugging.
+		//var cf = Loader.ContentIndex.ContentsFlat;
+		//var cm = Loader.ContentIndex.Suggestions;
 	}
 }
