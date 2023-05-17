@@ -33,21 +33,39 @@ public partial class Index
 	{
 		foreach (var content in contents)
 		{
-			var text = GetNormalText(content.Text);
+
+			var text = GetNormalText(content.Text, content.ArgTypes);
 
 			var labels = content.Labels.JpFullyRoman.Concat(content.Labels.Jp).Concat(content.Labels.ShortJp).Concat(content.Labels.En).Concat(content.Labels.ShortEn);
 			foreach (var item in labels)
 			{
-				yield return new Suggestion(item, text, content.Labels.JpFullyRoman.FirstOrDefault() ?? item);
+				if (string.IsNullOrEmpty(item)) continue;
+				var fd1 = content.Labels.JpFullyRoman.FirstOrDefault();
+				var fd2 = content.Labels.En.FirstOrDefault();
+				yield return new Suggestion(item, text, string.IsNullOrEmpty(fd1) ? (string.IsNullOrEmpty(fd2) ? item : fd2) : fd1, text, $"{text}\n参照：{content.DocumentLink}");
 			}
 		}
 	}
 
-	private static string GetNormalText(IEnumerable<string> strings)
+	private static string GetNormalText(IEnumerable<string> strings, List<ArgType> argTypes)
 	{
 		var text = string.Join("\n", strings);
-		text = AllBoldRegex().Replace(text, string.Empty);
+		text = InterpolateFinal(text, a => $"${{{a + 1}:{ArgTypeToString(a)}}}");
 		return text;
+
+		string ArgTypeToString(int i)
+		{
+			if (i < 0 || i >= argTypes.Count) return string.Empty;
+			return argTypes[i] switch
+			{
+				ArgType.Alphabet => "半角英数",
+				ArgType.Any => "テキスト",
+				ArgType.NumberFull => "全角数字",
+				ArgType.NumberHalf => "半角数字",
+				ArgType.Ref => "テキスト",
+				_ => "エラー",
+			};
+		}
 	}
 
 	public static Content[] ApplyTemplates(Schema.Snippets snippets, IDictionary<string, Template> templates, ReadOnlyDictionary<string, string> keyWords)
@@ -319,14 +337,14 @@ public partial class Index
 				int numShifted = num + (shiftNum ? shiftNumCnt : 0);
 				try { result = argProvider.Invoke(numShifted, callDepth); }
 				catch (Exception e) { throw new Exception($"Invalid: {{{command}}}", e); }
+				maxNum = Math.Max(maxNum, num + 1);
 				if (result is null)
 				{
-					sb.Append($"{{{command}}}");
+					sb.Append($"{{{numShifted}}}");
 					argTypes[numShifted] = (callDepth, num);
 				}
 				else
 				{
-					maxNum = Math.Max(maxNum, num + 1);
 					maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, argTypes, shiftNum, autoCap, !capFirst, 0, callDepth + 1);
 				}
 				continue;
@@ -360,7 +378,4 @@ public partial class Index
 			}
 		}
 	}
-
-	[GeneratedRegex("\\(\\*/?|/?\\*\\)")]
-	private static partial Regex AllBoldRegex();
 }

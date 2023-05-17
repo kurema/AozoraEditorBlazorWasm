@@ -3,8 +3,7 @@
         return monaco.languages.getLanguages();
     },
 
-    registerAozora: function (index) {
-        //console.log(index);
+    registerAozora: function (suggestionsCS) {
 
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
@@ -29,15 +28,17 @@
                     let charEdit = model.getValueInRange(rangeEdit);
                     if (charEdit == ' ') { snipetDeleteSpace = [{ text: '', range: rangeEdit }]; }
                 }
-                var suggestions = [
-                    {
-                        label: 'ruby',
+                var suggestions = suggestionsCS.map(function (e) {
+                    return {
+                        label: e.label,
                         kind: monaco.languages.CompletionItemKind.Snippet,
-                        insertText: '《${1:ルビ}》',
+                        insertText: e.insertText,
                         insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                         additionalTextEdits: snipetDeleteSpace,
-                    },
-                ];
+                        documentation: e.documentation,
+                        detail: e.detail,
+                    };
+                });
                 return { suggestions: suggestions };
             }
         });

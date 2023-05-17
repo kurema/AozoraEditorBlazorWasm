@@ -108,7 +108,7 @@
     },
     {
       "id": "command_block",
-      "text": [ "ここから{content[0]}", "", "ここで(*/{content[1]}/*)終わり" ],
+      "text": [ "［＃ここから{content[0]}］", "", "［＃ここで(*/{content[1]}/*)終わり］" ],
       "labels": {
         "jp": "{0}Kokokara",
         "en": "{0}Block",

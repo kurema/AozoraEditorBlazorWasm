@@ -1,5 +1,5 @@
 ﻿
-<iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" srcdoc="@PreviewDocument"></iframe>
+<iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewDocument"></iframe>
 
 <article style="overflow:scroll;">
 </article>
@@ -8,5 +8,5 @@
 	public RenderFragment? Content { get; set; }
 
 	[Parameter]
-	public string PreviewDocument { get; set; } = "<html><body>プレビューの作成は▶ボタンを押してください。</body></html>";
+	public string PreviewDocument { get; set; } = "<html><body>空のプレビュー画面</body></html>";
 }

@@ -35,6 +35,7 @@
 		top: 0;
 		left: 0;
 		padding: 4px 0;
+		box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
 	}
 
 		.menubox > .mebubox_entry {
@@ -43,7 +44,7 @@
 			margin: 0 4px;
 			cursor: pointer;
 			user-select: none;
-			height: 28px;
+			min-height: 28px;
 			align-items: center;
 		}
 
@@ -148,11 +149,12 @@
 			await ShowAsync();
 			return;
 		}
-		await OnHeaderSelected.InvokeAsync(null);
 		IMenuParent parent = this;
 		while ((parent as IMenuItem)?.Parent is { } p) parent = p;
 		parent.Hide();
+		StateHasChanged();
 
+		await OnHeaderSelected.InvokeAsync(null);
 		StateHasChanged();
 	}
 
@@ -166,7 +168,7 @@
 		var r3 = await InterOp.Functions.GetElementRect(JSRuntime, ElementBox);
 		double x = 0;
 		double y = 0;
-		Console.WriteLine($"{r2?.Y} {ElementHeader}");
+
 		switch (Parent?.ChildPosition)
 		{
 			case MenuPosition.Bottom:

@@ -34,7 +34,8 @@ internal static partial class Setup
 		if (await IsAozoraRegistered(runtime)) return;
 		await InitTheme();
 		var (_, index) = Snippets.Loader.LoadFromResouce();
-		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora", index.ContentsFlat.ToArray());
+		//なぜ最初の要素しか渡されないんだろうと思ったらparamsだった。別にnew[]{*.ToArray()}でも良いけど、nullで。追加も想定し。
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora", index.Suggestions.ToArray(), null);
 	}
 
 	public async static Task InitTheme()
