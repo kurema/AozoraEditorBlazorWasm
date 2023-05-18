@@ -13,7 +13,10 @@
 @code {
 	public StandaloneCodeEditor? Content;
 
-	string EditorId { get; } = Guid.NewGuid().ToString();
+	string EditorId => Id.ToString();
+
+	[CascadingParameter]
+	public Guid Id { get; set; }
 
 	//protected override async Task OnParametersSetAsync()
 	//{

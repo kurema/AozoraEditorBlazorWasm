@@ -2,19 +2,20 @@
 
 @code {
 
-	public EditorTab()
+	public EditorTab(Guid id)
 	{
+		Id = id;
 	}
 
 	public RenderFragment Title =>@<span>@Content?.FileName</span>;
 
-	public RenderFragment Body =>@<EditorPage @ref="Content" />;
+	public RenderFragment Body =>@<CascadingValue Value="@Id"><EditorPage @ref="Content" /></CascadingValue>;
 
 	EditorPage? _Content;
-	EditorPage? Content
+	public EditorPage? Content
 	{
 		get => _Content;
-		set
+		private set
 		{
 			_Content = value;
 			if (_Content is not null)
@@ -87,6 +88,8 @@
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
+	
+	public Guid Id{ get; set; }
 
 	public event EventHandler? TitleChanged;
 

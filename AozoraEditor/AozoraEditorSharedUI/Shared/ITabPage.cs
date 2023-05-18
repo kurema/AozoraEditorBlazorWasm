@@ -17,7 +17,7 @@ public interface ITabPage
 	ObservableCollection<ICommandEntry> PanelSwitchCommands { get; }
 	ObservableCollection<ICommandEntry> MainCommands { get; }
 
-
+	Guid Id { get; set; }
 	TabControl? Parent { get; set; }
 
 }

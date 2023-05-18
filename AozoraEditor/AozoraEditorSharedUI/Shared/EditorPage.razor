@@ -6,6 +6,9 @@
 </SplitPage>
 
 @code {
+	[CascadingParameter]
+	public Guid Id { get; set; }
+
 	SplitPage? splitPage { get; set; }
 
 	public SplitPage.DisplayModes? DisplayMode
@@ -63,11 +66,11 @@
 		{
 			await Task.Run(() => aozora.Process());
 			PreviewHtml = output.ToString();
-			if (Parent is not null) Parent.SetMessage(message.ToString());
+			if (Parent is not null && editor is not null) Parent.SetOutputMessage(message.ToString(), FileName, editor.Id);
 		}
 		catch
 		{
-			if (Parent is not null) Parent.SetMessage(message.ToString());
+			if (Parent is not null && editor is not null) Parent.SetOutputMessage(message.ToString(), FileName, editor.Id);
 			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
 		}
 		StateHasChanged();
@@ -181,5 +184,13 @@
 	}
 
 	public event EventHandler? TitleChanged;
+
+	public void SetPosition(Position position)
+	{
+		editor?.Content?.SetPosition(position, string.Empty);
+		editor?.Content?.RevealLineInCenter(position.LineNumber);
+	}
+
+	[CascadingParameter]
 	public TabControl? Parent { get; set; }
 }

@@ -131,7 +131,9 @@
 		<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
 	</div>
 	<div class="aozora_editor_bottom">
-		@OutputMessage
+		<CascadingValue Value="this">
+			<BottomPanel @ref="bottomPanel" />
+		</CascadingValue>
 	</div>
 </div>
 
@@ -186,10 +188,10 @@
 	}
 
 	.vr {
-		height:100%;
-		vertical-align:central;
-		width:2px;
-		border-left:solid 2px rgba(127,127,127,0.4);
+		height: 100%;
+		vertical-align: central;
+		width: 2px;
+		border-left: solid 2px rgba(127,127,127,0.4);
 	}
 
 </style>
@@ -200,7 +202,6 @@
 		grid-template-rows: auto auto 1fr;
 		grid-template-columns: 1fr auto;
 		flex: 1 0 0;
-		/*background: #f8f8f8;*/
 	}
 
 	.tab_control_controller {
@@ -367,6 +368,7 @@
 
 @code {
 	AozoraEditor.Shared.Shared.Menu.MenuBar? MenuBar { get; set; }
+	BottomPanel? bottomPanel { get; set; }
 
 	ICommandEntry[] CommonCommands
 	{
@@ -387,7 +389,7 @@
 		await base.OnInitializedAsync();
 	}
 
-	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab() };
+	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab(Guid.NewGuid()) };
 	public ITabPage? ActivePage { get; set; }
 
 	public void ActivateTab(MouseEventArgs e, ITabPage page)
@@ -402,11 +404,19 @@
 		StateHasChanged();
 	}
 
+	public ITabPage? SelectTabByGuid(Guid key)
+	{
+		var target = Pages.FirstOrDefault(a => a.Id == key);
+		if (target is null) return null;
+		ActivateTab(target);
+		return target;
+	}
+
 	public async Task CloseTab(ITabPage page)
 	{
-		if (Dialog is null) return;
-		var result = await Dialog.ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
-		if (result.Id is string and "no") return;
+		var result = await ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+		if (result is null) return;
+		if (result.Value.Id is string and "no") return;
 		if (!Pages.Contains(page)) return;
 		if (ActivePage == page)
 		{
@@ -420,7 +430,9 @@
 
 	public void AddEditorTab()
 	{
-		var page = new TabPages.EditorTab();
+		var id = Guid.NewGuid();
+		while (Pages.Any(a => a.Id == id)) { id = Guid.NewGuid(); }
+		var page = new TabPages.EditorTab(id);
 		Pages.Add(page);
 		ActivateTab(page);
 	}
@@ -442,23 +454,29 @@
 
 	public async Task ShowVersionInfo()
 	{
-		if (Dialog is null) return;
-		await Dialog.ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+		await ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
 	}
+
+	public async Task<Dialogs.DialogOption?> ShowDialog(string title, string text, RenderFragment? icon, params Dialogs.DialogOption[] options)
+	{
+		if (Dialog is null) return null;
+		var result = await Dialog.ShowDialog(title, text, icon, options);
+		bottomPanel?.AppendAppMessage($"{text}\n> {result.Text}\n", title);
+		return result;
+	}
+
+
 }
 
 @code {
 	public Dialogs.Dialog? Dialog { get; set; }
 
-	string _OutputMessage = string.Empty;
-	public string OutputMessage { get; set; } = "出力はここに表示されます。";
+	bool _OutputVisible = false;
+	public bool OutputVisible { get => _OutputVisible; set { _OutputVisible = value; StateHasChanged(); } }
 
-	bool _OutputVisible;
-	public bool OutputVisible { get; set; } = false;
-
-	public void SetMessage(string message)
+	public void SetOutputMessage(string message, string title, Guid source)
 	{
-		OutputMessage = message;
+		bottomPanel?.SetOutputMessage(message, title, source);
 		if (!string.IsNullOrWhiteSpace(message)) OutputVisible = true;
 		StateHasChanged();
 	}
