@@ -1,13 +1,16 @@
 ﻿@inject IJSRuntime JSRuntime;
 
 <SplitPage @ref="splitPage">
-	<Left><MonacoEditorAozora @ref="editor" /></Left>
+	<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
 	<Right><SubPanel PreviewDocument="@PreviewHtml" /></Right>
 </SplitPage>
 
 @code {
 	[CascadingParameter]
 	public Guid Id { get; set; }
+
+	[Parameter]
+	public string OriginalText { get; set; } = string.Empty;
 
 	SplitPage? splitPage { get; set; }
 
@@ -76,63 +79,10 @@
 		StateHasChanged();
 	}
 
-
-	public async Task LoadFile(Stream stream, string fileName)
+	public async Task<string?> GetText()
 	{
-		if (stream is null || string.IsNullOrEmpty(fileName)) return;
-		var ext = Path.GetExtension(fileName);
-		try
-		{
-			var ms = new MemoryStream();
-			await stream.CopyToAsync(ms);
-			if (ext.Equals(".zip", StringComparison.InvariantCultureIgnoreCase))
-			{
-				using var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Read);
-				var f = zip.Entries.FirstOrDefault(a => System.IO.Path.GetExtension(a.Name)?.Equals(".txt", StringComparison.InvariantCultureIgnoreCase) == true);
-				if (f is null) goto fail;
-				var s2 = f.Open();
-				if (s2 is null) goto fail;
-				var text = await LoadText(s2);
-				if (text is null) goto fail;
-				if (editor?.Content is null) goto fail;
-				await editor.Content.SetValue(text);
-				FileName = Path.GetFileName(f.FullName);
-			}
-			else
-			{
-				var text = await LoadText(ms);
-				if (text is null) goto fail;
-				if (editor?.Content is null) goto fail;
-				await editor.Content.SetValue(text);
-				FileName = Path.GetFileName(fileName);
-			}
-		}
-		catch
-		{
-			throw;
-		}
-		return;
-	fail:
-		throw new FileLoadException("ファイルの読み込みに失敗しました");
-	}
-
-	private async Task<string?> LoadText(Stream stream)
-	{
-		try
-		{
-			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
-			if (sjis is null) throw new Exception();
-			using var sr = new StreamReader(stream, sjis);
-			return await sr.ReadToEndAsync();
-		}
-		catch { }
-		try
-		{
-			using var sr = new StreamReader(stream, true);
-			return await sr.ReadToEndAsync();
-		}
-		catch { }
-		return null;
+		if (editor?.Content is null) return null;
+		return await editor.Content.GetValue();
 	}
 
 	public async Task DownloadText()

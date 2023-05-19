@@ -32,7 +32,7 @@
 
 					if (commands.Any())
 					{
-						// ここでSeparatorを入れるべきか？
+						commands = commands.Concat(new[] { new CommandEntrySeparator() });
 					}
 					if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
 
@@ -50,6 +50,9 @@
 									@item.Icon
 									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
 								</div>
+								break;
+							case CommandEntrySeparator:
+								<div class="vr" />
 								break;
 						}
 					}
@@ -189,7 +192,7 @@
 
 	.vr {
 		height: 100%;
-		vertical-align: central;
+		vertical-align: middle;
 		width: 2px;
 		border-left: solid 2px rgba(127,127,127,0.4);
 	}
@@ -227,6 +230,7 @@
 		.tab_control_top_left > .tab_control_main_buttons {
 			display: flex;
 			align-items: center;
+			height: 100%;
 		}
 
 	.tab_control_top_right {
@@ -370,11 +374,30 @@
 	AozoraEditor.Shared.Shared.Menu.MenuBar? MenuBar { get; set; }
 	BottomPanel? bottomPanel { get; set; }
 
+	ICommandEntry[]? _CommonCommands;
+
 	ICommandEntry[] CommonCommands
 	{
 		get
 		{
-			return new ICommandEntry[0];
+			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
+			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
+	{
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
+		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
@@ -389,7 +412,7 @@
 		await base.OnInitializedAsync();
 	}
 
-	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab(Guid.NewGuid()) };
+	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt") };
 	public ITabPage? ActivePage { get; set; }
 
 	public void ActivateTab(MouseEventArgs e, ITabPage page)
@@ -414,25 +437,42 @@
 
 	public async Task CloseTab(ITabPage page)
 	{
-		var result = await ShowDialog("確認", "閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
-		if (result is null) return;
-		if (result.Value.Id is string and "no") return;
-		if (!Pages.Contains(page)) return;
-		if (ActivePage == page)
+		switch (page)
 		{
-			int count = Pages.IndexOf(page);
-			count = count == 0 ? 1 : count - 1;
-			if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
+			case TabPages.EditorTab et:
+				{
+					if (et?.Content is null) return;
+					if (!(et.OriginalText == await et.Content.GetText()))
+					{
+						var result = await ShowDialog("確認", "ファイルが変更されています。\n閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+						if (result is null) return;
+						if (result.Value.Id is string and "no") return;
+					}
+					if (!Pages.Contains(page)) return;
+					if (ActivePage == page)
+					{
+						int count = Pages.IndexOf(page);
+						count = count == 0 ? 1 : count - 1;
+						if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
+					}
+					Pages.Remove(page);
+					StateHasChanged();
+				}
+				break;
 		}
-		Pages.Remove(page);
-		StateHasChanged();
 	}
 
 	public void AddEditorTab()
 	{
+		AddEditorTab(MonacoEditorAozora.SampleText, "new.txt");
+	}
+
+
+	public void AddEditorTab(string text, string fileName)
+	{
 		var id = Guid.NewGuid();
 		while (Pages.Any(a => a.Id == id)) { id = Guid.NewGuid(); }
-		var page = new TabPages.EditorTab(id);
+		var page = new TabPages.EditorTab(id, text, fileName) { };
 		Pages.Add(page);
 		ActivateTab(page);
 	}
@@ -465,7 +505,60 @@
 		return result;
 	}
 
+	public async Task LoadFile(Stream stream, string fileName)
+	{
+		if (stream is null || string.IsNullOrEmpty(fileName)) return;
+		var ext = Path.GetExtension(fileName);
+		try
+		{
+			var ms = new MemoryStream();
+			await stream.CopyToAsync(ms);
+			if (ext.Equals(".zip", StringComparison.InvariantCultureIgnoreCase))
+			{
+				using var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Read);
+				foreach (var file in zip.Entries.Where(a => System.IO.Path.GetExtension(a.Name)?.Equals(".txt", StringComparison.InvariantCultureIgnoreCase) == true))
+				{
+					var s2 = file.Open();
+					if (s2 is null) continue;
+					var text = await LoadText(s2);
+					if (text is null) continue;
+					var fileNameTemp = Path.GetFileName(file.FullName);
+					AddEditorTab(text, fileNameTemp);
+				}
+			}
+			else
+			{
+				var text = await LoadText(ms);
+				if (text is null) throw new Exception();
+				var fileNameTemp = Path.GetFileName(fileName);
+				AddEditorTab(text, fileNameTemp);
+			}
+		}
+		catch
+		{
+			throw;
+		}
+		return;
+	}
 
+	private async Task<string?> LoadText(Stream stream)
+	{
+		try
+		{
+			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
+			if (sjis is null) throw new Exception();
+			using var sr = new StreamReader(stream, sjis);
+			return await sr.ReadToEndAsync();
+		}
+		catch { }
+		try
+		{
+			using var sr = new StreamReader(stream, true);
+			return await sr.ReadToEndAsync();
+		}
+		catch { }
+		return null;
+	}
 }
 
 @code {

@@ -74,6 +74,12 @@ public class CommandEntryFile : ICommandEntry
 
 }
 
+public class CommandEntrySeparator : ICommandEntry
+{
+	public string Description { get; set; } = String.Empty;
+	public RenderFragment Icon { get; set; } = new RenderFragment(_ => { });
+}
+
 //public static class TabPages
 //{
 //	public class EditorTab : ITabPage

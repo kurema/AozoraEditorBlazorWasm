@@ -2,14 +2,31 @@
 
 @code {
 
-	public EditorTab(Guid id)
+	public EditorTab(Guid id, string text, string fileName)
 	{
 		Id = id;
+		OriginalText = text;
+		_FileName = fileName;
 	}
 
 	public RenderFragment Title =>@<span>@Content?.FileName</span>;
 
-	public RenderFragment Body =>@<CascadingValue Value="@Id"><EditorPage @ref="Content" /></CascadingValue>;
+	public RenderFragment Body =>@<CascadingValue Value="@Id"><EditorPage @ref="Content" OriginalText="@OriginalText" /></CascadingValue>;
+
+	[Parameter]
+	public string OriginalText { get; set; } = string.Empty;
+
+	string _FileName = string.Empty;
+
+	public string FileName
+	{
+		get => Content?.FileName ?? _FileName; set
+		{
+			_FileName = value;
+			if (Content is not null) Content.FileName = value;
+		}
+	}
+
 
 	EditorPage? _Content;
 	public EditorPage? Content
@@ -20,6 +37,7 @@
 			_Content = value;
 			if (_Content is not null)
 			{
+				_Content.FileName = _FileName;
 				_Content.Parent = this.Parent;
 				var currentContent = _Content;
 				currentContent.TitleChanged += (_, e) =>
@@ -48,23 +66,23 @@
 				}
 
 				MainCommands.Clear();
-				{
-					var com = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
-					com.FileChanged += async (_, e) =>
-					{
-						if (e.FileCount != 1 || e.File?.Name == null) return;
-						try
-						{
-							var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-							await currentContent.LoadFile(stream, e.File.Name);
-						}
-						catch
-						{
-							Console.WriteLine("ファイルの読み込みに失敗しました。");
-						}
-					};
-					MainCommands.Add(com);
-				}
+				//{
+				//	var com = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
+				//	com.FileChanged += async (_, e) =>
+				//	{
+				//		if (e.FileCount != 1 || e.File?.Name == null) return;
+				//		try
+				//		{
+				//			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+				//			await currentContent.LoadFile(stream, e.File.Name);
+				//		}
+				//		catch
+				//		{
+				//			Console.WriteLine("ファイルの読み込みに失敗しました。");
+				//		}
+				//	};
+				//	MainCommands.Add(com);
+				//}
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("save", "ファイルを保存");
 					com.Clicked += async (_, _) =>
@@ -88,8 +106,8 @@
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
-	
-	public Guid Id{ get; set; }
+
+	public Guid Id { get; set; }
 
 	public event EventHandler? TitleChanged;
 
