@@ -7,20 +7,16 @@
 				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="最近使ったファイル">
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト1.txt" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト2.txt" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="テスト3.txt" />
-					</AozoraEditor.Shared.Shared.Menu.MenuItem>
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="編集">
-				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="選択" />
 				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヒント" />
+					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="青空文庫">
+						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="作業マニュアル" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/aozora-manual/");})" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="注記一覧" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/annotation/");})" />
+						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
+					</AozoraEditor.Shared.Shared.Menu.MenuItem>
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="アプリについて">
 						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="プライバシーポリシー" />
 					</AozoraEditor.Shared.Shared.Menu.MenuItem>
 					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
 				</AozoraEditor.Shared.Shared.Menu.MenuItem>
@@ -30,7 +26,7 @@
 				@{
 					IEnumerable<ICommandEntry> commands = CommonCommands;
 
-					if (commands.Any())
+					if (commands.Any() && ActivePage?.MainCommands.Any() == true)
 					{
 						commands = commands.Concat(new[] { new CommandEntrySeparator() });
 					}
@@ -41,7 +37,7 @@
 						switch (item)
 						{
 							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")">
 									@item.Icon
 								</button>
 								break;
@@ -104,7 +100,7 @@
 						switch (item)
 						{
 							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()">
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")">
 									@item.Icon
 								</button>
 								break;
@@ -181,7 +177,6 @@
 		display: flex;
 		min-width: 0;
 		min-height: 0;
-		white-space: pre;
 		background: #f8f8f8;
 		border-top: 1px solid rgba(0, 0, 0, 0.1);
 	}
@@ -257,7 +252,7 @@
 	}
 
 	.tab_control_controller_tab {
-		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.0);
 	}
 
 		.tab_control_controller_tab:hover {
@@ -382,22 +377,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
@@ -444,22 +439,22 @@
 					if (et?.Content is null) return;
 					if (!(et.OriginalText == await et.Content.GetText()))
 					{
-						var result = await ShowDialog("確認", "ファイルが変更されています。\n閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+						var result = await ShowDialog(et.Content.FileName ?? "確認", "ファイルが変更されています。\n閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
 						if (result is null) return;
 						if (result.Value.Id is string and "no") return;
 					}
-					if (!Pages.Contains(page)) return;
-					if (ActivePage == page)
-					{
-						int count = Pages.IndexOf(page);
-						count = count == 0 ? 1 : count - 1;
-						if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
-					}
-					Pages.Remove(page);
-					StateHasChanged();
 				}
 				break;
 		}
+		if (!Pages.Contains(page)) return;
+		if (ActivePage == page)
+		{
+			int count = Pages.IndexOf(page);
+			count = count == 0 ? 1 : count - 1;
+			if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
+		}
+		Pages.Remove(page);
+		StateHasChanged();
 	}
 
 	public void AddEditorTab()
@@ -470,11 +465,16 @@
 
 	public void AddEditorTab(string text, string fileName)
 	{
-		var id = Guid.NewGuid();
-		while (Pages.Any(a => a.Id == id)) { id = Guid.NewGuid(); }
-		var page = new TabPages.EditorTab(id, text, fileName) { };
+		var page = new TabPages.EditorTab(GetNewGuid(), text, fileName) { };
 		Pages.Add(page);
 		ActivateTab(page);
+	}
+
+	private Guid GetNewGuid()
+	{
+		var id = Guid.NewGuid();
+		while (Pages.Any(a => a.Id == id)) { id = Guid.NewGuid(); }
+		return id;
 	}
 
 	public static RenderFragment GetMaterialSymbolOutlined(string name)
@@ -559,6 +559,13 @@
 		catch { }
 		return null;
 	}
+
+	public void ShowDiffTab(string fileName, string original, string modified)
+	{
+		var page = new TabPages.DiffTab(fileName, original, modified) { Id = GetNewGuid() };
+		Pages.Add(page);
+		ActivateTab(page);
+	}
 }
 
 @code {
@@ -570,7 +577,7 @@
 	public void SetOutputMessage(string message, string title, Guid source)
 	{
 		bottomPanel?.SetOutputMessage(message, title, source);
-		if (!string.IsNullOrWhiteSpace(message)) OutputVisible = true;
+		if (!string.IsNullOrWhiteSpace(message) && bottomPanel?.AutoOpen == true) OutputVisible = true;
 		StateHasChanged();
 	}
 }

@@ -57,7 +57,19 @@
 					PanelSwitchCommands.Add(com);
 				}
 				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("difference", "差分を表示");
+					com.Clicked += async (_, _) =>
+					{
+						if (Parent is null) return;
+						var text = await currentContent.GetText();
+						if (text is null) return;
+						Parent.ShowDiffTab(currentContent.FileName, currentContent.OriginalText, text);
+					};
+					PanelSwitchCommands.Add(com);
+				}
+				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("close", "閉じる");
+					//com.IsEnabled = false;
 					com.Clicked += (_, _) =>
 					{
 						currentContent.DisplayMode = SplitPage.DisplayModes.MainFull;

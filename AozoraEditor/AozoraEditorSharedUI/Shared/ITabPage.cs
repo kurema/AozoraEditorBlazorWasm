@@ -26,6 +26,7 @@ public interface ICommandEntry
 {
 	string Description { get; set; }
 	RenderFragment Icon { get; set; }
+	bool IsEnabled { get; }
 }
 
 public class CommandEntry : ICommandEntry
@@ -47,6 +48,7 @@ public class CommandEntry : ICommandEntry
 	public void OnClick() => Clicked?.Invoke(this, new());
 
 	//public bool IsFileInput { get; set; } = false;
+	public bool IsEnabled { get; set; } = true;
 }
 
 public class CommandEntryFile : ICommandEntry
@@ -72,12 +74,15 @@ public class CommandEntryFile : ICommandEntry
 
 	public void OnFileChanged(Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs file) => FileChanged?.Invoke(this, file);
 
+	public bool IsEnabled { get; set; } = true;
 }
 
 public class CommandEntrySeparator : ICommandEntry
 {
 	public string Description { get; set; } = String.Empty;
 	public RenderFragment Icon { get; set; } = new RenderFragment(_ => { });
+
+	public bool IsEnabled => true;
 }
 
 //public static class TabPages

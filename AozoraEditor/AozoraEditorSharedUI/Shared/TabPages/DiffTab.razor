@@ -1,0 +1,69 @@
+﻿@implements ITabPage
+
+@code {
+	public DiffTab(string fileName, string original, string modified)
+	{
+		FileName = fileName;
+		TextOriginal = original;
+		TextModified = modified;
+	}
+
+	public RenderFragment Title =>@<span>[差分] @FileName</span>;
+	public string FileName { get; init; }
+	public event EventHandler? TitleChanged;
+	public RenderFragment Body =>@<StandaloneDiffEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="editor"/>;
+	public string TextOriginal { get; init; }
+	public string TextModified { get; init; }
+
+	private async void EditorOnDidInit()
+	{
+		//OnDidInitで呼ぶと"The render handle is not yet assigned"が出る。要するに外でRenderしてるから？
+		if (editor is null) return;
+		var original = await Global.CreateModel(TextOriginal, "aozora", $"{Id}_originalModel");
+		var modified = await Global.CreateModel(TextModified, "aozora", $"{Id}_modifiedModel");
+		await editor.SetModel(new DiffEditorModel() { Original = original, Modified = modified });
+	}
+
+	StandaloneDiffEditor? _editor;
+	StandaloneDiffEditor? editor
+	{
+		get => _editor;
+		set
+		{
+			_editor = value;
+			//雑なやり方だけど、まぁ良い。
+			EditorOnDidInit();
+		}
+	}
+
+	private StandaloneDiffEditorConstructionOptions EditorConstructionOptions(StandaloneDiffEditor editor)
+	{
+		var result = new StandaloneDiffEditorConstructionOptions
+			{
+				ReadOnly = true,
+				AutomaticLayout = true,
+				Folding = true,
+				WordWrap = "on",
+				OriginalEditable = false,
+				DiffWordWrap = "on",
+				Suggest = new SuggestOptions()
+				{
+					SnippetsPreventQuickSuggestions = false,
+				},
+				UnicodeHighlight = new UnicodeHighlightOptions()
+				{
+					AmbiguousCharacters = false,
+					InvisibleCharacters = false,
+				}
+			};
+
+		return result;
+	}
+
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
+
+	public Guid Id { get; set; }
+
+	public TabControl? Parent { get; set; }
+}
