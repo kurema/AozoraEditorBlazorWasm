@@ -1,0 +1,117 @@
+﻿<div class="left_panel_container">
+	<div class="left_panel_tabs_container">
+		<ul class="left_panel_tabs_items">
+			@foreach (var item in tabEntries)
+			{
+				<li class="left_panel_tabs_item @(item == selectedTab && IsOpen?"left_panel_tabs_item_selected":"")" @onclick="()=>{SelectTab(item);}">@(item.icon)</li>
+			}
+		</ul>
+	</div>
+	@if (IsOpen)
+	{
+		<div class="left_panel_body">
+			@switch (selectedTab.Key)
+			{
+				case "Files":
+					<span>ファイル</span>
+					break;
+				case "Search":
+					<span>検索</span>
+					break;
+				case "Notes":
+					<span>メモ</span>
+					break;
+				default:
+					break;
+			}
+		</div>
+	}
+</div>
+
+<style>
+	.left_panel_container {
+		display: grid;
+		flex: 1 0 0;
+		min-width: 0;
+		grid-template-columns: 48px auto;
+	}
+
+		.left_panel_container > .left_panel_tabs_container {
+			grid-column: 1/2;
+			display: flex;
+			background: #f8f8f8;
+			border-right: 1px solid rgba(0, 0, 0, 0.1);
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+		}
+
+			.left_panel_container > .left_panel_tabs_container > .left_panel_tabs_items {
+				flex: 1 0 0;
+				display: flex;
+				flex-direction: column;
+				margin: 0;
+				padding: 0;
+				justify-content: stretch;
+			}
+
+				.left_panel_container > .left_panel_tabs_container > .left_panel_tabs_items > li.left_panel_tabs_item {
+					list-style: none;
+					width: 100%;
+					height: 48px;
+					display: flex;
+					margin: 0;
+					align-items: center;
+					justify-content: center;
+					border-left: 4px solid transparent;
+					border-right: 4px solid transparent;
+					box-sizing: border-box;
+				}
+
+					.left_panel_container > .left_panel_tabs_container > .left_panel_tabs_items > li.left_panel_tabs_item.left_panel_tabs_item_selected {
+						border-left: 4px solid #005fb8;
+					}
+
+		.left_panel_container > .left_panel_body {
+			grid-column: 2/3;
+			width: 280px;
+			display: flex;
+			background: #f8f8f8;
+			border-right: 1px solid rgba(0, 0, 0, 0.1);
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+		}
+</style>
+
+@code {
+	System.Collections.ObjectModel.ObservableCollection<TabEntry> tabEntries { get; }
+
+	record TabEntry(string Description, string Key, RenderFragment icon) { }
+
+	TabEntry _selectedTab;
+	TabEntry selectedTab { get => _selectedTab; set { _selectedTab = value; StateHasChanged(); } }
+
+	bool _IsOpen = false;
+	public bool IsOpen { get => _IsOpen; set { _IsOpen = value; StateHasChanged(); } }
+
+	void SelectTab(TabEntry tab)
+	{
+		if (tab == selectedTab)
+		{
+			_IsOpen = !IsOpen;
+			StateHasChanged();
+			return;
+		}
+		_selectedTab = tab;
+		_IsOpen = true;
+		StateHasChanged();
+	}
+
+	public LeftPanel()
+	{
+		tabEntries = new()
+		{
+			new TabEntry("ファイル","Files",TabControl.GetMaterialSymbolOutlined("folder")),
+			new TabEntry("検索","Search",TabControl.GetMaterialSymbolOutlined("search")),
+			new TabEntry("メモ","Notes",TabControl.GetMaterialSymbolOutlined("note")),
+		};
+		_selectedTab = tabEntries[0];
+	}
+}
