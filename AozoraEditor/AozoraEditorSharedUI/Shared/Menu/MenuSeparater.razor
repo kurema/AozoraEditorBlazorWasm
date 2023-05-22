@@ -1,0 +1,33 @@
+﻿@implements IMenuItem
+
+@code {
+	public string Title => string.Empty;
+
+	public ElementReference? ElementHeader { get; set; }
+
+	public bool IsChildrenVisible => false;
+
+	public bool HasChild => false;
+
+	public EventCallback OnHeaderSelected { get; set; }
+
+	[CascadingParameter]
+	public IMenuParent? Parent { get; private set; }
+
+	public RenderFragment? Icon => null;
+
+	public void Hide()
+	{
+	}
+
+	protected override void OnInitialized()
+	{
+		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		Parent.AddItem(this);
+		base.OnInitialized();
+	}
+
+	public Task InvokeAsync() => Task.CompletedTask;
+
+	public Task ShowAsync() => Task.CompletedTask;
+}

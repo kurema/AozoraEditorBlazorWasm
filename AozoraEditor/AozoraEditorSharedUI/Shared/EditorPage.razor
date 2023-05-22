@@ -87,6 +87,11 @@
 
 	public async Task DownloadText()
 	{
+		//フォルダを開く：FireFox非対応。
+		//https://developer.mozilla.org/docs/Web/API/Window/showDirectoryPicker
+		//ファイル保存ダイアログを開く：FireFox他非対応。
+		//https://developer.mozilla.org/docs/Web/API/Window/showSaveFilePicker
+
 		using var ms = new MemoryStream();
 		if (editor?.Content is null) goto fail;
 		var text = await editor.Content.GetValue();
@@ -129,7 +134,7 @@
 
 		return;
 	fail:
-		Console.WriteLine("Saving file failed.");
+		if (Parent?.Dialog is not null) await Parent.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
 		return;
 	}
 

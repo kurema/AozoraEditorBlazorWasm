@@ -37,139 +37,6 @@
 	</div>
 }
 
-<style>
-	.dialog_modal_fullscreen {
-		position: fixed;
-		height: 100%;
-		width: 100%;
-		left: 0;
-		top: 0;
-		z-index: 2600;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background: rgba(0,0,0,0.3);
-	}
-
-	.dialog_shadow {
-		box-shadow: 0 0px 8px rgba(0,0,0,0.16);
-	}
-
-	.dialog_box {
-		display: flex;
-		flex-direction: column-reverse;
-		width: min-content;
-		min-width: 500px;
-		max-width: 90vw;
-		min-height: 75px;
-		padding: 10px;
-		transform: translateZ(0);
-		color: black;
-		background: white;
-	}
-
-		.dialog_box > .dialog_buttons_row {
-			align-items: center;
-			overflow: hidden;
-			display: flex;
-			white-space: nowrap;
-			padding: 20px 10px 10px;
-			padding-right: 1px;
-		}
-
-			.dialog_box > .dialog_buttons_row > .dialog_buttons {
-				display: flex;
-				width: 100%;
-				justify-content: flex-end;
-				overflow: hidden;
-				margin-left: 67px;
-			}
-
-				.dialog_box > .dialog_buttons_row > .dialog_buttons > text_button_highlight, .dialog_box > .dialog_buttons_row > .dialog_buttons > .text_button {
-					width: fit-content;
-					padding: 5px 10px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					margin: 4px 5px;
-					outline-offset: 2px !important;
-				}
-
-		.dialog_box .dialog_message_row {
-			display: flex;
-			flex-grow: 1;
-			align-items: center;
-			padding: 0 10px;
-		}
-
-			.dialog_box .dialog_message_row > .dialog_icon {
-				flex: 0 0 48px;
-				height: 48px;
-				align-self: baseline;
-				font-size: 48px;
-				margin-top: 12px;
-			}
-
-			.dialog_box .dialog_message_row > .dialog_message_container {
-				display: flex;
-				flex-direction: column;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				padding-left: 24px;
-				user-select: text;
-				-webkit-user-select: text;
-				word-wrap: break-word;
-				white-space: normal;
-				font-family: Segoe WPC,Segoe UI,sans-serif;
-			}
-
-				.dialog_box .dialog_message_row > .dialog_message_container > .dialog_message_title {
-					line-height: 22px;
-					font-size: 18px;
-					flex: 1;
-					white-space: normal;
-					word-wrap: break-word;
-					min-height: 48px;
-					margin-bottom: 8px;
-					display: flex;
-					align-items: center;
-				}
-
-				.dialog_box .dialog_message_row > .dialog_message_container > .dialog_message_detail {
-					line-height: 22px;
-					flex: 1;
-					white-space: pre;
-				}
-
-	.text_button {
-		color: black;
-		background-color: rgba(0, 0, 0, 0.1);
-		box-sizing: border-box;
-		display: flex;
-		width: 100%;
-		padding: 4px;
-		border-radius: 2px;
-		text-align: center;
-		cursor: pointer;
-		justify-content: center;
-		align-items: center;
-		border: 1px solid var(--vscode-button-border,transparent);
-		line-height: 18px;
-		text-decoration: none;
-		font-family: Segoe WPC,Segoe UI,sans-serif;
-		user-select: none;
-	}
-
-	.text_button_highlight {
-		color: white;
-		background-color: #005fb8;
-	}
-
-	.hidden {
-		display: none;
-	}
-
-</style>
-
 @code {
 	TaskCompletionSource<DialogOption>? tcs;
 	RenderFragment? Icon { get; set; }
@@ -180,7 +47,9 @@
 	string Message { get; set; } = string.Empty;
 	string Title { get; set; } = string.Empty;
 
-	public static RenderFragment IconMessage =>@<span class="material-symbols-outlined" style="color:#2088ff;font-size:48px;">info</span>;
+	public static RenderFragment IconMessage => TabControl.GetMaterialSymbolOutlined("info", "color:#2088ff;font-size:48px;");
+	public static RenderFragment IconError => TabControl.GetMaterialSymbolOutlined("error", "color:#e50000;font-size:48px;");
+	//@<span class="material-symbols-outlined" style="color:#2088ff;font-size:48px;">info</span>;
 
 	void Clicked(DialogOption option)
 	{

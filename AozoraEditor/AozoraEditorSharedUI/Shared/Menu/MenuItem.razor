@@ -5,18 +5,26 @@
 <div class="menubox @HiddenClass" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
 	@foreach (var item in ChildMenus)
 	{
-		<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}">
-			<div class="mebubox_entry_icon">@item.Icon</div>
-			<div class="mebubox_entry_text">@item.Title</div>
-			@if (item.HasChild)
-			{
-				<div class="mebubox_entry_arrow">
-					<span class="material-symbols-outlined">
-						arrow_right
-					</span>
+		switch (item)
+		{
+			case MenuItem:
+				<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}">
+					<div class="mebubox_entry_icon">@item.Icon</div>
+					<div class="mebubox_entry_text">@item.Title</div>
+					@if (item.HasChild)
+					{
+						<div class="mebubox_entry_arrow">
+							<span class="material-symbols-outlined">
+								arrow_right
+							</span>
+						</div>
+					}
 				</div>
-			}
-		</div>
+				break;
+			case MenuSeparater:
+				<hr />
+				break;
+		}
 	}
 </div>
 
@@ -55,7 +63,7 @@
 			.menubox > .mebubox_entry > .mebubox_entry_icon {
 				display: inline;
 				grid-column: 1/2;
-				justify-self:start;
+				justify-self: start;
 			}
 
 				.menubox > .mebubox_entry > .mebubox_entry_icon > * {
@@ -78,6 +86,15 @@
 					vertical-align: middle;
 				}
 
+		.menubox > hr {
+			height: 0;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			border-top: 1px solid #d4d4d4;
+			margin: 6px 0px;
+			width: 100%;
+		}
 </style>
 
 @code {

@@ -1,26 +1,30 @@
 ﻿@inject IJSRuntime jsRuntime
+@using AozoraEditor.Shared.Shared.Menu
 
+<AozoraEditor.Shared.Shared.Themes.LightTheme />
 <div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 	<div class="tab_control_top_container">
 		<div class="tab_control_top_left">
-			<AozoraEditor.Shared.Shared.Menu.MenuBar @ref="MenuBar">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ファイル">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="開く" />
-				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="ヘルプ">
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="青空文庫">
-						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="作業マニュアル" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/aozora-manual/");})" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="注記一覧" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/annotation/");})" />
-						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
-					</AozoraEditor.Shared.Shared.Menu.MenuItem>
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="アプリについて">
-						<AozoraEditor.Shared.Shared.Menu.MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
-					</AozoraEditor.Shared.Shared.Menu.MenuItem>
-					<AozoraEditor.Shared.Shared.Menu.MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
-				</AozoraEditor.Shared.Shared.Menu.MenuItem>
-			</AozoraEditor.Shared.Shared.Menu.MenuBar>
+			<MenuBar @ref="MenuBar">
+				<MenuItem Title="ファイル">
+					<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
+					<MenuItem Title="開く" />
+				</MenuItem>
+				<MenuItem Title="ヘルプ">
+					<MenuItem Title="青空文庫">
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
+						<MenuSeparater />
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="作業マニュアル" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/aozora-manual/");})" />
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="注記一覧" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/annotation/");})" />
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
+					</MenuItem>
+					<MenuItem Title="アプリについて">
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+					</MenuItem>
+					<MenuSeparater />
+					<MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
+				</MenuItem>
+			</MenuBar>
 			<div class="vr" />
 			<div class="tab_control_main_buttons">
 				@{
@@ -37,12 +41,12 @@
 						switch (item)
 						{
 							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")">
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
 									@item.Icon
 								</button>
 								break;
 							case CommandEntryFile itemF:
-								<div class="FileInputButton ButtonMini">
+								<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
 									@item.Icon
 									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
 								</div>
@@ -56,6 +60,12 @@
 			</div>
 		</div>
 		<div class="tab_control_top_right">
+			<button class="ButtonMini" @onclick="async ()=>{if(leftPanel is null)return;leftPanel.IsOpen=!leftPanel.IsOpen; StateHasChanged();}">
+				<span class="material-symbols-outlined">
+					@(leftPanel?.IsOpen ?? true ? "left_panel_close" : "left_panel_open")
+				</span>
+			</button>
+
 			<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}">
 				<span class="material-symbols-outlined">
 					@(OutputVisible ? "bottom_panel_close" : "bottom_panel_open")
@@ -75,7 +85,7 @@
 
 					<div @onclick="(e)=>ActivateTab(e,item)" class="@cl">
 						<p class="tab_control_controller_tab_title">@item.Title</p>
-						<button @onclick:preventDefault @onclick:stopPropagation="true" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
+						<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
 							<span class="material-symbols-outlined">
 								close
 							</span>
@@ -100,12 +110,12 @@
 						switch (item)
 						{
 							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")">
+								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
 									@item.Icon
 								</button>
 								break;
 							case CommandEntryFile itemF:
-								<div class="FileInputButton ButtonMini">
+								<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
 									@item.Icon
 									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
 								</div>
@@ -135,7 +145,9 @@
 		</CascadingValue>
 	</div>
 	<div class="aozora_editor_left">
-		<LeftPanel />
+		<CascadingValue Value="this">
+			<LeftPanel @ref="leftPanel" />
+		</CascadingValue>
 	</div>
 </div>
 
@@ -172,11 +184,24 @@
 		.ButtonMini:hover {
 			background-color: #7F7F7F22;
 		}
+
+	.vr {
+		height: 100%;
+		vertical-align: middle;
+		width: 2px;
+		border-left: solid 1px rgba(127,127,127,0.4);
+	}
+
+	.hidden {
+		display: none !important;
+	}
+
 </style>
 
 @code {
-	AozoraEditor.Shared.Shared.Menu.MenuBar? MenuBar { get; set; }
+	MenuBar? MenuBar { get; set; }
 	BottomPanel? bottomPanel { get; set; }
+	LeftPanel? leftPanel { get; set; }
 
 	ICommandEntry[]? _CommonCommands;
 
@@ -286,9 +311,9 @@
 		return id;
 	}
 
-	public static RenderFragment GetMaterialSymbolOutlined(string name)
+	public static RenderFragment GetMaterialSymbolOutlined(string name, string? style = null)
 	{
-		return @<span class="material-symbols-outlined">@name</span>;
+		return @<span class="material-symbols-outlined" style="@(style ?? string.Empty)">@name</span>;
 	}
 
 	public void NotifyStateChanged()
