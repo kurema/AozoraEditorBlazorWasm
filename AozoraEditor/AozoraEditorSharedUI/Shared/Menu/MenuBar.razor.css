@@ -14,10 +14,10 @@
         padding: 0 8px;
         border-radius: 5px;
         cursor: default;
-        font-family: Segoe WPC,Segoe UI,sans-serif;
+        font-family: var(--aozora-ui-fonts);
         user-select: none;
     }
 
         .menubar > .menubar_menu_button:hover {
-            background-color: #7F7F7F22;
+            background-color: var(--aozora-menubar-button-hover-background);
         }

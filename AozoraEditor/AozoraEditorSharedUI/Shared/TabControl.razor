@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime jsRuntime
 @using AozoraEditor.Shared.Shared.Menu
 
-<AozoraEditor.Shared.Shared.Themes.LightTheme />
+<AozoraEditor.Shared.Shared.Themes.ThemeControl />
 <div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 	<div class="tab_control_top_container">
 		<div class="tab_control_top_left">
@@ -83,7 +83,7 @@
 				{
 					var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
 
-					<div @onclick="(e)=>ActivateTab(e,item)" class="@cl">
+					<div class="@cl" @onmousedown="(e)=>TabClicked(e,item)">
 						<p class="tab_control_controller_tab_title">@item.Title</p>
 						<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
 							<span class="material-symbols-outlined">
@@ -134,10 +134,18 @@
 						@item.Body
 					</div>
 				}
+				@if (ActivePage is null)
+				{
+					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);">
+						<div>
+							<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
+							<p>このアプリが気に入ったなら、是非ご支援をご検討ください。</p>
+						</div>
+					</div>
+				}
 			</div>
 
 		</div>
-		<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
 	</div>
 	<div class="aozora_editor_bottom">
 		<CascadingValue Value="this">
@@ -149,6 +157,7 @@
 			<LeftPanel @ref="leftPanel" />
 		</CascadingValue>
 	</div>
+	<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
 </div>
 
 <style>
@@ -244,9 +253,18 @@
 	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt") };
 	public ITabPage? ActivePage { get; set; }
 
-	public void ActivateTab(MouseEventArgs e, ITabPage page)
+	public async void TabClicked(MouseEventArgs e, ITabPage page)
 	{
-		ActivateTab(page);
+		//@onclickは左クリックのみ。onmousedownで真ん中ボタンが機能する。
+		switch (e.Button)
+		{
+			case 0:
+				ActivateTab(page);
+				break;
+			case 1:
+				await CloseTab(page);
+				break;
+		}
 	}
 
 	public void ActivateTab(ITabPage page)

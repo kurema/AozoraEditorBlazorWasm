@@ -37,13 +37,13 @@
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		background: white;
-		border: solid 1px #d4d4d4;
+		background: var(--aozora-menubar-box-background);
+		border: solid 1px var(--aozora-menubar-box-border);
 		z-index: 1000;
 		top: 0;
 		left: 0;
 		padding: 4px 0;
-		box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
+		box-shadow: var(--aozora-menubar-button-box-shadow);
 	}
 
 		.menubox > .mebubox_entry {
@@ -57,7 +57,7 @@
 		}
 
 			.menubox > .mebubox_entry:hover {
-				background: #e8e8e8;
+				background: var(--aozora-menubar-box-background-hover);
 			}
 
 			.menubox > .mebubox_entry > .mebubox_entry_icon {
@@ -74,7 +74,7 @@
 				display: inline;
 				grid-column: 2/3;
 				font-size: 13px;
-				font-family: Segoe WPC,Segoe UI,sans-serif;
+				font-family: var(--aozora-ui-fonts);
 			}
 
 			.menubox > .mebubox_entry > .mebubox_entry_arrow {
@@ -91,7 +91,7 @@
 			margin: 0;
 			padding: 0;
 			border: 0;
-			border-top: 1px solid #d4d4d4;
+			border-top: 1px solid var(--aozora-menubar-box-border);
 			margin: 6px 0px;
 			width: 100%;
 		}

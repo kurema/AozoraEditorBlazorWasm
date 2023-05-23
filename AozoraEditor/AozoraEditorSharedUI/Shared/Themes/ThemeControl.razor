@@ -1,0 +1,27 @@
+﻿@(SelectedTheme?.Fragment)
+
+@code {
+	public record ThemeEntry(string Title, string Key, RenderFragment Fragment);
+
+	private ThemeEntry _selectedTheme;
+	public ThemeEntry SelectedTheme
+	{
+		get => _selectedTheme;
+		set
+		{
+			if (!ThemeEntries.Contains(value)) return;
+			SelectedTheme = value;
+			StateHasChanged();
+		}
+	}
+
+	public System.Collections.ObjectModel.ObservableCollection<ThemeEntry> ThemeEntries { get; }
+
+	public ThemeControl()
+	{
+		ThemeEntries = new() {    
+			new ThemeEntry("ライト","Light",@<LightTheme />), 
+		};
+		_selectedTheme = ThemeEntries[0];
+	}
+}
