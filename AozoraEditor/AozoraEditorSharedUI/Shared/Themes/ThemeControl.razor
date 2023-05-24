@@ -1,7 +1,7 @@
 ﻿@(SelectedTheme?.Fragment)
 
 @code {
-	public record ThemeEntry(string Title, string Key, RenderFragment Fragment);
+	public record ThemeEntry(string Title, string Key, RenderFragment Fragment, string MonacoTheme);
 
 	private ThemeEntry _selectedTheme;
 	public ThemeEntry SelectedTheme
@@ -10,7 +10,8 @@
 		set
 		{
 			if (!ThemeEntries.Contains(value)) return;
-			SelectedTheme = value;
+			_selectedTheme = value;
+			if (value is not null) _ = Global.SetTheme(value.MonacoTheme);
 			StateHasChanged();
 		}
 	}
@@ -19,8 +20,9 @@
 
 	public ThemeControl()
 	{
-		ThemeEntries = new() {    
-			new ThemeEntry("ライト","Light",@<LightTheme />), 
+		ThemeEntries = new() {
+			new ThemeEntry("ライト","Light",@<LightTheme />,"aozora-theme"),
+			new ThemeEntry("デバッグ","Debug",@<div />,"aozora-theme-dark"),
 		};
 		_selectedTheme = ThemeEntries[0];
 	}

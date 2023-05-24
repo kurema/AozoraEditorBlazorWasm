@@ -1,0 +1,45 @@
+﻿@implements IMenuItemBasic
+@inject IJSRuntime JSRuntime;
+
+@code {
+	[CascadingParameter]
+	public IMenuParent? Parent { get; private set; }
+
+	public void Hide() { }
+
+	public bool IsChildrenVisible => false;
+	public bool HasChild => false;
+	bool _IsChecked;
+	[Parameter]
+	public bool IsChecked { get; set; }
+
+	public async Task InvokeAsync()
+	{
+
+		IMenuParent? parent = Parent;
+		while ((parent as IMenuItem)?.Parent is { } p) parent = p;
+		parent?.Hide();
+		await OnHeaderSelected.InvokeAsync(null);
+
+		if (!IsChecked) await Checked.InvokeAsync(); else await UnChecked.InvokeAsync();
+		if (Parent is MenuItem pmi) pmi.NotifyStateHasChanged();
+	}
+	[Parameter]
+	public string Title { get; set; } = String.Empty;
+	[Parameter]
+	public EventCallback Checked{ get; set; }
+	[Parameter]
+	public EventCallback UnChecked{ get; set; }
+	public ElementReference? ElementHeader { get; set; }
+	public Task ShowAsync() => Task.CompletedTask;
+	[Parameter]
+	public EventCallback OnHeaderSelected { get; set; }
+	public RenderFragment? Icon => @<span class="material-symbols-outlined">@(IsChecked ? "check" : string.Empty)</span>;
+
+	protected override void OnInitialized()
+	{
+		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		Parent.AddItem(this);
+		base.OnInitialized();
+	}
+}

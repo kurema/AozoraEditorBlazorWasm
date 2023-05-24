@@ -1,5 +1,5 @@
 ﻿@implements IMenuParent
-@implements IMenuItem
+@implements IMenuItemBasic
 @inject IJSRuntime JSRuntime;
 
 <div class="menubox @HiddenClass" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
@@ -7,19 +7,9 @@
 	{
 		switch (item)
 		{
-			case MenuItem:
-				<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}">
-					<div class="mebubox_entry_icon">@item.Icon</div>
-					<div class="mebubox_entry_text">@item.Title</div>
-					@if (item.HasChild)
-					{
-						<div class="mebubox_entry_arrow">
-							<span class="material-symbols-outlined">
-								arrow_right
-							</span>
-						</div>
-					}
-				</div>
+			case IMenuItemBasic basic:
+				@GetMenuItem(basic)
+				;
 				break;
 			case MenuSeparater:
 				<hr />
@@ -229,7 +219,7 @@
 			item2.Hide();
 		}
 		if (!item.HasChild) return;
-		await item.ShowAsync();
+		if(item is IMenuItemBasic basic) await basic.ShowAsync();
 		StateHasChanged();
 	}
 
@@ -237,4 +227,20 @@
 	public EventCallback OnHeaderSelected { get; set; }
 
 	public void NotifyStateHasChanged() => StateHasChanged();
+
+	public RenderFragment GetMenuItem(IMenuItemBasic item)
+	{
+		return @<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}">
+			<div class="mebubox_entry_icon">@(item.Icon)</div>
+			<div class="mebubox_entry_text">@(item.Title)</div>
+			@if (item.HasChild)
+			{
+				<div class="mebubox_entry_arrow">
+					<span class="material-symbols-outlined">
+						arrow_right
+					</span>
+				</div>
+			}
+		</div>;
+	}
 }

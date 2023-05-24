@@ -26,14 +26,18 @@ public enum MenuPosition
 
 public interface IMenuItem
 {
-	Task InvokeAsync();
-	string Title { get; }
 	void Hide();
-	ElementReference? ElementHeader { get; set; }
 	bool IsChildrenVisible { get; }
 	bool HasChild { get; }
+	IMenuParent? Parent { get; }
+}
+
+public interface IMenuItemBasic: IMenuItem
+{
+	Task InvokeAsync();
+	string Title { get; }
+	ElementReference? ElementHeader { get; set; }
 	Task ShowAsync();
 	EventCallback OnHeaderSelected { get; set; }
-	IMenuParent? Parent { get; }
 	RenderFragment? Icon { get; }
 }

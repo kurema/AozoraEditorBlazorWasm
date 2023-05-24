@@ -8,7 +8,12 @@
 	@foreach (var item in ChildMenus)
 	{
 		i++;
-		<div class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(item);}" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}">@item.Title</div>
+		switch (item)
+		{
+			case IMenuItemBasic basic:
+				<div class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}">@basic.Title</div>
+				break;
+		}
 	}
 </div>
 
@@ -43,7 +48,7 @@
 
 	public MenuPosition ChildPosition => MenuPosition.Bottom;
 
-	public async Task ItemClicked(IMenuItem item)
+	public async Task ItemClicked(IMenuItemBasic item)
 	{
 		if (item.HasChild && item.IsChildrenVisible)
 		{
@@ -57,7 +62,7 @@
 		return;
 	}
 
-	public async Task MouseOverItem(IMenuItem item)
+	public async Task MouseOverItem(IMenuItemBasic item)
 	{
 		if (!ChildMenus.Any(a => a.IsChildrenVisible)) return;
 		if (item.IsChildrenVisible) return;

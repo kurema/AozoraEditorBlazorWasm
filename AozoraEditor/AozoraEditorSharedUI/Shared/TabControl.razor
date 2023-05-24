@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime jsRuntime
 @using AozoraEditor.Shared.Shared.Menu
 
-<AozoraEditor.Shared.Shared.Themes.ThemeControl />
+<AozoraEditor.Shared.Shared.Themes.ThemeControl @ref="themeControl" />
 <div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 	<div class="tab_control_top_container">
 		<div class="tab_control_top_left">
@@ -9,6 +9,17 @@
 				<MenuItem Title="ファイル">
 					<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
 					<MenuItem Title="開く" />
+					@*<MenuItemCheckbox Title="チェックボックス1" IsChecked="@b" Checked="()=>{b=true;}" UnChecked="()=>{b=false;}" />*@
+					<MenuSeparater />
+					<MenuItem Title="テーマ">
+						@if (themeControl is not null)
+						{
+							foreach (var theme in themeControl.ThemeEntries)
+							{
+								<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == themeControl.SelectedTheme)" Checked="()=>{themeControl.SelectedTheme=theme;}" />
+							}
+						}
+					</MenuItem>
 				</MenuItem>
 				<MenuItem Title="ヘルプ">
 					<MenuItem Title="青空文庫">
@@ -60,13 +71,13 @@
 			</div>
 		</div>
 		<div class="tab_control_top_right">
-			<button class="ButtonMini" @onclick="async ()=>{if(leftPanel is null)return;leftPanel.IsOpen=!leftPanel.IsOpen; StateHasChanged();}">
+			<button class="ButtonMini" @onclick="async ()=>{if(leftPanel is null)return;leftPanel.IsOpen=!leftPanel.IsOpen; StateHasChanged();}" title="サイドパネル開閉">
 				<span class="material-symbols-outlined">
 					@(leftPanel?.IsOpen ?? true ? "left_panel_close" : "left_panel_open")
 				</span>
 			</button>
 
-			<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}">
+			<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}" title="下部パネル開閉">
 				<span class="material-symbols-outlined">
 					@(OutputVisible ? "bottom_panel_close" : "bottom_panel_open")
 				</span>
@@ -120,6 +131,9 @@
 									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
 								</div>
 								break;
+							case CommandEntrySeparator:
+								<div class="vr" />
+								break;
 						}
 					}
 				}
@@ -136,10 +150,10 @@
 				}
 				@if (ActivePage is null)
 				{
-					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);">
+					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-background);">
 						<div>
 							<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
-							<p>このアプリが気に入ったなら、是非ご支援をご検討ください。</p>
+							<p>このアプリを気に入られましたら、是非ご支援をご検討いただけますようお願いします。</p>
 						</div>
 					</div>
 				}
@@ -208,9 +222,13 @@
 </style>
 
 @code {
+	[CascadingParameter]
+	public Models.IApplicationModel? AppModel { get; set; }
+
 	MenuBar? MenuBar { get; set; }
 	BottomPanel? bottomPanel { get; set; }
 	LeftPanel? leftPanel { get; set; }
+	Themes.ThemeControl? themeControl { get; set; }
 
 	ICommandEntry[]? _CommonCommands;
 
