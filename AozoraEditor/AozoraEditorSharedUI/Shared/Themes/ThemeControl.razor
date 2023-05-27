@@ -1,7 +1,10 @@
 ﻿@(SelectedTheme?.Fragment)
 
 @code {
-	public record ThemeEntry(string Title, string Key, RenderFragment Fragment, string MonacoTheme);
+	public record ThemeEntry(string Title, string Key, RenderFragment Fragment, string MonacoTheme)
+	{
+		public IEnumerable<string> AdditionalCss { get; init; } = Array.Empty<string>();
+	}
 
 	private ThemeEntry _selectedTheme;
 	public ThemeEntry SelectedTheme
@@ -22,7 +25,7 @@
 	{
 		ThemeEntries = new() {
 			new ThemeEntry("ライト","Light",@<LightTheme />,"aozora-theme"),
-			new ThemeEntry("ダーク","Dark",@<DarkTheme />,"aozora-theme-dark"),
+			new ThemeEntry("ダーク","Dark",@<DarkTheme />,"aozora-theme-dark"){ AdditionalCss=new string[]{"_content/AozoraEditorSharedUI/darkmode.css" } },
 		};
 		_selectedTheme = ThemeEntries[0];
 	}

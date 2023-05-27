@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime jsRuntime
 @using AozoraEditor.Shared.Shared.Menu
 
-<AozoraEditor.Shared.Shared.Themes.ThemeControl @ref="themeControl" />
+<AozoraEditor.Shared.Shared.Themes.ThemeControl @ref="Theme" />
 <div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 	<div class="tab_control_top_container">
 		<div class="tab_control_top_left">
@@ -12,11 +12,11 @@
 					@*<MenuItemCheckbox Title="チェックボックス1" IsChecked="@b" Checked="()=>{b=true;}" UnChecked="()=>{b=false;}" />*@
 					<MenuSeparater />
 					<MenuItem Title="テーマ">
-						@if (themeControl is not null)
+						@if (Theme is not null)
 						{
-							foreach (var theme in themeControl.ThemeEntries)
+							foreach (var theme in Theme.ThemeEntries)
 							{
-								<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == themeControl.SelectedTheme)" Checked="()=>{themeControl.SelectedTheme=theme;}" />
+								<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == Theme.SelectedTheme)" Checked="()=>{Theme.SelectedTheme=theme;}" />
 							}
 						}
 					</MenuItem>
@@ -150,7 +150,7 @@
 				}
 				@if (ActivePage is null)
 				{
-					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-background);">
+					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
 						<div>
 							<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
 							<p>このアプリを気に入られましたら、是非ご支援をご検討いただけますようお願いします。</p>
@@ -229,7 +229,7 @@
 	MenuBar? MenuBar { get; set; }
 	BottomPanel? bottomPanel { get; set; }
 	LeftPanel? leftPanel { get; set; }
-	Themes.ThemeControl? themeControl { get; set; }
+	public Themes.ThemeControl? Theme { get; private set; }
 
 	ICommandEntry[]? _CommonCommands;
 
@@ -440,7 +440,7 @@
 }
 
 @code {
-	public Dialogs.Dialog? Dialog { get; set; }
+	public Dialogs.Dialog? Dialog { get; private set; }
 
 	bool _OutputVisible = false;
 	public bool OutputVisible { get => _OutputVisible; set { _OutputVisible = value; StateHasChanged(); } }

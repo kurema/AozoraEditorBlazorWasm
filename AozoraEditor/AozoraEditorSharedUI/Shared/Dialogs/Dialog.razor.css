@@ -8,11 +8,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0,0,0,0.3);
+    background: var(--aozora-dialog-modal-background);
 }
 
 .dialog_shadow {
-    box-shadow: 0 0px 8px rgba(0,0,0,0.16);
+    box-shadow: var(--aozora-dialog-box-shadow);
 }
 
 .dialog_box {
@@ -24,8 +24,8 @@
     min-height: 75px;
     padding: 10px;
     transform: translateZ(0);
-    color: black;
-    background: white;
+    color: var(--aozora-theme-text-color);
+    background: var(--aozora-dialog-background);
 }
 
     .dialog_box > .dialog_buttons_row {
@@ -101,8 +101,8 @@
             }
 
 .text_button {
-    color: black;
-    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--aozora-button-color);
+    background-color: var(--aozora-button-background);
     box-sizing: border-box;
     display: flex;
     width: 100%;
@@ -112,14 +112,14 @@
     cursor: pointer;
     justify-content: center;
     align-items: center;
-    border: 1px solid transparent;
+    border: 1px solid var(--aozora-button-border-color);
     line-height: 18px;
     text-decoration: none;
-    font-family: Segoe WPC,Segoe UI,sans-serif;
+    font-family: var(--aozora-ui-fonts);
     user-select: none;
 }
 
 .text_button_highlight {
-    color: white;
-    background-color: #005fb8;
+    color: var(--aozora-button-accent-color);
+    background-color: var(--aozora-button-accent-background);
 }

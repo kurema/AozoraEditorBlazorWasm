@@ -7,6 +7,7 @@
     grid-template-columns: 1fr auto;
     background: var(--aozora-bottom-background);
     color: var(--aozora-theme-text-color);
+    border-top: 1px solid var(--aozora-bottom-boder-color);
 }
 
     .bottom_panel_container > .bottom_panel_tab_bar {

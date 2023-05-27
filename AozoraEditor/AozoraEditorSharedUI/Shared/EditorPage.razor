@@ -59,7 +59,9 @@
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
 		var message = new Aozora.Helpers.OutputString();
-		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: new[] { "_content/AozoraEditorSharedUI/aozora.css" })
+		IEnumerable<string> cssFiles = new[] { "_content/AozoraEditorSharedUI/aozora.css" };
+		if (Parent?.Theme?.SelectedTheme?.AdditionalCss is not null) cssFiles = cssFiles.Concat(Parent.Theme.SelectedTheme.AdditionalCss);
+		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: cssFiles.ToArray())
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,

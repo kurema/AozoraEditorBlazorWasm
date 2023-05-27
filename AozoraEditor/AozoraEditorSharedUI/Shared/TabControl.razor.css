@@ -39,7 +39,6 @@
     display: flex;
     min-width: 0;
     min-height: 0;
-    border-top: 1px solid var(--aozora-top-border-color);
 }
 
 .aozora_editor_top:not(.aozoa_editor_top_show_output) .aozora_editor_bottom {
@@ -105,6 +104,7 @@
 .tab_control_controller_tab {
     /* レイアウト維持のため、不可視の線を配置しておく。 */
     border-bottom: 1px solid rgba(0, 0, 0, 0.0);
+    background: var(--aozora-tab-normal-background);
 }
 
     .tab_control_controller_tab:hover {
@@ -117,7 +117,7 @@
     border-right: 1px solid var(--aozora-top-border-color);
     border-left: 1px solid var(--aozora-top-border-color);
     border-top: 1px solid var(--aozora-tabs-active-accent);
-    border-bottom: 1px solid var(--aozora-tab-background);
+    border-bottom: 1px solid var(--aozora-tabs-active-background);
 }
 
 .tab_control_controller_tab_title {
