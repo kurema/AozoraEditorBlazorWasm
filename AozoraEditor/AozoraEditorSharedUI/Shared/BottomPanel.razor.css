@@ -6,6 +6,7 @@
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr auto;
     background: var(--aozora-bottom-background);
+    color: var(--aozora-theme-text-color);
 }
 
     .bottom_panel_container > .bottom_panel_tab_bar {
@@ -59,6 +60,7 @@
             border: 1px solid var(--aozora-bottom-files-select-border-color);
             background-color: var(--aozora-bottom-files-select-background);
             vertical-align: middle;
+            color: var(--aozora-theme-text-color);
         }
 
         .bottom_panel_container > .bottom_panel_tab_bar_right > label {

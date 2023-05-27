@@ -2,6 +2,7 @@
 {
 	<div class="dialog_modal_fullscreen">
 		<div class="dialog_shadow">
+			<!-- dialogを使った場合はInterop機能を使うことになるので複雑になる。 -->
 			<div class="dialog_box">
 				<div class="dialog_buttons_row">
 					<div class="dialog_buttons">
@@ -9,11 +10,11 @@
 						{
 							if (item.IsHighlighted)
 							{
-								<a role="button" class="text_button text_button_highlight" @onclick="()=>{Clicked(item);}">@item.Text</a>
+								<a role="button" tabindex="0" class="text_button text_button_highlight" @onclick="()=>{Clicked(item);}">@item.Text</a>
 							}
 							else
 							{
-								<a role="button" class="text_button" @onclick="()=>{Clicked(item);}">@item.Text</a>
+								<a role="button" tabindex="0" class="text_button" @onclick="()=>{Clicked(item);}">@item.Text</a>
 							}
 						}
 					</div>

@@ -11,7 +11,7 @@
 		switch (item)
 		{
 			case IMenuItemBasic basic:
-				<div class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}">@basic.Title</div>
+				<div tabindex="0" class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
 				break;
 		}
 	}
@@ -70,6 +70,15 @@
 		Hide();
 		await item.ShowAsync();
 		StateHasChanged();
+	}
+
+	async Task KeyDown(KeyboardEventArgs keyboard, IMenuItemBasic basic)
+	{
+		//Console.WriteLine(keyboard.Key);
+		if (keyboard.Key == "Enter")
+		{
+			await ItemClicked(basic);
+		}
 	}
 
 	public void NotifyStateHasChanged() => StateHasChanged();

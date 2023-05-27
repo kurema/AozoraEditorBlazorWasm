@@ -3,6 +3,7 @@
     flex: 1 0 0;
     min-width: 0;
     grid-template-columns: 48px auto;
+    color: var(--aozora-theme-text-color);
 }
 
     .left_panel_container > .left_panel_tabs_container {

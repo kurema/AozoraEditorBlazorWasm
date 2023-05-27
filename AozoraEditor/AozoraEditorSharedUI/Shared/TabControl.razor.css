@@ -4,6 +4,7 @@
     min-width: 0;
     min-height: 0;
     grid-template-columns: auto 1fr;
+    color: var(--aozora-theme-text-color);
 }
 
     .aozora_editor_top:not(.aozoa_editor_top_show_output) {
@@ -107,12 +108,12 @@
 }
 
     .tab_control_controller_tab:hover {
-        background: #e8e8e8;
+        background: var(--aozora-tabs-hover-background);
     }
 
 
 .tab_control_controller_tab_active {
-    background: white;
+    background: var(--aozora-tabs-active-background);
     border-right: 1px solid var(--aozora-top-border-color);
     border-left: 1px solid var(--aozora-top-border-color);
     border-top: 1px solid var(--aozora-tabs-active-accent);
