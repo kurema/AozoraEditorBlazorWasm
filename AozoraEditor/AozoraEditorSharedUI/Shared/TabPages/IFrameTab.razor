@@ -1,0 +1,26 @@
+@implements ITabPage
+
+@code {
+	public RenderFragment Body =>@<iframe sandbox="allow-same-origin" style="flex: 1 0 0;border: none;" src="@Source" />;
+	public string Source { get; init; }
+	public string TitleString { get; init; }
+
+	public IFrameTab(Guid guid, string source, string title)
+	{
+		Id = guid;
+		Source = source;
+		TitleString = title;
+	}
+
+	public Guid Id { get; set; }
+
+	public event EventHandler? TitleChanged;
+
+	public TabControl? Parent { get; set; }
+
+	public RenderFragment Title =>@<span>@TitleString</span>;
+
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
+
+}

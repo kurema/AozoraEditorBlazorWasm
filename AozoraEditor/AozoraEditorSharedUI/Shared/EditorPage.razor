@@ -59,7 +59,7 @@
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
 		var message = new Aozora.Helpers.OutputString();
-		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: Parent?.PreviewCssFiles?.ToArray() ?? new[] { "_content/AozoraEditorSharedUI/aozora.css" })
+		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: Parent?.PreviewCssFiles?.ToArray() ?? new[] { "_content/AozoraEditorSharedUI/css/aozora.css" })
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,

@@ -9,7 +9,6 @@
 				<MenuItem Title="ファイル">
 					<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
 					<MenuItem Title="開く" />
-					@*<MenuItemCheckbox Title="チェックボックス1" IsChecked="@b" Checked="()=>{b=true;}" UnChecked="()=>{b=false;}" />*@
 					<MenuSeparater />
 					<MenuItem Title="テーマ">
 						@if (Theme is not null)
@@ -33,7 +32,9 @@
 						<MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
 					</MenuItem>
 					<MenuItem Title="アプリについて">
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="プロジェクトページ" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+						<MenuItem IconMaterialSymbols="open_in_new_down" Title="ライセンス" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/LICENSE");})" />
+						<MenuItem Title="サードパーティーライセンス" OnHeaderSelected="@(async ()=>{OepnInNewInternalTab("_content/AozoraEditorSharedUI/thirdparty.xml","サードパーティー");})" />
 					</MenuItem>
 					<MenuSeparater />
 					<MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
@@ -238,7 +239,7 @@
 	{
 		get
 		{
-			yield return PreviewVertical ? "_content/AozoraEditorSharedUI/aozora-v.css" : "_content/AozoraEditorSharedUI/aozora.css";
+			yield return PreviewVertical ? "_content/AozoraEditorSharedUI/css/aozora-v.css" : "_content/AozoraEditorSharedUI/css/aozora.css";
 			if (Theme?.SelectedTheme?.AdditionalCss is not null)
 			{
 				foreach (var item in Theme.SelectedTheme.AdditionalCss) yield return item;
@@ -378,6 +379,13 @@
 	public async Task OpenInNewTab(string url)
 	{
 		await jsRuntime.InvokeVoidAsync("open", url, "_blank");
+	}
+
+	public void OepnInNewInternalTab(string url,string title)
+	{
+		var page = new TabPages.IFrameTab(GetNewGuid(), url, title);
+		Pages.Add(page);
+		ActivateTab(page);
 	}
 
 	public async Task ShowVersionInfo()
