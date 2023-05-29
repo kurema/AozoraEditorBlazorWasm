@@ -20,6 +20,9 @@
 							}
 						}
 					</MenuItem>
+					<MenuItem Title="設定">
+						<MenuItemCheckbox Title="プレビュー - 縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
+					</MenuItem>
 				</MenuItem>
 				<MenuItem Title="ヘルプ">
 					<MenuItem Title="青空文庫">
@@ -231,6 +234,20 @@
 	LeftPanel? leftPanel { get; set; }
 	public Themes.ThemeControl? Theme { get; private set; }
 
+	public IEnumerable<string> PreviewCssFiles
+	{
+		get
+		{
+			yield return PreviewVertical ? "_content/AozoraEditorSharedUI/aozora-v.css" : "_content/AozoraEditorSharedUI/aozora.css";
+			if (Theme?.SelectedTheme?.AdditionalCss is not null)
+			{
+				foreach (var item in Theme.SelectedTheme.AdditionalCss) yield return item;
+			}
+		}
+	}
+
+	public bool PreviewVertical { get; set; }
+
 	ICommandEntry[]? _CommonCommands;
 
 	ICommandEntry[] CommonCommands
@@ -239,22 +256,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
