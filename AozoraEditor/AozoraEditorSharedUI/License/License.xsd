@@ -17,6 +17,7 @@
 							<xs:element name="summary" type="xs:string" />
 							<xs:element name="license" type="xs:string" />
 						</xs:sequence>
+						<xs:attribute name="repository" type="xs:anyURI" use="optional" />
 					</xs:complexType>
 				</xs:element>
 			</xs:choice>

@@ -1,7 +1,7 @@
 @implements ITabPage
 
 @code {
-	public RenderFragment Body =>@<iframe sandbox="allow-same-origin" style="flex: 1 0 0;border: none;" src="@Source" />;
+	public RenderFragment Body =>@<iframe sandbox="allow-same-origin allow-popups" style="flex: 1 0 0;border: none;" src="@Source" />;
 	public string Source { get; init; }
 	public string TitleString { get; init; }
 

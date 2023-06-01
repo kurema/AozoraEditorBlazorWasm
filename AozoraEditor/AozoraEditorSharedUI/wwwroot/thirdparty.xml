@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <?xml-stylesheet type="text/xsl" href="thirdparty.xslt"?>
 <licenses xmlns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/License/License.xsd">
-	<entry>
+	<entry repository="https://github.com/dotnet/">
 		<name>.NET</name>
-		<info>.NET / Blazor / Maui他.NET関係</info>
+		<info>.NET / Blazor / Maui他.NET関係。</info>
 		<summary>MIT License - Copyright (c) .NET Foundation and Contributors</summary>
-		<license>
-<![CDATA[The MIT License (MIT)
+		<license><![CDATA[The MIT License (MIT)
 
 Copyright (c) .NET Foundation and Contributors
 
@@ -31,12 +30,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]>
 		</license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/microsoft/vscode">
 		<name>Visual Studio Code</name>
 		<info>クローン元エディタ。CSSやデザイン参考など。</info>
 		<summary>MIT License - Copyright (c) 2015 - present Microsoft Corporation</summary>
-		<license>
-<![CDATA[MIT License
+		<license><![CDATA[MIT License
 
 Copyright (c) 2015 - present Microsoft Corporation
 
@@ -58,12 +56,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]></license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/microsoft/monaco-editor">
 		<name>Monaco Editor</name>
-		<info>VS Codeと同じエディタエンジン</info>
+		<info>Visual Studio Codeと同じエディタエンジン。</info>
 		<summary>MIT License - Copyright (c) 2016 - present Microsoft Corporation</summary>
-		<license>
-<![CDATA[The MIT License (MIT)
+		<license><![CDATA[The MIT License (MIT)
 
 Copyright (c) 2016 - present Microsoft Corporation
 
@@ -85,12 +82,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]></license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/serdarciplak/BlazorMonaco">
 		<name>BlazorMonaco</name>
-		<info>Monaco Editor用のBlazorコンポーネント</info>
+		<info>Monaco Editor用のBlazorコンポーネント。</info>
 		<summary>MIT License - Copyright (c) 2020 serdarciplak</summary>
-		<license>
-<![CDATA[ MIT License
+		<license><![CDATA[ MIT License
 
 Copyright (c) 2020 serdarciplak
 
@@ -113,12 +109,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]>
 		</license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/aozorahack">
 		<name>青空文庫 / aozorahack</name>
-		<info>このプロジェクトには青空文庫・aozorahackの成果物を利用しています</info>
+		<info>このプロジェクトは青空文庫・aozorahackの成果物を利用しています。</info>
 		<summary>CC0</summary>
-		<license>
-			<![CDATA[CC0 1.0 Universal
+		<license><![CDATA[CC0 1.0 Universal
 
 Statement of Purpose
 
@@ -237,9 +232,9 @@ For more information, please see
 ]]>
 		</license>
 	</entry>
-	<entry>
+	<entry repository="https://gitlab.com/fj68/aozora-format">
 		<name>縦書きで読む青空文庫</name>
-		<info>縦書き用CSS</info>
+		<info>縦書き表示用CSS。</info>
 		<summary>MIT License - Copyright (c) 2021 Shintaro K</summary>
 		<license>
 <![CDATA[MIT License
@@ -264,9 +259,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]></license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/google/material-design-icons">
 		<name>Material Symbols</name>
-		<info>アイコン用フォント</info>
+		<info>アイコン用フォント。</info>
 		<summary>Apache License Version 2.0</summary>
 		<license>
 			<![CDATA[
@@ -473,9 +468,37 @@ SOFTWARE.]]></license>
    limitations under the License.
 ]]></license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/lukehaas/css-loaders">
+		<name>Single Element CSS Spinners</name>
+		<info>ローディング時のアニメーションCSS。</info>
+		<summary>MIT License - Copyright (c) 2014 Luke Haas</summary>
+		<license><![CDATA[The MIT License (MIT)
+
+Copyright (c) 2014 Luke Haas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+]]>
+			
+		</license>
+	</entry>
+	<entry repository="https://github.com/coverlet-coverage/coverlet">
 		<name>Coverlet</name>
-		<info>テスト関係のライブラリ</info>
+		<info>テスト関係のライブラリ。</info>
 		<summary>MIT License - Copyright (c) 2018 Toni Solarin-Sodara</summary>
 		<license>
 <![CDATA[The MIT License (MIT)
@@ -500,9 +523,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.]]></license>
 	</entry>
-	<entry>
+	<entry repository="https://github.com/xunit/xunit">
 		<name>xUnit.net</name>
-		<info>テスト関係のライブラリ</info>
+		<info>テスト関係のライブラリ。</info>
 		<summary>Apache License &amp; MIT License - Copyright (c) .NET Foundation and Contributors</summary>
 		<license>
 <![CDATA[Unless otherwise noted, the source code here is covered by the following license:
