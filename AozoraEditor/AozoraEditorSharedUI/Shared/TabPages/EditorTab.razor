@@ -64,10 +64,19 @@
 					var com = CommandEntry.FromMaterialSymbolOutlined("preview", "プレビュー");
 					com.Clicked += (_, _) =>
 					{
-						currentContent.SubPanelSwitchToPreview();
+						currentContent.SubPanelSwitchTo(SubPanel.SubPanelContents.Iframe);
 					};
 					PanelSwitchCommands.Add(com);
 				}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("snippet_folder", "スニペット一覧");
+					com.Clicked += (_, _) =>
+					{
+						currentContent.SubPanelSwitchTo(SubPanel.SubPanelContents.Snippets);
+					};
+					PanelSwitchCommands.Add(com);
+				}
+
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("close", "閉じる");
 					//com.IsEnabled = false;

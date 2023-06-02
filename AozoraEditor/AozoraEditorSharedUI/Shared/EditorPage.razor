@@ -2,7 +2,7 @@
 
 <SplitPage @ref="splitPage">
 	<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
-	<Right><SubPanel PreviewDocument="@PreviewHtml" /></Right>
+	<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
 </SplitPage>
 
 @code {
@@ -11,6 +11,8 @@
 
 	[Parameter]
 	public string OriginalText { get; set; } = string.Empty;
+
+	public SubPanel.SubPanelContents Selected { get; set; }
 
 	SplitPage? splitPage { get; set; }
 
@@ -36,10 +38,11 @@
 
 	public string PreviewHtml { get; set; } = @"<html><link href=""_content/AozoraEditorSharedUI/emoji/MaterialSymbols.css"" rel=""stylesheet"" /><body>プレビューの作成には<span class=""material-symbols-outlined"" style=""vertical-align:middle;"">play_arrow</span>を押してください。</body></html>";
 
-	public void SubPanelSwitchToPreview()
+	public void SubPanelSwitchTo(SubPanel.SubPanelContents content)
 	{
 		if (splitPage is null) return;
 		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		Selected = content;
 		StateHasChanged();
 	}
 
@@ -48,6 +51,7 @@
 		if (splitPage is null) return;
 		PreviewHtml = "<html><body><p>プレビュー作成中です<br />この間、UIがフリーズすることがあります。</p></body></html>";
 		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		Selected = SubPanel.SubPanelContents.Iframe;
 		StateHasChanged();
 		if (editor is null)
 		{

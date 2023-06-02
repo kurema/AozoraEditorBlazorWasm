@@ -19,171 +19,171 @@ div.keigakomi{padding-top: 0.5em;
 .underline_solid  {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/sen/bosen.png") repeat-x;
+    background: url("kentenbosen/after/sen/bosen.png") repeat-x;
     }
 
 .underline_double {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/sen/nijyubosen.png") repeat-x;
+    background: url("kentenbosen/after/sen/nijyubosen.png") repeat-x;
     }
 
 .underline_dotted {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/sen/sasen.png") repeat-x;
+    background: url("kentenbosen/after/sen/sasen.png") repeat-x;
     }
 
 .underline_dashed {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/sen/hasen.png") repeat-x;
+    background: url("kentenbosen/after/sen/hasen.png") repeat-x;
     }
 
 .underline_wave   {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/sen/namisen.png") repeat-x;
+    background: url("kentenbosen/after/sen/namisen.png") repeat-x;
     }
 
 .overline_solid  {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/sen/bosen.png") repeat-x;
+    background: url("kentenbosen/before/sen/bosen.png") repeat-x;
     }
 
 .overline_double {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/sen/nijyubosen.png") repeat-x;
+    background: url("kentenbosen/before/sen/nijyubosen.png") repeat-x;
     }
 
 .overline_dotted {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/sen/sasen.png") repeat-x;
+    background: url("kentenbosen/before/sen/sasen.png") repeat-x;
     }
 
 .overline_dashed {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/sen/hasen.png") repeat-x;
+    background: url("kentenbosen/before/sen/hasen.png") repeat-x;
     }
 
 .overline_wave   {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/sen/namisen.png") repeat-x;
+    background: url("kentenbosen/before/sen/namisen.png") repeat-x;
     }
 
 .sesame_dot {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/boten.png") repeat-x;
+    background: url("kentenbosen/before/ten/boten.png") repeat-x;
     }
 
 .white_sesame_dot {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/shirogoma.png") repeat-x;
+    background: url("kentenbosen/before/ten/shirogoma.png") repeat-x;
     }
 
 .black_circle {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/maru.png") repeat-x;
+    background: url("kentenbosen/before/ten/maru.png") repeat-x;
     }
 
 .white_circle {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/shiromaru.png") repeat-x;
+    background: url("kentenbosen/before/ten/shiromaru.png") repeat-x;
     }
 
 .black_up-pointing_triangle {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/kurosankaku.png") repeat-x;
+    background: url("kentenbosen/before/ten/kurosankaku.png") repeat-x;
     }
 
 .white_up-pointing_triangle {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/shirosankaku.png") repeat-x;
+    background: url("kentenbosen/before/ten/shirosankaku.png") repeat-x;
     }
 
 .bullseye {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/nijyumaru.png") repeat-x;
+    background: url("kentenbosen/before/ten/nijyumaru.png") repeat-x;
     }
 
 .fisheye {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/jyanome.png") repeat-x;
+    background: url("kentenbosen/before/ten/jyanome.png") repeat-x;
     }
 
 .saltire {
     font-style: normal;
     padding: 7px 0 0;
-    background: url("css/kentenbosen/before/ten/batsu.png") repeat-x;
+    background: url("kentenbosen/before/ten/batsu.png") repeat-x;
     }
 
 
 .sesame_dot_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/boten.png") repeat-x;
+    background: url("kentenbosen/after/ten/boten.png") repeat-x;
 
     }
 
 .white_sesame_dot_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/shirogoma.png") repeat-x;
+    background: url("kentenbosen/after/ten/shirogoma.png") repeat-x;
     }
 
 .black_circle_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/maru.png") repeat-x;
+    background: url("kentenbosen/after/ten/maru.png") repeat-x;
     }
 
 .white_circle_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/shiromaru.png") repeat-x;
+    background: url("kentenbosen/after/ten/shiromaru.png") repeat-x;
     }
 
 .black_up-pointing_triangle_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/kurosankaku.png") repeat-x;
+    background: url("kentenbosen/after/ten/kurosankaku.png") repeat-x;
     }
 
 .white_up-pointing_triangle_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/shirosankaku.png") repeat-x;
+    background: url("kentenbosen/after/ten/shirosankaku.png") repeat-x;
     }
 
 .bullseye_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/nijyumaru.png") repeat-x;
+    background: url("kentenbosen/after/ten/nijyumaru.png") repeat-x;
     }
 
 .fisheye_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/jyanome.png") repeat-x;
+    background: url("kentenbosen/after/ten/jyanome.png") repeat-x;
     }
 
 .saltire_after {
     font-style: normal;
     padding: 0 0 7px 0;
-    background: url("css/kentenbosen/after/ten/batsu.png") repeat-x;
+    background: url("kentenbosen/after/ten/batsu.png") repeat-x;
     }
 
 .subscript { font-size: small; }

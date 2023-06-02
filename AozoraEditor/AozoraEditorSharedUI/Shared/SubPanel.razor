@@ -1,11 +1,25 @@
-﻿
-<iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewDocument"></iframe>
+﻿<iframe class="@(Selected == SubPanelContents.Iframe? "":"hidden")" style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewDocument"></iframe>
 
-<article style="overflow:scroll;">
+<article class="subpanel_body" style="overflow:scroll;">
+	@switch (Selected)
+	{
+		case SubPanelContents.Snippets:
+			<SnippetsList />
+			break;
+	}
+
 </article>
 
 @code {
-	public RenderFragment? Content { get; set; }
+	public enum SubPanelContents
+	{
+		Iframe, Snippets,
+	}
+
+	[Parameter]
+	public SubPanelContents Selected { get; set; }
+
+	//public RenderFragment? Content { get; set; }
 
 	[Parameter]
 	public string PreviewDocument { get; set; } = "<html><body>空のプレビュー画面</body></html>";

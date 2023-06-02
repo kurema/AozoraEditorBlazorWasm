@@ -52,7 +52,6 @@
 					grid-row:1/2;
 					grid-column:1/2;
 					margin-left:10px;
-					margin-top:10px;
 					}
 
 					.entry > .comment{
@@ -91,6 +90,24 @@
 					transform: rotate(180deg);
 					}
 
+					.entry > details.license[open] > summary {
+					margin-bottom:10px;
+					}
+
+					@media (prefers-color-scheme: dark) {
+					body {
+					background-color: black;
+					color: white;
+					}
+
+					.entry > .top_background{
+					background:#252525;
+					}
+
+					.entry > .repository_link{
+					background-color: black;
+					}
+					}
 				</style>
 				<h1>サードパーティーライセンス</h1>
 				<p>このアプリには以下の成果物が含まれています。</p>
@@ -117,6 +134,8 @@
 						</details>
 					</div>
 				</xsl:for-each>
+				<p>このファイルにはアプリのテーマ設定が反映されません。</p>
+				<p>このファイルはXSLTで変換されたXMLファイルです。XML Schemaで定義されています。</p>
 			</body>
 		</html>
 	</xsl:template>

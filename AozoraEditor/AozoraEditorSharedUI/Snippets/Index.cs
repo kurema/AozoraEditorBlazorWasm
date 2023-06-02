@@ -56,16 +56,22 @@ public partial class Index
 		string ArgTypeToString(int i)
 		{
 			if (i < 0 || i >= argTypes.Count) return string.Empty;
-			return argTypes[i] switch
-			{
-				ArgType.Alphabet => "半角英数",
-				ArgType.Any => "テキスト",
-				ArgType.NumberFull => "全角数字",
-				ArgType.NumberHalf => "半角数字",
-				ArgType.Ref => "テキスト",
-				_ => "エラー",
-			};
+			return ArgTypeToNormalText(argTypes[i]);
 		}
+	}
+
+	public static string ArgTypeToNormalText(ArgType at)
+	{
+		return at switch
+		{
+			ArgType.Alphabet => "半角英数",
+			ArgType.Any => "テキスト",
+			ArgType.NumberFull => "全角数字",
+			ArgType.NumberHalf => "半角数字",
+			ArgType.Ref => "テキスト",
+			_ => "エラー",
+		};
+
 	}
 
 	public static Content[] ApplyTemplates(Schema.Snippets snippets, IDictionary<string, Template> templates, ReadOnlyDictionary<string, string> keyWords)

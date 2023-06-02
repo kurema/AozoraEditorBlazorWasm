@@ -1,0 +1,28 @@
+﻿@if (Snippets.Loader.ContentIndex?.ContentsFlat is not null)
+{
+	foreach (var item in Snippets.Loader.ContentIndex.ContentsFlat.ToArray())
+	{
+		<div>
+			<p>@((MarkupString)ItemToHtmlText(item))</p>
+			<a target="_blank" href="@(item.DocumentLink)">@(TabControl.GetMaterialSymbolOutlined("link"))</a>
+			@if(item.Obsolete == true)
+			{
+				<p>この要素は現在使われていません。</p>
+			}
+		</div>
+	}
+}
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await Snippets.Loader.LoadFromResouceAsync();
+		await base.OnInitializedAsync();
+	}
+
+	string ItemToHtmlText(Snippets.Schema.Content content)
+	{
+		var text = string.Join("<br />", content.Text.Select(a => System.Net.WebUtility.HtmlEncode(a)));
+		return Snippets.Index.InterpolateFinal(text, n => Snippets.Index.ArgTypeToNormalText(content.ArgTypes[n]), "<b>", "</b>");
+	}
+}
