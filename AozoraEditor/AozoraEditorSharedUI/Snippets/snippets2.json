@@ -633,6 +633,32 @@
     },
     {
       "labels": {
+        "jp_fully_roman": [""],
+        "jp": [ "rubi" ],
+        "en": [ "ruby" ],
+        "short_jp": [ "rb" ]
+      },
+      "text": [ "《{0}》" ],
+      "arg_types": [ "any" ],
+      "templates": [ "default" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby",
+      "comment": "ルビ系二つは間を開けてから追加したので何かミスがあるかも知れない。"
+    },
+    {
+      "labels": {
+        "jp_fully_roman": [ "" ],
+        "jp": [ "rubiKugiri" ],
+        "en": [ "rubySplit" ],
+        "short_en": [ "rbSpl" ],
+        "short_jp": [ "rbKgr" ]
+      },
+      "text": [ "｜{0}《{1}》" ],
+      "arg_types": [ "any", "any" ],
+      "templates": [ "default" ],
+      "documentLink": "https://www.aozora.gr.jp/annotation/etc.html#ruby"
+    },
+    {
+      "labels": {
         "jp_fully_roman": [ "chuukiTsuki", "noChuukiTsuki" ],
         "jp": [ "chuki" ],
         "short_jp": [ "cuk" ],

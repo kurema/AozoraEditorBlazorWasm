@@ -21,7 +21,7 @@
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
     user-select: none;
-    vertical-align: central;
+    vertical-align: middle;
 }
 
 /*.material-symbols-outlined {

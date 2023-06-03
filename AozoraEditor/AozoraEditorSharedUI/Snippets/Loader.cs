@@ -20,8 +20,7 @@ public static class Loader
 
 	public static (Schema.Snippets, Index) LoadFromResouce()
 	{
-		using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets2.json");
-		if (stream is null) throw new Exception("Loading resouce failed!");
+		using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets2.json") ?? throw new Exception("Loading resouce failed!");
 		using var sr = new StreamReader(stream);
 		_Content = Schema.Snippets.FromJson(sr.ReadToEnd());
 		ContentIndex = new Index(_Content);
