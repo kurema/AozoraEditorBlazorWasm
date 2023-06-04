@@ -2,7 +2,7 @@
 
 <SplitPage @ref="splitPage">
 	<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
-	<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
+	<Right><CascadingValue Value="this"><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></CascadingValue></Right>
 </SplitPage>
 
 @code {

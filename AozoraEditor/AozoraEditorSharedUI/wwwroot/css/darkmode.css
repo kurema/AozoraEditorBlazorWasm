@@ -1,8 +1,10 @@
 body {
-    background-color: black;
+    /*    background-color: black;
     color: white;
+*/
+    filter:invert(100%) hue-rotate(180deg);
 }
 
 .title {
-    color: white;
+/*    color: white;*/
 }

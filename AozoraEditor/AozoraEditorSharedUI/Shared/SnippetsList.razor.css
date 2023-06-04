@@ -1,19 +1,20 @@
 .snippet_button {
     margin: 10px;
-    background: white;
-    border: 1px solid #ddd;
+    background: var(--aozora-sub-snippets-button-background);
+    border: 1px solid var(--aozora-sub-snippets-button-border-color);
     padding: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    color: var(--aozora-theme-text-color);
 }
 
 .snippet_header {
     display: grid;
     grid-template-columns: 1fr auto auto auto;
-    border-bottom: 1px solid #ddd;
-    background: #f5f5f5;
+    border-bottom: 1px solid var(--aozora-sub-snippets-header-border-color);
+    background: var(--aozora-sub-snippets-header-background);
 }
 
     .snippet_header .snippet_header_title {
@@ -26,7 +27,7 @@
     }
 
         .snippet_header > .snippet_header_info.snippet_header_info_on {
-            background: #f5f5f5;
+            background: var(--aozora-sub-snippets-header-background);
         }
 
     .snippet_header > .snippet_header_run_all {
@@ -36,15 +37,21 @@
     .snippet_header > input {
         grid-column: 4/5;
         border: 0px solid transparent;
-        border-left: 1px solid #ddd;
+        border-left: 1px solid var(--aozora-sub-snippets-header-border-color);
+        background: var(--aozora-sub-background);
     }
 
+        .snippet_header > input::placeholder {
+            color: var(--aozora-sub-snippets-header-input-placeholder-color);
+        }
 
-.snippet_info {
-    margin: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-}
+
+        .snippet_info {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid var(--aozora-sub-snippets-info-border-color);
+            background: var(--aozora-sub-snippets-info-background);
+        }
 
 .snippet {
     display: grid;
@@ -52,15 +59,15 @@
     grid-template-rows: auto auto auto;
     align-items: center;
     margin: 20px;
-    box-shadow: #8888 0 2px 10px;
-    border: 1px solid #ddd;
+    box-shadow: var(--aozora-sub-snippets-entry-box-shadow);
+    border: 1px solid var(--aozora-sub-snippets-entry-border-color);
 }
 
     .snippet > .snippet_background {
         grid-row: 1/2;
         grid-column: 1/5;
         height: 100%;
-        background: #f5f5f5;
+        background: var(--aozora-sub-snippets-entry-header-background);
         width: 100%;
     }
 
@@ -75,7 +82,7 @@
         }
 
     .snippet > .snippet_document_link {
-        color: black;
+        color: var(--aozora-theme-text-color);
         text-decoration: none;
         grid-row: 1/2;
         grid-column: 3/4;
@@ -120,14 +127,14 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto auto;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid var(--aozora-sub-snippets-entry-preview-border-color);
     }
 
         .snippet > .snippet_preview > .snippet_preview_original {
             grid-row: 1/2;
             grid-column: 1/2;
             white-space: pre;
-            background: #f5f5f5;
+            background: var(--aozora-sub-snippets-entry-preview-original-background);
             padding: 5px;
         }
 
@@ -147,6 +154,6 @@
         .snippet > .snippet_preview > .snippet_preview_error {
             grid-row: 2/3;
             grid-column: 1/3;
-            background: #ffd5d5;
+            background: var(--aozora-sub-snippets-entry-preview-error-background);
             padding: 5px;
         }

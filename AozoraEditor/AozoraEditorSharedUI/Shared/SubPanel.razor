@@ -4,7 +4,9 @@
 	@switch (Selected)
 	{
 		case SubPanelContents.Snippets:
-			<SnippetsList />
+			<CascadingValue Value="Parent">
+				<SnippetsList />
+			</CascadingValue>
 			break;
 	}
 
@@ -23,4 +25,7 @@
 
 	[Parameter]
 	public string PreviewDocument { get; set; } = "<html><body>空のプレビュー画面</body></html>";
+
+	[CascadingParameter]
+	public EditorPage? Parent { get; private set; }
 }
