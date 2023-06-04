@@ -43,5 +43,6 @@ public class UnitTest1
 		Assert.Equal("(*‰ü’š*)", Loader.Content.Contents[0].Text[0]);
 		Assert.Equal("{content[0]}", Loader.ContentIndex?.Templates["default"].Text[0]);
 		//For break point debugging.
+		//var f= Loader.ContentIndex.ContentsFlat.ToArray().Where(a=>a.Labels.AllValues.Any(a=>a.Text.Contains("Hanni"))).ToArray();
 	}
 }

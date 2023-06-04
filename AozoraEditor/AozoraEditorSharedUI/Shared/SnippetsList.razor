@@ -1,6 +1,7 @@
 ﻿<div class="snippet_header">
 	<p class="snippet_header_title">スニペット一覧</p>
-	<div class="snippet_header_info @(ShowInfo?"snippet_header_info_on":"snippet_header_info_off")" @onclick="_=>{ShowInfo=!ShowInfo;StateHasChanged();}" title="@InfoText">@(TabControl.GetMaterialSymbolOutlined("info"))</div>
+	<div class="snippet_header_info snippet_button @(ShowInfo?"snippet_header_info_on":"snippet_header_info_off")" @onclick="_=>{ShowInfo=!ShowInfo;StateHasChanged();}" title="@InfoText">@(TabControl.GetMaterialSymbolOutlined("info"))</div>
+	<div class="snippet_header_run_all snippet_button" @onclick="_=>{RunPreviewAll();StateHasChanged();}" title="全てのプレビューを表示">@(TabControl.GetMaterialSymbolOutlined("play_arrow"))</div>
 	<input @bind="SearchWord" placeholder="検索" />
 </div>
 
@@ -29,12 +30,13 @@
 			<p class="snippet_text">@((MarkupString)ItemToHtmlText(item))</p>
 			@if (item.DocumentLink is not null)
 			{
-				<a class="snippet_document_link" title="公式ドキュメント" target="_blank" href="@(item.DocumentLink)">@(TabControl.GetMaterialSymbolOutlined("link"))</a>
+				<a class="snippet_document_link snippet_button" title="公式ドキュメント" target="_blank" href="@(item.DocumentLink)">@(TabControl.GetMaterialSymbolOutlined("link"))</a>
 			}
 			@if (item.Obsolete == true)
 			{
-				<p class="snippet_obsolete" title="この要素は現在使われていません。">@(TabControl.GetMaterialSymbolOutlined("warning"))</p>
+				<p class="snippet_obsolete snippet_button" title="この要素は現在使われていません。">@(TabControl.GetMaterialSymbolOutlined("warning"))</p>
 			}
+			<p class="snippet_run_button snippet_button" @onclick="_=>RunPreview(item)">@(TabControl.GetMaterialSymbolOutlined("play_arrow"))</p>
 			<div class="snippet_labels">
 				<table>
 					@ListToTableHtml(item.Labels.JpFullyRoman,new List<string>(), "全文")
@@ -42,119 +44,22 @@
 					@ListToTableHtml(item.Labels.En,item.Labels.ShortEn, "英語")
 				</table>
 			</div>
+			@if (Previews.TryGetValue(item, out var preview))
+			{
+				<div class="snippet_preview">
+					<div class="snippet_preview_original">@(preview.OriginalText)</div>
+					<div class="snippet_preview_result">
+						<iframe srcdoc="@(preview.HtmlFull)" sandbox="allow-same-origin" height="75" />
+					</div>
+					@if (!string.IsNullOrWhiteSpace(preview.Error))
+					{
+						<div class="snippet_preview_error">@(preview.Error)</div>
+					}
+				</div>
+			}
 		</div>
 	}
 }
-
-<style>
-	.snippet_header {
-		display: grid;
-		grid-template-columns: 1fr auto auto;
-		border-bottom: 1px solid #ddd;
-		background: #f5f5f5;
-	}
-
-		.snippet_header .snippet_header_title {
-			grid-column: 1/2;
-			font-weight: bold;
-		}
-
-		.snippet_header > .snippet_header_info {
-			grid-column: 2/3;
-			margin: 10px;
-			background: white;
-			border: 1px solid #ddd;
-			padding: 5px;
-		}
-
-		.snippet_header > input {
-			grid-column: 3/4;
-			border: 0px solid transparent;
-			border-left: 1px solid #ddd;
-		}
-
-			.snippet_header > input.snippet_header_info_on {
-				background: #f5f5f5;
-			}
-
-	.snippet_info {
-		margin: 20px;
-		padding: 10px;
-		border: 1px solid #ddd;
-	}
-
-	.snippet {
-		display: grid;
-		grid-template-columns: 1fr auto auto;
-		grid-template-rows: auto auto auto;
-		align-items: center;
-		margin: 20px;
-		box-shadow: #8888 0 2px 10px;
-		border: 1px solid #ddd;
-	}
-
-		.snippet > .snippet_background {
-			grid-row: 1/2;
-			grid-column: 1/4;
-			height: 100%;
-			background: #f5f5f5;
-			width: 100%;
-		}
-
-		.snippet > .snippet_text {
-			grid-row: 1/2;
-			grid-column: 1/2;
-			margin-left: 10px;
-		}
-
-			.snippet > .snippet_text .snippet_arg {
-				text-decoration: underline;
-			}
-
-		.snippet > .snippet_document_link {
-			color: black;
-			text-decoration: none;
-			grid-row: 1/2;
-			grid-column: 3/4;
-			margin: 10px;
-			background: white;
-			border: 1px solid #ddd;
-			padding: 5px;
-		}
-
-		.snippet > .snippet_obsolete {
-			grid-row: 1/2;
-			grid-column: 2/3;
-			margin: 10px;
-			background: white;
-			border: 1px solid #ddd;
-			padding: 5px;
-		}
-
-		.snippet > .snippet_labels {
-			grid-row: 2/3;
-			grid-column: 1/4;
-			overflow: scroll;
-		}
-
-			.snippet > .snippet_labels > table {
-				width: 100%;
-			}
-
-				.snippet > .snippet_labels > table tr {
-					width: 100%;
-				}
-
-				.snippet > .snippet_labels > table th {
-					text-overflow: ellipsis;
-					overflow: hidden;
-					white-space: nowrap;
-				}
-
-				.snippet > .snippet_labels > table td {
-				}
-
-</style>
 
 @code {
 	string SearchWord { get; set; } = string.Empty;
@@ -195,5 +100,57 @@
 			return @<tr><th style="width: @(w1)%;">@title</th><td style="width: @(w1+w2*2)%;" colspan="3">@join(strings)</td></tr>;
 		}
 		return @<tr><th style="width: @(w1)%;">@title</th><td style="width: @(w2)%;">@join(strings)</td><th style="width: @(w1)%;">@(title)省略</th><td style="width: @(w2)%;">@join(strings2)</td></tr>;
+	}
+
+	void RunPreview(Snippets.Schema.Content content)
+	{
+		if (Previews.ContainsKey(content)) { Previews.Remove(content); }
+		else Previews.Add(content, new PreviewEntry(content));
+		StateHasChanged();
+	}
+
+	void RunPreviewAll()
+	{
+		if (Snippets.Loader.ContentIndex?.ContentsFlat is null) return;
+		foreach (var item in Snippets.Loader.ContentIndex.ContentsFlat.ToArray())
+		{
+			if (Previews.ContainsKey(item)) continue;
+			Previews.Add(item, new PreviewEntry(item));
+		}
+		StateHasChanged();
+	}
+
+	Dictionary<Snippets.Schema.Content, PreviewEntry> Previews = new();
+
+	class PreviewEntry
+	{
+		public string OriginalText { get; private set; } = string.Empty;
+		public string Html { get; private set; } = string.Empty;
+		public string HtmlFull => $@"<html><head><link rel=""stylesheet"" type=""text/css"" href=""_content/AozoraEditorSharedUI/css/aozora.css"" /><link rel=""stylesheet"" type=""text/css"" href=""_content/AozoraEditorSharedUI/css/zero-margin.css"" /></head><body>{Html}</body></head>";
+		public string Error { get; private set; } = string.Empty;
+
+		public PreviewEntry(Snippets.Schema.Content content)
+		{
+			var text = $"1行目\n{string.Join('\n', content.Text.Select(a => string.IsNullOrEmpty(a) ? "本文" : a))}テキスト\n";
+			text = Snippets.Index.InterpolateFinal(text, n => Snippets.Index.ArgTypeToSampleText(content.ArgTypes[n], n + 1), string.Empty, string.Empty);
+
+			var js = new Aozora.JstreamString(text);
+			var output = new Aozora.Helpers.OutputString();
+			var message = new Aozora.Helpers.OutputString();
+			var parser = new Aozora.Aozora2Html(js, output, message) { Section = Aozora.Aozora2Html.SectionKind.tail, ExtendedOption = new() { UseGeneralImage = true } };
+			try
+			{
+				while (true) { if (!parser.Parse()) break; }
+			}
+			catch (Aozora.Exceptions.TerminateException)
+			{
+			}
+			catch
+			{
+			}
+			OriginalText = text;
+			Html = output.ToString();
+			Error = message.ToString();
+		}
 	}
 }

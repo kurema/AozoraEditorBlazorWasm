@@ -22,6 +22,7 @@
 					</MenuItem>
 					<MenuItem Title="プレビュー">
 						<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
+						<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
 					</MenuItem>
 				</MenuItem>
 				<MenuItem Title="ヘルプ">
@@ -241,6 +242,7 @@
 		get
 		{
 			yield return PreviewVertical ? "_content/AozoraEditorSharedUI/css/aozora-v.css" : "_content/AozoraEditorSharedUI/css/aozora.css";
+			if (PreviewNoMargin) yield return "_content/AozoraEditorSharedUI/css/zero-margin.css";
 			if (Theme?.SelectedTheme?.AdditionalCss is not null)
 			{
 				foreach (var item in Theme.SelectedTheme.AdditionalCss) yield return item;
@@ -248,7 +250,8 @@
 		}
 	}
 
-	public bool PreviewVertical { get; set; }
+	public bool PreviewVertical { get; set; } = false;
+	public bool PreviewNoMargin { get; set; } = false;
 
 	ICommandEntry[]? _CommonCommands;
 
@@ -258,22 +261,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 

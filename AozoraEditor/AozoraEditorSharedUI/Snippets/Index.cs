@@ -71,8 +71,21 @@ public partial class Index
 			ArgType.Ref => "テキスト",
 			_ => "エラー",
 		};
-
 	}
+	public static string ArgTypeToSampleText(ArgType at, int? n)
+	{
+		string ns = (n is null ? string.Empty : n.Value.ToString());
+		return at switch
+		{
+			ArgType.Alphabet => $"Abc{ns}",
+			ArgType.Any => $"テキスト{ns}",
+			ArgType.NumberFull => "５",
+			ArgType.NumberHalf => "4",
+			ArgType.Ref => $"テキスト{ns}",
+			_ => "エラー",
+		};
+	}
+
 
 	public static Content[] ApplyTemplates(Schema.Snippets snippets, IDictionary<string, Template> templates, ReadOnlyDictionary<string, string> keyWords)
 	{
@@ -301,6 +314,7 @@ public partial class Index
 
 		var span = text.AsSpan();
 		int maxNum = 0;
+		int innerMaxNum = 0;
 		bool start = true;
 		Dictionary<string, int> maxNumCache = new();
 		while (true)
@@ -340,7 +354,7 @@ public partial class Index
 			else if (char.IsNumber(command[0]))
 			{
 				if (!int.TryParse(command, out int num)) throw new Exception($"Invalid: {{{command}}}");
-				int numShifted = num + (shiftNum ? shiftNumCnt : 0);
+				int numShifted = num + (shiftNum ? shiftNumCnt + innerMaxNum : 0);
 				try { result = argProvider.Invoke(numShifted, callDepth); }
 				catch (Exception e) { throw new Exception($"Invalid: {{{command}}}", e); }
 				maxNum = Math.Max(maxNum, num + 1);
@@ -366,6 +380,7 @@ public partial class Index
 				int maxNumTemp = maxNumCache.TryGetValue(commandString, out int value) ? value : maxNum;
 				maxNumCache[commandString] = maxNumTemp;
 				maxNum += InterpolateAppend(sb, result, argProvider, dicProvider, simpleProvider, argTypes, shiftNum, autoCap, !capFirst, maxNumTemp, callDepth + 1);
+				innerMaxNum = maxNum;
 				continue;
 			}
 			else
