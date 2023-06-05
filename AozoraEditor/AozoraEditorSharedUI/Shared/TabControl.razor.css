@@ -5,6 +5,7 @@
     min-height: 0;
     grid-template-columns: auto 1fr;
     color: var(--aozora-theme-text-color);
+    overflow:hidden;
 }
 
     .aozora_editor_top:not(.aozoa_editor_top_show_output) {

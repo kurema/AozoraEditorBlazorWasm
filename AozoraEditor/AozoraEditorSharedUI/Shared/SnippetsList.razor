@@ -49,7 +49,7 @@
 				<div class="snippet_preview">
 					<div class="snippet_preview_original">@(preview.OriginalText)</div>
 					<div class="snippet_preview_result">
-						<iframe srcdoc="@(preview.GetHtmleFull(Parent?.Parent?.Theme?.SelectedTheme?.AdditionalCss))" sandbox="allow-same-origin" height="75" />
+						<iframe srcdoc="@(preview.GetHtmleFull(Parent?.Parent?.Theme?.SelectedTheme?.GetHeaderLinks()))" sandbox="allow-same-origin" height="75" />
 					</div>
 					@if (!string.IsNullOrWhiteSpace(preview.Error))
 					{
@@ -133,9 +133,9 @@
 		public string HtmlFull => $@"<html><head><link rel=""stylesheet"" type=""text/css"" href=""_content/AozoraEditorSharedUI/css/aozora.css"" /><link rel=""stylesheet"" type=""text/css"" href=""_content/AozoraEditorSharedUI/css/zero-margin.css"" /></head><body>{Html}</body></head>";
 		public string Error { get; private set; } = string.Empty;
 
-		public string GetHtmleFull(IEnumerable<string>? css)
+		public string GetHtmleFull(string? cssLinks)
 		{
-			var cssLinks = (css is null ? string.Empty : string.Join('\n', css.Select(a => $@"<link rel=""stylesheet"" type=""text/css"" href=""{a}"" />")));
+			cssLinks = cssLinks ?? string.Empty;
 
 			return $@"
 <html>
@@ -145,7 +145,7 @@
 {cssLinks}
   </head>
   <body>
-			{Html}
+		{Html}
   </body>
 </html>																																																	</head>
 ";
@@ -159,7 +159,14 @@
 			var js = new Aozora.JstreamString(text);
 			var output = new Aozora.Helpers.OutputString();
 			var message = new Aozora.Helpers.OutputString();
-			var parser = new Aozora.Aozora2Html(js, output, message) { Section = Aozora.Aozora2Html.SectionKind.tail, ExtendedOption = new() { UseGeneralImage = true } };
+			var parser = new Aozora.Aozora2Html(js, output, message) { Section = Aozora.Aozora2Html.SectionKind.tail,
+					Template = new Aozora.Helpers.TemplateBasic(),
+					ExtendedOption = new()
+					{
+						UseGeneralImage = true,
+						WarnUnknownCommand = true,
+					}
+			};
 			try
 			{
 				while (true) { if (!parser.Parse()) break; }

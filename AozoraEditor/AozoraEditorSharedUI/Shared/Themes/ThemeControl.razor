@@ -1,10 +1,12 @@
 ﻿@(SelectedTheme?.Fragment)
 
 @code {
-	public record ThemeEntry(string Title, string Key, RenderFragment Fragment, string MonacoTheme)
-	{
-		public IEnumerable<string> AdditionalCss { get; init; } = Array.Empty<string>();
-	}
+    public record ThemeEntry(string Title, string Key, RenderFragment Fragment, string MonacoTheme)
+    {
+        public IEnumerable<string> AdditionalCss { get; init; } = Array.Empty<string>();
+
+        public string GetHeaderLinks() => string.Join('\n', AdditionalCss.Select(a => $@"<link rel=""stylesheet"" type=""text/css"" href=""{a}"" />"));
+    }
 
 	private ThemeEntry _selectedTheme;
 	public ThemeEntry SelectedTheme

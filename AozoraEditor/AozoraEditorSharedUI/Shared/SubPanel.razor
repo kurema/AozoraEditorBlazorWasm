@@ -1,6 +1,6 @@
-﻿<iframe class="@(Selected == SubPanelContents.Iframe? "":"hidden")" style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewDocument"></iframe>
+﻿<iframe class="@(Selected == SubPanelContents.Iframe? string.Empty:"hidden")" style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewDocument"></iframe>
 
-<article class="subpanel_body" style="overflow:scroll;">
+<article class="subpanel_body @(Selected == SubPanelContents.Iframe? "hidden":string.Empty)" style="overflow:scroll;">
 	@switch (Selected)
 	{
 		case SubPanelContents.Snippets:

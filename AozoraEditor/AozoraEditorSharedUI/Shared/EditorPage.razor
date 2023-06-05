@@ -36,7 +36,7 @@
 
 	private MonacoEditorAozora? editor;
 
-	public string PreviewHtml { get; set; } = @"<html><link href=""_content/AozoraEditorSharedUI/emoji/MaterialSymbols.css"" rel=""stylesheet"" /><body>プレビューの作成には<span class=""material-symbols-outlined"" style=""vertical-align:middle;"">play_arrow</span>を押してください。</body></html>";
+	public string PreviewHtml { get; set; } = $@"<html><head><link href=""_content/AozoraEditorSharedUI/emoji/MaterialSymbols.css"" rel=""stylesheet"" /><link href=""_content/AozoraEditorSharedUI/css/preview-default.css"" rel=""stylesheet"" /></head><body><div class=""top_message"">プレビューの作成には<span class=""material-symbols-outlined"" style=""vertical-align:middle;"">play_arrow</span>を押してください。</div></body></html>";
 
 	public void SubPanelSwitchTo(SubPanel.SubPanelContents content)
 	{
@@ -68,7 +68,13 @@
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,
 				UseUnicodeEmbedGaiji = true,
-			}; ;
+				Template = new Aozora.Helpers.TemplateBasic(),
+				ExtendedOption = new()
+				{
+					UseGeneralImage = true,
+					WarnUnknownCommand = true,
+				}
+			};
 		try
 		{
 			await Task.Run(() => aozora.Process());
