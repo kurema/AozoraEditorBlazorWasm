@@ -6,7 +6,7 @@ html, body {
 
 body {
     display: flex;
-    background: white;
+    background: #E8E8E8;
     justify-content: center;
     align-items: center;
 }
@@ -15,16 +15,18 @@ body {
     border: 1px solid #888;
     box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
     padding: 10px;
+    background: white;
 }
 
 @media (prefers-color-scheme: dark) {
     body {
-        background: black;
+        background: #282828;
         color: white;
     }
 
     .top_message {
         border: 1px solid #888;
         box-shadow: none;
+        background: black;
     }
 }

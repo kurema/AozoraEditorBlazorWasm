@@ -28,6 +28,7 @@
 		ThemeEntries = new() {
 			new ThemeEntry("ライト","Light",@<LightTheme />,"aozora-theme"),
 			new ThemeEntry("ダーク","Dark",@<DarkTheme />,"aozora-theme-dark"){ AdditionalCss=new string[]{"_content/AozoraEditorSharedUI/css/darkmode.css" } },
+			new ThemeEntry("ハイコントラスト","HighContrast",@<HighContrast />,"aozora-theme"),
 		};
 		_selectedTheme = ThemeEntries[0];
 	}

@@ -58,6 +58,7 @@
 					grid-row:2/3;
 					grid-column:1/3;
 					margin-left:10px;
+					overflow:scroll;
 					}
 
 					.entry > details.license {
@@ -67,6 +68,8 @@
 					<!--background:#f5f5f5;-->
 					border-top:1px solid #ddd;
 					padding:10px;
+					word-break:break-word;
+					overflow:scroll;
 					}
 
 					.entry > details.license > summary {
