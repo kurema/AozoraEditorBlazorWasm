@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Shared\LeftPanels\" />
     <Folder Include="wwwroot\css\kentenbosen\" />
   </ItemGroup>
 

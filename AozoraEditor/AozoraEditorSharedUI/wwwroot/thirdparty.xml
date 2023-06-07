@@ -106,8 +106,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.]]>
-		</license>
+SOFTWARE.]]></license>
 	</entry>
 	<entry repository="https://github.com/aozorahack">
 		<name>青空文庫 / aozorahack</name>
@@ -229,15 +228,13 @@ Affirmer's express Statement of Purpose.
 
 For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
-]]>
-		</license>
+]]></license>
 	</entry>
 	<entry repository="https://gitlab.com/fj68/aozora-format">
 		<name>縦書きで読む青空文庫</name>
 		<info>縦書き表示用CSS。</info>
 		<summary>MIT License - Copyright (c) 2021 Shintaro K</summary>
-		<license>
-<![CDATA[MIT License
+		<license><![CDATA[MIT License
 
 Copyright (c) 2021 Shintaro K
 
@@ -263,8 +260,7 @@ SOFTWARE.]]></license>
 		<name>Material Symbols</name>
 		<info>アイコン用フォント。</info>
 		<summary>Apache License Version 2.0</summary>
-		<license>
-			<![CDATA[
+		<license><![CDATA[
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -492,16 +488,13 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-]]>
-			
-		</license>
+]]></license>
 	</entry>
 	<entry repository="https://github.com/coverlet-coverage/coverlet">
 		<name>Coverlet</name>
 		<info>テスト関係のライブラリ。</info>
 		<summary>MIT License - Copyright (c) 2018 Toni Solarin-Sodara</summary>
-		<license>
-<![CDATA[The MIT License (MIT)
+		<license><![CDATA[The MIT License (MIT)
 
 Copyright (c) 2018 Toni Solarin-Sodara
 
@@ -527,8 +520,7 @@ SOFTWARE.]]></license>
 		<name>xUnit.net</name>
 		<info>テスト関係のライブラリ。</info>
 		<summary>Apache License &amp; MIT License - Copyright (c) .NET Foundation and Contributors</summary>
-		<license>
-<![CDATA[Unless otherwise noted, the source code here is covered by the following license:
+		<license><![CDATA[Unless otherwise noted, the source code here is covered by the following license:
 
 Copyright (c) .NET Foundation and Contributors
 All Rights Reserved

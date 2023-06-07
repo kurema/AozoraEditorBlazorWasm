@@ -5,7 +5,12 @@
 	{
 		case SubPanelContents.Snippets:
 			<CascadingValue Value="Parent">
-				<SnippetsList />
+				<AozoraEditor.Shared.Shared.SubPanels.SnippetsList />
+			</CascadingValue>
+			break;
+		case SubPanelContents.Dictionary:
+			<CascadingValue Value="Parent">
+				<AozoraEditor.Shared.Shared.SubPanels.DictionaryPage />
 			</CascadingValue>
 			break;
 	}
@@ -15,7 +20,7 @@
 @code {
 	public enum SubPanelContents
 	{
-		Iframe, Snippets,
+		Iframe, Snippets, Dictionary,
 	}
 
 	[Parameter]

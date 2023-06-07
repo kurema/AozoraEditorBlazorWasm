@@ -76,6 +76,14 @@
 					};
 					PanelSwitchCommands.Add(com);
 				}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("glyphs", "文字検索");
+					com.Clicked += (_, _) =>
+					{
+						currentContent.SubPanelSwitchTo(SubPanel.SubPanelContents.Dictionary);
+					};
+					PanelSwitchCommands.Add(com);
+				}
 
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("close", "閉じる");

@@ -1,0 +1,18 @@
+﻿<div>
+	@if (Aozora.GaijiChuki.Manager.Toc.RadicalCharacters is not null)
+	{
+		foreach (var item in Aozora.GaijiChuki.Manager.Toc.RadicalCharacters)
+		{
+			<div>@(item.Key)</div>
+		}
+	}
+</div>
+
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Run(() => Aozora.GaijiChuki.Manager.LoadContent());
+		await base.OnInitializedAsync();
+	}
+}
