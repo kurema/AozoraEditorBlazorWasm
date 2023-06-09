@@ -1,15 +1,47 @@
-﻿<div>
-	@if (Aozora.GaijiChuki.Manager.Toc.RadicalCharacters is not null)
-	{
-		foreach (var item in Aozora.GaijiChuki.Manager.Toc.RadicalCharacters)
+﻿<div class="aozora_dictionary_container">
+	<input data-bind="SearchText" />
+
+	<div class="aozora_dictionary_radicals">
+		@if (Aozora.GaijiChuki.Manager.Toc.RadicalCharacters is not null)
 		{
-			<div>@(item.Key)</div>
+			foreach (var item in Aozora.GaijiChuki.Manager.Toc.RadicalCharacters)
+			{
+				<div class="aozora_dictionary_radical">@(item.Key)</div>
+			}
 		}
-	}
+	</div>
+
+	<div>
+		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
+		{
+			@foreach (var item in Aozora.GaijiChuki.Manager.Instance.kanji.page)
+			{
+				<div>@(string.Join(" / ", item.radical.characters.character))</div>
+				<div>@(string.Join(" / ", item.radical.readings.reading))</div>
+			}
+		}
+	</div>
+
 </div>
+
+<style>
+	.aozora_dictionary_container {
+	}
+
+	.aozora_dictionary_radicals {
+		width:100%;
+		display: flex;
+		line-break: auto;
+	}
+
+	aozora_dictionary_radical {
+	}
+</style>
 
 
 @code {
+	string SearchText { get; set; } = string.Empty;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await Task.Run(() => Aozora.GaijiChuki.Manager.LoadContent());

@@ -182,6 +182,11 @@
 
 <style>
 	/* Global styles. */
+
+	button {
+		all: unset;
+	}
+
 	.FileInputButton {
 		display: inline-flex;
 		align-items: center;
@@ -261,22 +266,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
