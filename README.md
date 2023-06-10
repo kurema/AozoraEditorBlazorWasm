@@ -1,23 +1,34 @@
 # AozoraEditorBlazorWasm
 青空文庫ファイルエディタ (開発中)
 
-WinUIで開発するのは厳しそうなので、BlazorWasmで試してみることにしました。  
-色々実験しましたが、Blazor Wasm + Monaco Editorが良さげ。
+## スクリーンショット
+![image](https://github.com/kurema/AozoraEditorBlazorWasm/assets/10556974/952c26fb-69ce-4f93-b902-e536a5925140)
+![image](https://github.com/kurema/AozoraEditorBlazorWasm/assets/10556974/92c32335-fd4d-4179-a26d-c50984f219d2)
+![image](https://github.com/kurema/AozoraEditorBlazorWasm/assets/10556974/cfd8a993-9578-4cb3-97d9-94b52c219c71)
 
-現在開発中です。今後アーカイブ行きになる可能性が高いです。
+## 関連プロジェクト
+Powered by
+* .NET
+* Blazor Wasm
+* Monaco Editor
 
-## 目標
-* 行番号、HTML出力付き簡易エディタ
-* タブ機能 (低優先度)
-* プレビューを非表示・左右・上下分割切り替え
-* 「青空文庫・外字注記辞書【第八版】」索引＋PDFビュワー (PDF.js？)
-* 静的サイトとしてブラウザ上で動作 (保存はローカルのみ)
-* スマホでも動くが、デスクトップ想定
-* 必要な諸機能をライブラリ側に実装
-* Blazor絡みの学習
+```mermaid
+graph LR
+  A(aozorahack/aozora2html) -- 移植 --> B(kurema/aozora2htmlSharp)
+  C(kurema/JISX0213Table) -- 内蔵 --> B
+  D(青空文庫外字注記辞書) -- XML化 --> E(kurema/AozoraGaijiChukiXml)
+  E --> Z(本プロジェクト)
+  F(w3c/epubcheck) -- コード生成 --> G(kurema/EpubLibrary)
+  G --> Z
+  B --> Z
+  H(Monaco Editor) -- Blazor対応 --> I(serdarciplak/BlazorMonaco)
+  I --> Z
+```
 
-## やらないこと
-* 青空文庫ビュワー (BookViewer 3でやる)
-* サーバーサイドの処理
-* とにかくめんどくさいこと
-* ドキュメントの読み込み (青空文庫関連は結構多い)
+| プロジェクト | 派生元 | 説明 | 
+| -- | -- | -- |
+| [kurema/aozora2htmlSharp](https://github.com/kurema/aozora2htmlSharp) | [aozorahack/aozora2html](https://github.com/aozorahack/aozora2html) | 青空文庫形式をHTMLに変換する公式ツールの移植版 |
+| [kurema/JISX0213Table](https://github.com/kurema/JISX0213Table) | [kurema/aozora2htmlSharp](https://github.com/kurema/aozora2htmlSharp) | JIS X 0213のテーブル。上に組み込み済み。 |
+| [kurema/AozoraGaijiChukiXml](https://github.com/kurema/AozoraGaijiChukiXml) | [青空文庫・外字注記辞書【第八版】](https://www.aozora.gr.jp/gaiji_chuki/) | 外字辞書のXML版 |
+| [kurema/EpubLibrary](https://github.com/kurema/EpubLibrary) | [w3c/epubcheck](https://github.com/w3c/epubcheck) | Epub関連のライブラリ |
+| [serdarciplak/BlazorMonaco](https://github.com/serdarciplak/BlazorMonaco) | [microsoft/monaco-editor](https://github.com/microsoft/monaco-editor) | エディタエンジン |
