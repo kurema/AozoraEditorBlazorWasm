@@ -2,26 +2,28 @@
 	<input data-bind="SearchText" />
 
 	<div class="aozora_dictionary_radicals">
-		@if (Aozora.GaijiChuki.Manager.Toc.RadicalCharacters is not null)
-		{
-			foreach (var item in Aozora.GaijiChuki.Manager.Toc.RadicalCharacters)
-			{
-				<div class="aozora_dictionary_radical">@(item.Key)</div>
-			}
-		}
-	</div>
-
-	<div>
 		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
 		{
-			@foreach (var item in Aozora.GaijiChuki.Manager.Instance.kanji.page)
+			int stroke = 0;
+			@foreach (var (item, strk) in Aozora.GaijiChuki.Manager.Instance.kanji.page
+					.Select(a => (a, a.radical.characters.character.Select(b => Aozora.GaijiChuki.Manager.Toc.GetStrokeCount(b)).Max()))
+					.OrderBy(a => a.Item2))
 			{
-				<div>@(string.Join(" / ", item.radical.characters.character))</div>
-				<div>@(string.Join(" / ", item.radical.readings.reading))</div>
+				int strokeNew = strk;
+				if (stroke != strokeNew)
+				{
+					<div class="aozora_dictionary_radical_stroke">@strokeNew</div>
+				}
+				stroke = strokeNew;
+				<button class="aozora_dictionary_radical">
+					@foreach (var item2 in item.radical.characters.character)
+					{
+						<div class="aozora_dictionary_radical_character">@item2</div>
+					}
+				</button>
 			}
 		}
 	</div>
-
 </div>
 
 <style>
@@ -29,13 +31,40 @@
 	}
 
 	.aozora_dictionary_radicals {
-		width:100%;
+		width: 100%;
 		display: flex;
 		line-break: auto;
+		flex-wrap: wrap;
+		gap: 1px;
 	}
 
-	aozora_dictionary_radical {
-	}
+		.aozora_dictionary_radicals > .aozora_dictionary_radical {
+			border: 1px solid #888888;
+			display: flex;
+		}
+
+			.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character, .aozora_dictionary_radicals > .aozora_dictionary_radical_stroke {
+				width: 24px;
+				height: 24px;
+				display: flex;
+				justify-content: center;
+				align-content: center;
+				vertical-align: middle;
+			}
+
+			.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character {
+				margin-right: 3px;
+			}
+
+				.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character:last-child {
+					margin-right: 0px;
+				}
+
+		.aozora_dictionary_radicals > .aozora_dictionary_radical_stroke {
+			background: black;
+			color: white;
+			border: 1px solid transparent;
+		}
 </style>
 
 
@@ -46,5 +75,6 @@
 	{
 		await Task.Run(() => Aozora.GaijiChuki.Manager.LoadContent());
 		await base.OnInitializedAsync();
+
 	}
 }
