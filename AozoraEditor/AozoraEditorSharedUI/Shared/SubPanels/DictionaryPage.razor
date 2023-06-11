@@ -4,9 +4,36 @@
 	<div class="aozora_dictionary_radicals">
 		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
 		{
+			char saisho = ' ';
+			@foreach (var (item, rd, kana) in Aozora.GaijiChuki.Manager.Instance.kanji.page
+					.SelectMany(a => a.radical.readings.reading.Select(b => (a, b, b.Normalize(System.Text.NormalizationForm.FormD)[0])))
+					.DistinctBy(a => (a.a, a.Item3))
+					.OrderBy(a => a.Item2))
+			{
+				char saishoNew = kana;//UFDにして濁点・半濁点を取り除く処理。
+				if (saisho != saishoNew)
+				{
+					<div class="aozora_dictionary_radical_stroke">@saishoNew</div>
+				}
+				saisho = saishoNew;
+				<button class="aozora_dictionary_radical" title="@(string.Join('\n',item.radical.readings.reading))">
+					@foreach (var item2 in item.radical.characters.character)
+					{
+						<div class="aozora_dictionary_radical_character">@item2</div>
+					}
+				</button>
+			}
+		}
+	</div>
+
+
+	<div class="aozora_dictionary_radicals">
+		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
+		{
 			int stroke = 0;
 			@foreach (var (item, strk) in Aozora.GaijiChuki.Manager.Instance.kanji.page
-					.Select(a => (a, a.radical.characters.character.Select(b => Aozora.GaijiChuki.Manager.Toc.GetStrokeCount(b)).Max()))
+					.SelectMany(a => a.radical.characters.character.Select(b => (a, Aozora.GaijiChuki.Manager.Toc.GetStrokeCount(b))))
+					.Distinct().Where(a => a.Item2 > 0)
 					.OrderBy(a => a.Item2))
 			{
 				int strokeNew = strk;
@@ -36,6 +63,7 @@
 		line-break: auto;
 		flex-wrap: wrap;
 		gap: 1px;
+		margin: 4px;
 	}
 
 		.aozora_dictionary_radicals > .aozora_dictionary_radical {
