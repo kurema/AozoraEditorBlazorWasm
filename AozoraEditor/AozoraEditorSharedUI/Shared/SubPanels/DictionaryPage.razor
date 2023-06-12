@@ -1,60 +1,106 @@
-﻿<div class="aozora_dictionary_container">
-	<input data-bind="SearchText" />
+﻿<input data-bind="SearchText" />
 
-	<div class="aozora_dictionary_radicals">
-		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
-		{
-			char saisho = ' ';
-			@foreach (var (item, rd, kana) in Aozora.GaijiChuki.Manager.Instance.kanji.page
-					.SelectMany(a => a.radical.readings.reading.Select(b => (a, b, b.Normalize(System.Text.NormalizationForm.FormD)[0])))
-					.DistinctBy(a => (a.a, a.Item3))
-					.OrderBy(a => a.Item2))
+<div class="aozora_dictionary_radicals_container">
+	<details>
+		<summary>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">読み</span></h1>
+		</summary>
+
+		<div class="aozora_dictionary_radicals">
+			@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
 			{
-				char saishoNew = kana;//UFDにして濁点・半濁点を取り除く処理。
-				if (saisho != saishoNew)
+				char saisho = ' ';
+				@foreach (var (item, rd, kana) in Aozora.GaijiChuki.Manager.Instance.kanji.page
+						.SelectMany(a => a.radical.readings.reading.Select(b => (a, b, b.Normalize(System.Text.NormalizationForm.FormD)[0])))
+						.DistinctBy(a => (a.a, a.Item3))
+						.OrderBy(a => a.Item2))
 				{
-					<div class="aozora_dictionary_radical_stroke">@saishoNew</div>
-				}
-				saisho = saishoNew;
-				<button class="aozora_dictionary_radical" title="@(string.Join('\n',item.radical.readings.reading))">
-					@foreach (var item2 in item.radical.characters.character)
+					char saishoNew = kana;//UFDにして濁点・半濁点を取り除く処理。
+					if (saisho != saishoNew)
 					{
-						<div class="aozora_dictionary_radical_character">@item2</div>
+						<div class="aozora_dictionary_radical_stroke">@saishoNew</div>
 					}
-				</button>
+					saisho = saishoNew;
+					<button class="aozora_dictionary_radical" title="@(string.Join('\n',item.radical.readings.reading))">
+						@foreach (var item2 in item.radical.characters.character)
+						{
+							<div class="aozora_dictionary_radical_character">@item2</div>
+						}
+					</button>
+				}
 			}
-		}
-	</div>
+		</div>
+	</details>
 
+	<details>
+		<summary>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">画数</span></h1>
+		</summary>
 
-	<div class="aozora_dictionary_radicals">
-		@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
-		{
-			int stroke = 0;
-			@foreach (var (item, strk) in Aozora.GaijiChuki.Manager.Instance.kanji.page
-					.SelectMany(a => a.radical.characters.character.Select(b => (a, Aozora.GaijiChuki.Manager.Toc.GetStrokeCount(b))))
-					.Distinct().Where(a => a.Item2 > 0)
-					.OrderBy(a => a.Item2))
+		<div class="aozora_dictionary_radicals">
+			@if (Aozora.GaijiChuki.Manager.Instance?.kanji?.page is not null)
 			{
-				int strokeNew = strk;
-				if (stroke != strokeNew)
+				int stroke = 0;
+				@foreach (var (item, strk) in Aozora.GaijiChuki.Manager.Instance.kanji.page
+						.SelectMany(a => a.radical.characters.character.Select(b => (a, Aozora.GaijiChuki.Manager.Toc.GetStrokeCount(b))))
+						.Distinct().Where(a => a.Item2 > 0)
+						.OrderBy(a => a.Item2))
 				{
-					<div class="aozora_dictionary_radical_stroke">@strokeNew</div>
-				}
-				stroke = strokeNew;
-				<button class="aozora_dictionary_radical">
-					@foreach (var item2 in item.radical.characters.character)
+					int strokeNew = strk;
+					if (stroke != strokeNew)
 					{
-						<div class="aozora_dictionary_radical_character">@item2</div>
+						<div class="aozora_dictionary_radical_stroke">@strokeNew</div>
 					}
-				</button>
+					stroke = strokeNew;
+					<button class="aozora_dictionary_radical">
+						@foreach (var item2 in item.radical.characters.character)
+						{
+							<div class="aozora_dictionary_radical_character">@item2</div>
+						}
+					</button>
+				}
 			}
-		}
-	</div>
+		</div>
+	</details>
 </div>
 
 <style>
-	.aozora_dictionary_container {
+	.aozora_dictionary_radicals_container {
+	}
+
+		.aozora_dictionary_radicals_container details {
+		}
+
+			.aozora_dictionary_radicals_container details summary {
+				display: block;
+			}
+
+				.aozora_dictionary_radicals_container details summary::-webkit-details-marker {
+					display: none;
+				}
+
+				.aozora_dictionary_radicals_container details summary .aozora_dictionary_radicals_header_icon {
+					transition: transform 0.4s;
+					display: inline-flex;
+					flex-direction: row;
+					justify-content: center;
+					align-items: center;
+					width: 1em;
+					vertical-align: middle;
+					margin-right: 5px;
+				}
+
+			.aozora_dictionary_radicals_container details[open] summary .aozora_dictionary_radicals_header_icon {
+				transform: rotate(180deg);
+			}
+
+
+	.aozora_dictionary_radicals_header > .aozora_dictionary_radicals_header_main {
+		background: black;
+		color: white;
+	}
+
+	.aozora_dictionary_radicals_header > .aozora_dictionary_radicals_header_sub {
 	}
 
 	.aozora_dictionary_radicals {
@@ -63,7 +109,7 @@
 		line-break: auto;
 		flex-wrap: wrap;
 		gap: 1px;
-		margin: 4px;
+		/*margin: 4px;*/
 	}
 
 		.aozora_dictionary_radicals > .aozora_dictionary_radical {
