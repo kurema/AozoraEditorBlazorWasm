@@ -2,7 +2,7 @@
 @implements IMenuItemBasic
 @inject IJSRuntime JSRuntime;
 
-<div class="menubox @HiddenClass" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
+<div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
 	@foreach (var item in ChildMenus)
 	{
 		switch (item)
@@ -39,8 +39,6 @@
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
 	public bool IsChildrenVisible { get; set; }
-
-	string HiddenClass => IsChildrenVisible ? "" : "hidden";
 
 	//string GridRowCss => string.Join(' ', ChildMenus.Select(_ => "auto"));
 
@@ -154,7 +152,7 @@
 		{
 			item2.Hide();
 		}
-		if(item is IMenuItemBasic basic) await basic.ShowAsync();
+		if (item is IMenuItemBasic basic) await basic.ShowAsync();
 		StateHasChanged();
 	}
 
@@ -178,18 +176,18 @@
 
 	public RenderFragment GetMenuItem(IMenuItemBasic item)
 	{
-		return 
+		return
 	@<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}" tabindex="0" @onkeydown="async e =>await KeyDown(e,item)">
-			<div class="mebubox_entry_icon">@(item.Icon)</div>
-			<div class="mebubox_entry_text">@(item.Title)</div>
-			@if (item.HasChild)
-			{
-				<div class="mebubox_entry_arrow">
-					<span class="material-symbols-outlined">
-						arrow_right
-					</span>
-				</div>
-			}
-		</div>;
+		<div class="mebubox_entry_icon">@(item.Icon)</div>
+		<div class="mebubox_entry_text">@(item.Title)</div>
+		@if (item.HasChild)
+		{
+			<div class="mebubox_entry_arrow">
+				<span class="material-symbols-outlined">
+					arrow_right
+				</span>
+			</div>
+		}
+	</div>;
 	}
 }

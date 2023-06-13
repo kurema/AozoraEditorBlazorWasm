@@ -24,7 +24,7 @@
 					<button class="aozora_dictionary_radical" title="@(string.Join('\n',item.radical.readings.reading))">
 						@foreach (var item2 in item.radical.characters.character)
 						{
-							<div class="aozora_dictionary_radical_character">@item2</div>
+							<div class="aozora_dictionary_radical_character" @onclick="_=>SelectPage(item)">@item2</div>
 						}
 					</button>
 				}
@@ -52,7 +52,7 @@
 						<div class="aozora_dictionary_radical_stroke">@strokeNew</div>
 					}
 					stroke = strokeNew;
-					<button class="aozora_dictionary_radical">
+					<button class="aozora_dictionary_radical" @onclick="_=>SelectPage(item)">
 						@foreach (var item2 in item.radical.characters.character)
 						{
 							<div class="aozora_dictionary_radical_character">@item2</div>
@@ -63,6 +63,32 @@
 		</div>
 	</details>
 </div>
+
+@if (SearchResults.Count > 0)
+{
+	<div class="aozora_dictionary_result_container">
+		@foreach (var item in SearchResults)
+		{
+			switch (item)
+			{
+				case Aozora.GaijiChuki.Xsd.entry entry:
+					if (entry?.characters?.character is null or { Length: 0 }) break;
+					<div class="aozora_dictionary_result">
+						@foreach (var ch in entry.characters.character)
+						{
+							string ch2 = ch;
+							if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse)
+							{
+								ch2 = "？";
+							}
+							<div class="aozora_dictionary_result_character">@ch2</div>
+						}
+					</div>
+					break;
+			}
+		}
+	</div>
+}
 
 <style>
 	.aozora_dictionary_radicals_container {
@@ -144,6 +170,36 @@
 			color: white;
 			border: 1px solid transparent;
 		}
+
+	.aozora_dictionary_result_container {
+		width: 100%;
+		display: flex;
+		line-break: auto;
+		flex-wrap: wrap;
+		gap: 1px;
+		font-size: 200%;
+	}
+
+		.aozora_dictionary_result_container > .aozora_dictionary_result {
+			border: 1px solid #888888;
+			display: flex;
+		}
+
+			.aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character {
+				width: calc(1em + 8px);
+				height: calc(1em + 8px);
+				margin-right: 3px;
+				display: flex;
+				justify-content: center;
+				align-content: center;
+				vertical-align: middle;
+				user-select: none;
+				cursor: pointer;
+			}
+
+				.aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character:last-child {
+					margin-right: 0px;
+				}
 </style>
 
 
@@ -154,6 +210,15 @@
 	{
 		await Task.Run(() => Aozora.GaijiChuki.Manager.LoadContent());
 		await base.OnInitializedAsync();
+	}
 
+	List<object> SearchResults { get; set; } = new List<object>();
+
+	void SelectPage(Aozora.GaijiChuki.Xsd.page page)
+	{
+		if (page?.entries is null) return;
+		SearchResults.Clear();
+		SearchResults.AddRange(page.entries);
+		StateHasChanged();
 	}
 }
