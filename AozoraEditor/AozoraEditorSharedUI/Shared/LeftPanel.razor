@@ -39,10 +39,10 @@
 	TabEntry selectedTab { get => _selectedTab; set { _selectedTab = value; StateHasChanged(); } }
 
 	bool _IsOpen = false;
-	public bool IsOpen { get => _IsOpen; set { _IsOpen = value; StateHasChanged(); Parent?.NotifyStateChanged(); } }
+	public bool IsOpen { get => _IsOpen; set { _IsOpen = value; StateHasChanged(); Root?.NotifyStateChanged(); } }
 
 	[CascadingParameter]
-	public TabControl? Parent { get; private set; }
+	public TabControl? Root { get; private set; }
 
 
 	void SelectTab(TabEntry tab)

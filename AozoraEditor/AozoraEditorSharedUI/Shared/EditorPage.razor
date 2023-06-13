@@ -2,7 +2,7 @@
 
 <SplitPage @ref="splitPage">
 	<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
-	<Right><CascadingValue Value="this"><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></CascadingValue></Right>
+	<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
 </SplitPage>
 
 @code {
@@ -63,7 +63,7 @@
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
 		var message = new Aozora.Helpers.OutputString();
-		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: Parent?.PreviewCssFiles?.ToArray() ?? new[] { "_content/AozoraEditorSharedUI/css/aozora.css" })
+		var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: Root?.PreviewCssFiles?.ToArray() ?? new[] { "_content/AozoraEditorSharedUI/css/aozora.css" })
 			{
 				UseJisx0213Accent = true,
 				UseJisx0214EmbedGaiji = true,
@@ -79,11 +79,11 @@
 		{
 			await Task.Run(() => aozora.Process());
 			PreviewHtml = output.ToString();
-			if (Parent is not null && editor is not null) Parent.SetOutputMessage(message.ToString(), FileName, editor.Id);
+			if (Root is not null && editor is not null) Root.SetOutputMessage(message.ToString(), FileName, editor.Id);
 		}
 		catch
 		{
-			if (Parent is not null && editor is not null) Parent.SetOutputMessage(message.ToString(), FileName, editor.Id);
+			if (Root is not null && editor is not null) Root.SetOutputMessage(message.ToString(), FileName, editor.Id);
 			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
 		}
 		StateHasChanged();
@@ -144,7 +144,7 @@
 
 		return;
 	fail:
-		if (Parent?.Dialog is not null) await Parent.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
 		return;
 	}
 
@@ -157,5 +157,5 @@
 	}
 
 	[CascadingParameter]
-	public TabControl? Parent { get; set; }
+	public TabControl? Root { get; set; }
 }

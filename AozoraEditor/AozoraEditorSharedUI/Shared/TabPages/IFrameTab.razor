@@ -16,7 +16,7 @@
 
 	public event EventHandler? TitleChanged;
 
-	public TabControl? Parent { get; set; }
+	public TabControl? Root { get; set; }
 
 	public RenderFragment Title =>@<span>@TitleString</span>;
 

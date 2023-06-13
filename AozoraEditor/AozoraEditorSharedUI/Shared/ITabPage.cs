@@ -18,7 +18,7 @@ public interface ITabPage
 	ObservableCollection<ICommandEntry> MainCommands { get; }
 
 	Guid Id { get; set; }
-	TabControl? Parent { get; set; }
+	TabControl? Root { get; set; }
 
 }
 

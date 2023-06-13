@@ -49,7 +49,7 @@
 				<div class="snippet_preview">
 					<div class="snippet_preview_original">@(preview.OriginalText)</div>
 					<div class="snippet_preview_result">
-						<iframe srcdoc="@(preview.GetHtmleFull(Parent?.Parent?.Theme?.SelectedTheme?.GetHeaderLinks()))" sandbox="allow-same-origin" height="75" />
+						<iframe srcdoc="@(preview.GetHtmleFull(Root?.Theme?.SelectedTheme?.GetHeaderLinks()))" sandbox="allow-same-origin" height="75" />
 					</div>
 					@if (!string.IsNullOrWhiteSpace(preview.Error))
 					{
@@ -66,7 +66,7 @@
 	bool ShowInfo { get; set; } = false;
 
 	[CascadingParameter]
-	public EditorPage? Parent { get; private set; }
+	public TabControl? Root { get; set; }
 
 
 	const string InfoText = """"

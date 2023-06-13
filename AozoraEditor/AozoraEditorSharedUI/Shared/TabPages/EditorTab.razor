@@ -38,24 +38,24 @@
 			if (_Content is not null)
 			{
 				_Content.FileName = _FileName;
-				_Content.Parent = this.Parent;
+				_Content.Root = this.Root;
 				var currentContent = _Content;
 				currentContent.TitleChanged += (_, e) =>
 				{
 					TitleChanged?.Invoke(this, e);
-					Parent?.NotifyStateChanged();
+					Root?.NotifyStateChanged();
 				};
-				Parent?.NotifyStateChanged();
+				Root?.NotifyStateChanged();
 
 				PanelSwitchCommands.Clear();
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("difference", "差分を表示");
 					com.Clicked += async (_, _) =>
 					{
-						if (Parent is null) return;
+						if (Root is null) return;
 						var text = await currentContent.GetText();
 						if (text is null) return;
-						Parent.ShowDiffTab(currentContent.FileName, currentContent.OriginalText, text);
+						Root.ShowDiffTab(currentContent.FileName, currentContent.OriginalText, text);
 					};
 					PanelSwitchCommands.Add(com);
 				}
@@ -141,5 +141,5 @@
 
 	public event EventHandler? TitleChanged;
 
-	public TabControl? Parent { get; set; }
+	public TabControl? Root { get; set; }
 }

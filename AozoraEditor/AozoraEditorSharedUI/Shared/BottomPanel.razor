@@ -29,7 +29,7 @@
 				}
 			</select>
 		}
-		<button @onclick:preventDefault @onclick:stopPropagation="true" class="ButtonMini" @onclick="()=>{if(Parent is not null)Parent.OutputVisible=false;}">
+		<button @onclick:preventDefault @onclick:stopPropagation="true" class="ButtonMini" @onclick="()=>{if(Root is not null)Root.OutputVisible=false;}">
 			<span class="material-symbols-outlined">
 				close
 			</span>
@@ -149,11 +149,11 @@
 	record TabEntry(string Title, string Key) { }
 
 	[CascadingParameter]
-	public TabControl? Parent { get; private set; }
+	public TabControl? Root { get; private set; }
 
 	public void SelectTabAndGoto(Guid guid, Position position)
 	{
-		var result = Parent?.SelectTabByGuid(guid);
+		var result = Root?.SelectTabByGuid(guid);
 		if (result is not TabPages.EditorTab et || et.Content is null) return;
 		et.Content.SetPosition(position);
 	}

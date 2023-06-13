@@ -4,14 +4,10 @@
 	@switch (Selected)
 	{
 		case SubPanelContents.Snippets:
-			<CascadingValue Value="Parent">
-				<AozoraEditor.Shared.Shared.SubPanels.SnippetsList />
-			</CascadingValue>
+			<AozoraEditor.Shared.Shared.SubPanels.SnippetsList />
 			break;
 		case SubPanelContents.Dictionary:
-			<CascadingValue Value="Parent">
-				<AozoraEditor.Shared.Shared.SubPanels.DictionaryPage />
-			</CascadingValue>
+			<AozoraEditor.Shared.Shared.SubPanels.DictionaryPage />
 			break;
 	}
 
@@ -30,7 +26,4 @@
 
 	[Parameter]
 	public string PreviewDocument { get; set; } = "<html><body>空のプレビュー画面</body></html>";
-
-	[CascadingParameter]
-	public EditorPage? Parent { get; private set; }
 }

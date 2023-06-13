@@ -2,183 +2,181 @@
 @using AozoraEditor.Shared.Shared.Menu
 
 <AozoraEditor.Shared.Shared.Themes.ThemeControl @ref="Theme" />
-<div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
-	<div class="tab_control_top_container">
-		<div class="tab_control_top_left">
-			<MenuBar @ref="MenuBar">
-				<MenuItem Title="ファイル">
-					<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
-					<MenuItem Title="開く" />
-				</MenuItem>
-				<MenuItem Title="設定">
-					<MenuItem Title="テーマ">
-						@if (Theme is not null)
-						{
-							foreach (var theme in Theme.ThemeEntries)
+<CascadingValue Value="this" Name="Root">
+	<div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
+		<div class="tab_control_top_container">
+			<div class="tab_control_top_left">
+				<MenuBar @ref="MenuBar">
+					<MenuItem Title="ファイル">
+						<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
+						<MenuItem Title="開く" />
+					</MenuItem>
+					<MenuItem Title="設定">
+						<MenuItem Title="テーマ">
+							@if (Theme is not null)
 							{
-								<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == Theme.SelectedTheme)" Checked="()=>{Theme.SelectedTheme=theme;}" />
+								foreach (var theme in Theme.ThemeEntries)
+								{
+									<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == Theme.SelectedTheme)" Checked="()=>{Theme.SelectedTheme=theme;}" />
+								}
+							}
+						</MenuItem>
+						<MenuItem Title="プレビュー">
+							<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
+							<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
+						</MenuItem>
+					</MenuItem>
+					<MenuItem Title="ヘルプ">
+						<MenuItem Title="青空文庫">
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
+							<MenuSeparater />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="作業マニュアル" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/aozora-manual/");})" />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="注記一覧" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/annotation/");})" />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
+						</MenuItem>
+						<MenuItem Title="アプリについて">
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="プロジェクトページ" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="ライセンス" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/LICENSE");})" />
+							<MenuItem Title="サードパーティーライセンス" OnHeaderSelected="@(async ()=>{OepnInNewInternalTab("_content/AozoraEditorSharedUI/thirdparty.xml","サードパーティー");})" />
+						</MenuItem>
+						<MenuSeparater />
+						<MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
+					</MenuItem>
+				</MenuBar>
+				<div class="vr" />
+				<div class="tab_control_main_buttons">
+					@{
+						IEnumerable<ICommandEntry> commands = CommonCommands;
+
+						if (commands.Any() && ActivePage?.MainCommands.Any() == true)
+						{
+							commands = commands.Concat(new[] { new CommandEntrySeparator() });
+						}
+						if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
+
+						foreach (var item in commands)
+						{
+							switch (item)
+							{
+								case CommandEntry itemC:
+									<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
+										@item.Icon
+									</button>
+									break;
+								case CommandEntryFile itemF:
+									<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
+										@item.Icon
+										<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
+									</div>
+									break;
+								case CommandEntrySeparator:
+									<div class="vr" />
+									break;
 							}
 						}
-					</MenuItem>
-					<MenuItem Title="プレビュー">
-						<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
-						<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
-					</MenuItem>
-				</MenuItem>
-				<MenuItem Title="ヘルプ">
-					<MenuItem Title="青空文庫">
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
-						<MenuSeparater />
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="作業マニュアル" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/aozora-manual/");})" />
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="注記一覧" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/annotation/");})" />
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="耕作員手帳" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/guide/techo.html");})" />
-					</MenuItem>
-					<MenuItem Title="アプリについて">
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="プロジェクトページ" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
-						<MenuItem IconMaterialSymbols="open_in_new_down" Title="ライセンス" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/LICENSE");})" />
-						<MenuItem Title="サードパーティーライセンス" OnHeaderSelected="@(async ()=>{OepnInNewInternalTab("_content/AozoraEditorSharedUI/thirdparty.xml","サードパーティー");})" />
-					</MenuItem>
-					<MenuSeparater />
-					<MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
-				</MenuItem>
-			</MenuBar>
-			<div class="vr" />
-			<div class="tab_control_main_buttons">
-				@{
-					IEnumerable<ICommandEntry> commands = CommonCommands;
-
-					if (commands.Any() && ActivePage?.MainCommands.Any() == true)
-					{
-						commands = commands.Concat(new[] { new CommandEntrySeparator() });
 					}
-					if (ActivePage?.MainCommands is not null) { commands = commands.Concat(ActivePage.MainCommands); }
+				</div>
+			</div>
+			<div class="tab_control_top_right">
+				<button class="ButtonMini" @onclick="async ()=>{if(leftPanel is null)return;leftPanel.IsOpen=!leftPanel.IsOpen; StateHasChanged();}" title="サイドパネル開閉">
+					<span class="material-symbols-outlined">
+						@(leftPanel?.IsOpen ?? true ? "left_panel_close" : "left_panel_open")
+					</span>
+				</button>
 
-					foreach (var item in commands)
-					{
-						switch (item)
-						{
-							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
-									@item.Icon
-								</button>
-								break;
-							case CommandEntryFile itemF:
-								<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
-									@item.Icon
-									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
-								</div>
-								break;
-							case CommandEntrySeparator:
-								<div class="vr" />
-								break;
-						}
-					}
-				}
+				<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}" title="下部パネル開閉">
+					<span class="material-symbols-outlined">
+						@(OutputVisible ? "bottom_panel_close" : "bottom_panel_open")
+					</span>
+				</button>
 			</div>
 		</div>
-		<div class="tab_control_top_right">
-			<button class="ButtonMini" @onclick="async ()=>{if(leftPanel is null)return;leftPanel.IsOpen=!leftPanel.IsOpen; StateHasChanged();}" title="サイドパネル開閉">
-				<span class="material-symbols-outlined">
-					@(leftPanel?.IsOpen ?? true ? "left_panel_close" : "left_panel_open")
-				</span>
-			</button>
+		<div class="aozora_editor_main">
+			<div class="tab_control_container">
 
-			<button class="ButtonMini" @onclick="async ()=>{OutputVisible=!OutputVisible;StateHasChanged();}" title="下部パネル開閉">
-				<span class="material-symbols-outlined">
-					@(OutputVisible ? "bottom_panel_close" : "bottom_panel_open")
-				</span>
-			</button>
-		</div>
-	</div>
-	<div class="aozora_editor_main">
-		<div class="tab_control_container">
+				<div class="tab_control_background" />
 
-			<div class="tab_control_background" />
+				<div class="tab_control_controller">
+					@foreach (var item in Pages)
+					{
+						var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
 
-			<div class="tab_control_controller">
-				@foreach (var item in Pages)
-				{
-					var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
-
-					<div class="@cl" @onmousedown="(e)=>TabClicked(e,item)">
-						<p class="tab_control_controller_tab_title">@item.Title</p>
-						<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
+						<div class="@cl" @onmousedown="(e)=>TabClicked(e,item)">
+							<p class="tab_control_controller_tab_title">@item.Title</p>
+							<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
+								<span class="material-symbols-outlined">
+									close
+								</span>
+							</button>
+						</div>
+					}
+					<div class="tab_control_controller_add">
+						<button class="ButtonMini tab_control_controller_add_button" @onclick="()=>{AddEditorTab();}">
 							<span class="material-symbols-outlined">
-								close
+								add
 							</span>
 						</button>
 					</div>
-				}
-				<div class="tab_control_controller_add">
-					<button class="ButtonMini tab_control_controller_add_button" @onclick="()=>{AddEditorTab();}">
-						<span class="material-symbols-outlined">
-							add
-						</span>
-					</button>
+
+				</div>
+
+				<div class="tab_control_panel_switch_buttons">
+					@if (ActivePage?.PanelSwitchCommands is not null)
+					{
+						foreach (var item in ActivePage.PanelSwitchCommands)
+						{
+							switch (item)
+							{
+								case CommandEntry itemC:
+									<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
+										@item.Icon
+									</button>
+									break;
+								case CommandEntryFile itemF:
+									<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
+										@item.Icon
+										<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
+									</div>
+									break;
+								case CommandEntrySeparator:
+									<div class="vr" />
+									break;
+							}
+						}
+					}
+				</div>
+
+				<div class="tab_control_body">
+					@foreach (var item in Pages)
+					{
+						bool active = item == ActivePage;
+						string additonalClass = active ? "tab_page_container_active" : "hidden";
+						<div class="tab_page_container @additonalClass">
+							@item.Body
+						</div>
+					}
+					@if (ActivePage is null)
+					{
+						<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
+							<div>
+								<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
+								<p>このアプリを気に入られましたら、是非ご支援をご検討いただけますようお願いします。</p>
+							</div>
+						</div>
+					}
 				</div>
 
 			</div>
-
-			<div class="tab_control_panel_switch_buttons">
-				@if (ActivePage?.PanelSwitchCommands is not null)
-				{
-					foreach (var item in ActivePage.PanelSwitchCommands)
-					{
-						switch (item)
-						{
-							case CommandEntry itemC:
-								<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
-									@item.Icon
-								</button>
-								break;
-							case CommandEntryFile itemF:
-								<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
-									@item.Icon
-									<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="(e)=>itemF?.OnFileChanged(e)" />
-								</div>
-								break;
-							case CommandEntrySeparator:
-								<div class="vr" />
-								break;
-						}
-					}
-				}
-			</div>
-
-			<div class="tab_control_body">
-				@foreach (var item in Pages)
-				{
-					bool active = item == ActivePage;
-					string additonalClass = active ? "tab_page_container_active" : "hidden";
-					<div class="tab_page_container @additonalClass">
-						@item.Body
-					</div>
-				}
-				@if (ActivePage is null)
-				{
-					<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
-						<div>
-							<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
-							<p>このアプリを気に入られましたら、是非ご支援をご検討いただけますようお願いします。</p>
-						</div>
-					</div>
-				}
-			</div>
-
 		</div>
-	</div>
-	<div class="aozora_editor_bottom">
-		<CascadingValue Value="this">
+		<div class="aozora_editor_bottom">
 			<BottomPanel @ref="bottomPanel" />
-		</CascadingValue>
-	</div>
-	<div class="aozora_editor_left">
-		<CascadingValue Value="this">
+		</div>
+		<div class="aozora_editor_left">
 			<LeftPanel @ref="leftPanel" />
-		</CascadingValue>
+		</div>
+		<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
 	</div>
-	<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
-</div>
+</CascadingValue>
 
 <style>
 	/* Global styles. */
@@ -266,22 +264,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
@@ -316,7 +314,7 @@
 	public void ActivateTab(ITabPage page)
 	{
 		ActivePage = page;
-		page.Parent = this;
+		page.Root = this;
 		StateHasChanged();
 	}
 
