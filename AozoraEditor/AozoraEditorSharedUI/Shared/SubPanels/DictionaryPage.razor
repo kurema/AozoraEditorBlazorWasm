@@ -69,23 +69,19 @@
 	<div class="aozora_dictionary_result_container">
 		@foreach (var item in SearchResults)
 		{
-			switch (item)
-			{
-				case Aozora.GaijiChuki.Xsd.entry entry:
-					if (entry?.characters?.character is null or { Length: 0 }) break;
-					<div class="aozora_dictionary_result">
-						@foreach (var ch in entry.characters.character)
-						{
-							string ch2 = ch;
-							if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse)
-							{
-								ch2 = "？";
-							}
-							<div class="aozora_dictionary_result_character">@ch2</div>
-						}
-					</div>
-					break;
-			}
+			var chs = item.Characters.ToArray();
+			if (chs is null or { Length: 0 }) continue;
+			<button class="aozora_dictionary_result">
+				@foreach (var ch in chs)
+				{
+					string ch2 = ch;
+					if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse)
+					{
+						ch2 = "？";
+					}
+					<div class="aozora_dictionary_result_character">@ch2</div>
+				}
+			</button>
 		}
 	</div>
 }
@@ -178,6 +174,7 @@
 		flex-wrap: wrap;
 		gap: 1px;
 		font-size: 200%;
+		margin: 10px 0;
 	}
 
 		.aozora_dictionary_result_container > .aozora_dictionary_result {
@@ -212,13 +209,13 @@
 		await base.OnInitializedAsync();
 	}
 
-	List<object> SearchResults { get; set; } = new List<object>();
+	List<Models.IDictionaryResultEntry> SearchResults { get; set; } = new();
 
 	void SelectPage(Aozora.GaijiChuki.Xsd.page page)
 	{
 		if (page?.entries is null) return;
 		SearchResults.Clear();
-		SearchResults.AddRange(page.entries);
+		SearchResults.AddRange(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a)));
 		StateHasChanged();
 	}
 }
