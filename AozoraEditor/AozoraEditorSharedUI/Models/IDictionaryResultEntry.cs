@@ -11,48 +11,62 @@ namespace AozoraEditor.Shared.Models;
 public interface IDictionaryResultEntry
 {
 	IEnumerable<string> Characters { get; }
-	IEnumerable<(int men, int ku, int ten)> Jisx0213Codes { get; }
+	(int men, int ku, int ten) Jisx0213Code { get; }
 }
 
 public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 {
-	entry Content;
+	public entry Content { get; init; }
 
 	public DictionaryResultEntryGaijiChuki(entry content)
 	{
 		Content = content ?? throw new ArgumentNullException(nameof(content));
 	}
 
-	public IEnumerable<string> Characters => Content?.characters?.character ?? new string[0];
+	public IEnumerable<string> Characters => Content?.characters?.character ?? Array.Empty<string>();
 
-	ReadOnlyCollection<(int men, int ku, int ten)>? _Jisx0213Codes = null;
-
-	public IEnumerable<(int men, int ku, int ten)> Jisx0213Codes
+	public (int men, int ku, int ten) Jisx0213Code
 	{
 		get
 		{
-			if (_Jisx0213Codes is not null)
+			if (Content?.note?.Item is noteJisx0213 noteJisx0213) return (noteJisx0213.men, noteJisx0213.ku, noteJisx0213.ten);
+			var dic = Aozora.Helpers.YamlValues.Jisx0213ReverseDictionary;
+			foreach (var character in Characters)
 			{
-				foreach (var item in _Jisx0213Codes) yield return item;
-				yield break;
+				if (!dic.TryGetValue(character, out var value)) continue;
+				return value;
 			}
-			List<(int men, int ku, int ten)> results = new();
-			foreach (var item in GetJisx0213Codes(Characters))
-			{
-				results.Add(item);
-				yield return item;
-			}
-			_Jisx0213Codes = results.ToArray().AsReadOnly();
+			return Jisx0213CodeEmpty;
 		}
 	}
 
-	public static IEnumerable<(int men, int ku, int ten)> GetJisx0213Codes(IEnumerable<string> characters)
+	public static (int men, int ku, int ten) Jisx0213CodeEmpty => (-1, -1, -1);
+}
+
+public class DictionaryResultSingleChar : IDictionaryResultEntry
+{
+	string Character { get; init; }
+
+	public DictionaryResultSingleChar(string content)
 	{
-		var dic = Aozora.Helpers.YamlValues.Jisx0213ReverseDictionary;
-		foreach (var character in characters)
+		Character = content ?? throw new ArgumentNullException(nameof(content));
+	}
+
+	public IEnumerable<string> Characters
+	{
+		get
 		{
-			if (!dic.TryGetValue(character, out var value)) yield return (-1, -1, -1);
-			yield return value;
+			yield return Character;
+		}
+	}
+
+	public (int men, int ku, int ten) Jisx0213Code
+	{
+		get
+		{
+			var dic = Aozora.Helpers.YamlValues.Jisx0213ReverseDictionary;
+			if (!dic.TryGetValue(Character, out var value)) return DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty;
+			return value;
 		}
 	}
 }
