@@ -70,23 +70,76 @@
 		@foreach (var item in SearchResults)
 		{
 			var chs = item.Characters.ToArray();
+			@*var categories = item.UnicodeCategory.GetEnumerator();*@
 			if (chs is null or { Length: 0 }) continue;
 			<button class="aozora_dictionary_result">
 				@foreach (var ch in chs)
 				{
 					string ch2 = ch;
-					if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse)
-					{
-						ch2 = "？";
-					}
-					<div class="aozora_dictionary_result_character">@ch2</div>
+					if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse) ch2 = "？";
+					<div class="aozora_dictionary_result_character" onclick="document.getElementById('@(item.Guid)').scrollIntoView();">@ch2</div>
 				}
 			</button>
+		}
+	</div>
+
+	<div class="aozora_dictionary_result_detail_container">
+		@foreach (var item in SearchResults)
+		{
+			switch (item)
+			{
+				case Models.DictionaryResultEntryGaijiChuki itemGc:
+					<div class="aozora_dictionary_result_detail_item" id="@(item.Guid)">
+						<div class="aozora_dictionary_result_detail_item_character">@(string.Join(' ', item.Characters))</div>
+						<div class="aozora_dictionary_result_detail_item_info_container">
+							@(item.Note)
+							<table>
+								@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty)
+								{
+									<tr>
+										<th>Jisx0213Code</th>
+										<td>@(item.Jisx0213Code)</td>
+									</tr>
+								}
+								<tr>
+									<th>Unicode</th>
+									<td>@(string.Join(' ', item.Unicode))</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					break;
+				case Models.DictionaryResultSingleChar itemRs:
+					<div class="aozora_dictionary_result_detail_item">
+						@(string.Join(' ', item.Characters))<br />
+						@(string.Join(' ', item.Unicode))<br />
+						@(item.Jisx0213Code)
+					</div>
+					break;
+			}
 		}
 	</div>
 }
 
 <style>
+	.aozora_dictionary_result_detail_container {
+	}
+
+		.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item {
+			border: solid 1px #888888;
+			display: grid;
+			grid-template-columns: auto 1fr;
+		}
+
+			.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_character {
+				grid-column: 1/2;
+				font-size: 300%;
+			}
+
+			.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container {
+				grid-column: 2/3;
+			}
+
 	.aozora_dictionary_radicals_container {
 	}
 
