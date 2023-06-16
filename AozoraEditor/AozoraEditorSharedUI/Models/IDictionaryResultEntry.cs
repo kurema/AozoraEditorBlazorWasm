@@ -55,15 +55,16 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 	{
 		get
 		{
-			//if (UnicodeCategory.FirstOrDefault() == System.Globalization.UnicodeCategory.PrivateUse && Content?.note?.Item is noteUnicode note)
-			if (Content?.note?.Item is noteUnicode note)
+			switch (Content?.note?.Item)
 			{
-				return new[] { char.ConvertFromUtf32(Convert.ToInt32(note.code, 16)).ToString() };
-			}
-			else if (Content?.note?.Item is noteJisx0213 jisx0213)
-			{
-				var crct = Aozora.Helpers.YamlValues.Jisx0213ToString(jisx0213.men, jisx0213.ku, jisx0213.ten);
-				if (crct is not null) return new[] { crct };
+				case noteUnicode note:
+					return new[] { char.ConvertFromUtf32(Convert.ToInt32(note.code, 16)).ToString() };
+				case noteJisx0213 jisx0213:
+					{
+						var crct = Aozora.Helpers.YamlValues.Jisx0213ToString(jisx0213.men, jisx0213.ku, jisx0213.ten);
+						if (crct is not null) return new[] { crct };
+						break;
+					}
 			}
 			return Content?.characters?.character ?? Array.Empty<string>();
 		}
