@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA1304: CultureInfo を指定します
+dotnet_diagnostic.CA1304.severity = error
