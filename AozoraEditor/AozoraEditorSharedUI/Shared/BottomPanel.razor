@@ -148,7 +148,7 @@
 
 	record TabEntry(string Title, string Key) { }
 
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Root))]
 	public TabControl? Root { get; private set; }
 
 	public void SelectTabAndGoto(Guid guid, Position position)

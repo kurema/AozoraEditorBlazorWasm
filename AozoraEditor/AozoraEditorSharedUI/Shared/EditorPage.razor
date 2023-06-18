@@ -156,6 +156,6 @@
 		editor?.Content?.RevealLineInCenter(position.LineNumber);
 	}
 
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Root))]
 	public TabControl? Root { get; set; }
 }

@@ -41,7 +41,7 @@
 	bool _IsOpen = false;
 	public bool IsOpen { get => _IsOpen; set { _IsOpen = value; StateHasChanged(); Root?.NotifyStateChanged(); } }
 
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Root))]
 	public TabControl? Root { get; private set; }
 
 

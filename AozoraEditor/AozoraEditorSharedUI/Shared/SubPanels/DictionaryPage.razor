@@ -1,6 +1,50 @@
 ﻿@using Aozora.GaijiChuki.Xsd
 
-@*<input data-bind="SearchText" />*@
+<div class="aozora_dictionary_search_container">
+	<div class="aozora_dictionary_search_border">
+		<div class="aozora_dictionary_search_button">
+			@*当初はボタンの予定だったがボタンである必要はない。*@
+			@(TabControl.GetMaterialSymbolOutlined("search"))
+		</div>
+		<button class="aozora_dictionary_option_button" @onclick="_=>{SearchOptionVisible=!SearchOptionVisible;}">
+			@GetSearchOptionTargetsTitle(SearchOptionTarget)
+		</button>
+		<input data-bind="SearchText" placeholder="漢字・文字コード・部首の読み" />
+		<button class="aozora_dictionary_search_info_button" @onclick="_=>{SearchInfoVisible=!SearchInfoVisible;}">
+			@(TabControl.GetMaterialSymbolOutlined("info"))
+		</button>
+		@if (SearchOptionVisible)
+		{
+			const string selectedClass = "aozora_dictionary_search_option_item_selected";
+			<!-- aozora_dictionary_search_option_item_selected -->
+			<div class="aozora_dictionary_search_option">
+				@foreach (var item in new SearchOptionTargets[] { SearchOptionTargets.All, SearchOptionTargets.Kanji, SearchOptionTargets.Radical })
+				{
+					<button @onclick="_=>{SearchOptionTarget=item;}"
+							class="aozora_dictionary_search_option_item @(SearchOptionTarget == item?selectedClass:string.Empty)">
+						@(GetSearchOptionTargetsTitle(item))
+					</button>
+				}
+			</div>
+		}
+		@if (SearchInfoVisible)
+		{
+			<div class="aozora_dictionary_search_info">
+				<ul>
+					<li>入力は複数可能です。</li>
+					<li>
+						Unicodeコードポイント・JIS 0213面句点番号でも検索可能です。
+						<ul>
+							<li>例：U+1234、1-2-3</li>
+						</ul>
+					</li>
+					<li>読み仮名は部首のみ検索できます。</li>
+					<li>画数の検索は不確実です。</li>
+				</ul>
+			</div>
+		}
+	</div>
+</div>
 
 <div class="aozora_dictionary_radicals_container">
 	<details>
@@ -210,164 +254,25 @@
 	<li>青空文庫外部で利用する場合、Shift_JISではなくUTF-8などを利用して外字の使用を避けることも可能です。互換性が低下する点には注意してください。</li>
 </ul>
 
-<style>
-	.aozora_dictionary_result_detail_container {
-	}
-
-		.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item {
-			border: solid 1px #888888;
-			display: grid;
-			grid-template-columns: auto 1fr;
-			margin: 1px 0;
-			gap: 4px;
-		}
-
-			.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_character {
-				grid-column: 1/2;
-				font-size: 300%;
-			}
-
-			.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container {
-				grid-column: 2/3;
-			}
-
-				.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > .aozora_dictionary_result_detail_item_info_note_container {
-					display: flex;
-					flex-wrap: wrap;
-					align-items: stretch;
-				}
-
-					.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > .aozora_dictionary_result_detail_item_info_note_container > .aozora_dictionary_result_detail_item_info_note {
-						display: inline-flex;
-						align-items: center;
-					}
-
-					.aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > .aozora_dictionary_result_detail_item_info_note_container > .aozora_dictionary_result_detail_item_info_icon {
-						border-radius: 4px;
-						background: var(--aozora-theme-text-color);
-						color: var(--aozora-theme-background);
-						display: inline-flex;
-						margin-right: 3px;
-						padding: 0 2px;
-						align-items: center;
-					}
-
-
-	.aozora_dictionary_radicals_container {
-	}
-
-		.aozora_dictionary_radicals_container details {
-		}
-
-			.aozora_dictionary_radicals_container details summary {
-				display: block;
-			}
-
-				.aozora_dictionary_radicals_container details summary > * > * {
-					vertical-align: middle;
-				}
-
-				.aozora_dictionary_radicals_container details summary::-webkit-details-marker {
-					display: none;
-				}
-
-				.aozora_dictionary_radicals_container details summary .aozora_dictionary_radicals_header_icon {
-					transition: transform 0.4s;
-					display: inline-flex;
-					flex-direction: row;
-					justify-content: center;
-					align-items: center;
-					width: 1em;
-					margin-right: 5px;
-				}
-
-			.aozora_dictionary_radicals_container details[open] summary .aozora_dictionary_radicals_header_icon {
-				transform: rotate(180deg);
-			}
-
-
-	.aozora_dictionary_radicals_header > .aozora_dictionary_radicals_header_main {
-		background: var(--aozora-theme-text-color);
-		color: var(--aozora-theme-background);
-	}
-
-	.aozora_dictionary_radicals_header > .aozora_dictionary_radicals_header_sub {
-	}
-
-	.aozora_dictionary_radicals {
-		width: 100%;
-		display: flex;
-		line-break: auto;
-		flex-wrap: wrap;
-		gap: 1px;
-		/*margin: 4px;*/
-	}
-
-		.aozora_dictionary_radicals > .aozora_dictionary_radical {
-			border: 1px solid #888888;
-			display: flex;
-		}
-
-			.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character, .aozora_dictionary_radicals > .aozora_dictionary_radical_stroke {
-				width: calc(1em + 8px);
-				height: calc(1em + 8px);
-				display: flex;
-				justify-content: center;
-				align-content: center;
-				vertical-align: middle;
-				user-select: none;
-				cursor: pointer;
-			}
-
-			.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character {
-				margin-right: 3px;
-			}
-
-				.aozora_dictionary_radicals > .aozora_dictionary_radical > .aozora_dictionary_radical_character:last-child {
-					margin-right: 0px;
-				}
-
-		.aozora_dictionary_radicals > .aozora_dictionary_radical_stroke {
-			background: var(--aozora-theme-text-color);
-			color: var(--aozora-theme-background);
-			border: 1px solid transparent;
-		}
-
-	.aozora_dictionary_result_container {
-		width: 100%;
-		display: flex;
-		line-break: auto;
-		flex-wrap: wrap;
-		gap: 1px;
-		font-size: 200%;
-		margin: 10px 0;
-	}
-
-		.aozora_dictionary_result_container > .aozora_dictionary_result {
-			border: 1px solid #888888;
-			display: flex;
-		}
-
-			.aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character {
-				width: calc(1em + 8px);
-				height: calc(1em + 8px);
-				margin-right: 3px;
-				display: flex;
-				justify-content: center;
-				align-content: center;
-				vertical-align: middle;
-				user-select: none;
-				cursor: pointer;
-			}
-
-				.aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character:last-child {
-					margin-right: 0px;
-				}
-</style>
-
-
 @code {
 	string SearchText { get; set; } = string.Empty;
+	bool SearchInfoVisible { get; set; } = false;
+	bool SearchOptionVisible { get; set; } = false;
+
+	SearchOptionTargets SearchOptionTarget { get; set; } = SearchOptionTargets.All;
+
+	enum SearchOptionTargets
+	{
+		All, Kanji, Radical,
+	}
+
+	string GetSearchOptionTargetsTitle(SearchOptionTargets target) => target switch
+	{
+		SearchOptionTargets.All => "全て",
+		SearchOptionTargets.Kanji => "漢字",
+		SearchOptionTargets.Radical => "部首",
+		_ => string.Empty,
+	};
 
 	protected override async Task OnInitializedAsync()
 	{

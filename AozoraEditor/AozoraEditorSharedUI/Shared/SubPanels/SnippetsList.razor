@@ -65,7 +65,7 @@
 	string SearchWord { get; set; } = string.Empty;
 	bool ShowInfo { get; set; } = false;
 
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Root))]
 	public TabControl? Root { get; set; }
 
 
