@@ -23,6 +23,7 @@ public interface IDictionaryResultEntry
 public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 {
 	public entry Content { get; init; }
+	public page? Page { get; init; }
 
 	IEnumerable<UnicodeCategory?>? _UnicodeCategory;
 	public IEnumerable<UnicodeCategory?> UnicodeCategory
@@ -45,9 +46,10 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 		}
 	}
 
-	public DictionaryResultEntryGaijiChuki(entry content)
+	public DictionaryResultEntryGaijiChuki(entry content, page? parent = null)
 	{
 		Content = content ?? throw new ArgumentNullException(nameof(content));
+		Page = parent;
 		Guid = Guid.NewGuid();
 	}
 
@@ -167,5 +169,4 @@ public class DictionaryResultSingleChar : IDictionaryResultEntry
 	}
 
 	public Guid Guid { get; }
-
 }

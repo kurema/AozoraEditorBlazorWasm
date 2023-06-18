@@ -116,17 +116,16 @@
 {
 	<h1>一覧</h1>
 
-	@if (CurrentPage is not null)
+	@foreach (var c in CurrentPages)
 	{
-		<p>@(string.Join(string.Empty, CurrentPage.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', CurrentPage.radical?.readings?.reading ?? Array.Empty<string>())))</p>
+		<p>@(string.Join(string.Empty, c.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', c.radical?.readings?.reading ?? Array.Empty<string>())))</p>
 	}
 
 	<div class="aozora_dictionary_result_container">
 		@foreach (var item in SearchResults)
 		{
-			var chs = item.Characters.ToArray();
-			@*var categories = item.UnicodeCategory.GetEnumerator();*@
-			if (chs is null or { Length: 0 }) continue;
+			var chs = item.Characters?.ToArray();
+			if (chs is null or { Length: 0 }) chs = new[] { "？" };
 			<button class="aozora_dictionary_result">
 				@foreach (var ch in chs)
 				{
@@ -202,11 +201,6 @@
 								{
 									<div class="aozora_dictionary_result_detail_item_info_note">※［＃@(item.Note)］</div>
 								}
-
-								@*@if (itemGc.Content.duplicate)
-				{
-				<div class="aozora_dictionary_result_detail_item_info_icon">重複</div>
-				}*@
 							</div>
 							<table>
 								@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
@@ -230,7 +224,7 @@
 										{
 											<span title="本来の部首ではありません。">★</span>
 										}
-										@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, CurrentPage))
+										@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 									</td>
 								</tr>
 							</table>
@@ -255,11 +249,25 @@
 </ul>
 
 @code {
-	string SearchText { get; set; } = string.Empty;
+	string _SearchText = string.Empty;
+	string SearchText
+	{
+		get => _SearchText; set
+		{
+			_SearchText = value;
+			//ToDo:検索コマンド。
+			StateHasChanged();
+		}
+	}
 	bool SearchInfoVisible { get; set; } = false;
 	bool SearchOptionVisible { get; set; } = false;
 
 	SearchOptionTargets SearchOptionTarget { get; set; } = SearchOptionTargets.All;
+
+	void InvokeSearch()
+	{
+
+	}
 
 	enum SearchOptionTargets
 	{
@@ -282,14 +290,14 @@
 
 	List<Models.IDictionaryResultEntry> SearchResults { get; set; } = new();
 
-	page? CurrentPage { get; set; }
+	page[] CurrentPages { get; set; } = new page[0];
 
 	void SelectPage(page page)
 	{
 		if (page?.entries is null) return;
-		CurrentPage = page;
+		CurrentPages = new[] { page };
 		SearchResults.Clear();
-		SearchResults.AddRange(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a)));
+		SearchResults.AddRange(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)));
 		StateHasChanged();
 	}
 }
