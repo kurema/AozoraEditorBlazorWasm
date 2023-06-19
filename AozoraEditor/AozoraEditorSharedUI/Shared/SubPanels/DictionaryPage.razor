@@ -108,131 +108,82 @@
 			}
 		</div>
 	</details>
+
+	<details>
+		<!-- その他はradical(部首)ではないが、まぁええやろ。 -->
+		<summary>
+			<h1><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>その他</h1>
+		</summary>
+		<div class="aozora_dictionary_others">
+			@if (Aozora.GaijiChuki.Manager.Instance?.other?.PageOther is not null)
+			{
+				foreach (var item in Aozora.GaijiChuki.Manager.Instance.other.PageOther.Where(a => a.entries.Length > 0))
+				{
+					<button class="aozora_dictionary_others_other" @onclick="_=>SelectPageOther(item)">
+						@item.header
+					</button>
+				}
+			}
+		</div>
+	</details>
 </div>
 
 <hr />
 
-@if (SearchResults.Count > 0)
+@if (SearchResults.Any())
 {
 	<h1>一覧</h1>
 
-	@foreach (var c in CurrentPages)
+	@foreach (var c in SearchResults)
 	{
-		<p>@(string.Join(string.Empty, c.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', c.radical?.readings?.reading ?? Array.Empty<string>())))</p>
+		switch (c)
+		{
+			case Models.DictionaryResultGroupRadical cr:
+				<p>@(string.Join(string.Empty, cr.Page.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', cr.Page.radical?.readings?.reading ?? Array.Empty<string>())))</p>
+				break;
+		}
 	}
 
 	<div class="aozora_dictionary_result_container">
-		@foreach (var item in SearchResults)
+		@foreach (var itemG in SearchResults)
 		{
-			var chs = item.Characters?.ToArray();
-			if (chs is null or { Length: 0 }) chs = new[] { "？" };
-			<button class="aozora_dictionary_result">
-				@foreach (var ch in chs)
+			if (SearchResults.Count() > 1)
+			{
+				switch (itemG)
 				{
-					string ch2 = ch;
-					if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse) ch2 = "？";
-					<div class="aozora_dictionary_result_character" onclick="document.getElementById('@(item.Guid)').scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});">@ch2</div>
+					case Models.DictionaryResultGroupRadical rgr:
+						<div class="aozora_dictionary_result_header">
+							@foreach (var pchar in rgr.Page?.radical?.characters?.character ?? new string[0])
+							{
+								<div class="aozora_dictionary_result_header_character">@pchar</div>
+							}
+						</div>
+						break;
 				}
-			</button>
+			}
+			foreach (var item in itemG)
+			{
+				var chs = item.Characters?.ToArray();
+				if (chs is null or { Length: 0 }) chs = new[] { "？" };
+				<div class="aozora_dictionary_result">
+					@foreach (var ch in chs)
+					{
+						string ch2 = ch;
+						if (ch2.Length == 0 || System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse) ch2 = "？";
+
+						<button class="@(ch2.Length<=1 ? "aozora_dictionary_result_character":"aozora_dictionary_result_character_long")" onclick="document.getElementById('@(item.Guid)').scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});">@ch2</button>
+					}
+				</div>
+			}
 		}
 	</div>
 
 	<div class="aozora_dictionary_result_detail_container">
-		@foreach (var item in SearchResults)
+		@foreach (var itemG in SearchResults)
 		{
-			switch (item)
+			foreach (var item in itemG)
 			{
-				case Models.DictionaryResultEntryGaijiChuki itemGc:
-					<div class="aozora_dictionary_result_detail_item" id="@(item.Guid)">
-						<div class="aozora_dictionary_result_detail_item_character">
-							@{
-								var categories = item.UnicodeCategory.GetEnumerator();
-								var chs = item.Characters.ToArray();
-								chs = chs.Length == 0 ? new[] { "？" } : chs;
-								foreach (var ch in chs)
-								{
-									if (categories.Current == System.Globalization.UnicodeCategory.PrivateUse)
-									{
-										<text>？</text>
-									}
-									else
-									{
-										<text>@ch</text>
-									}
-								}
-							}
-						</div>
-						<div class="aozora_dictionary_result_detail_item_info_container">
-							<div class="aozora_dictionary_result_detail_item_info_note_container">
-								@switch (itemGc.Content.Item)
-								{
-									case entryCompatible78Inclusion i1:
-										<div class="aozora_dictionary_result_detail_item_info_icon">78互換包摂：@(i1.@ref)</div>
-										break;
-									case entryDesignVariant i2:
-										<div class="aozora_dictionary_result_detail_item_info_icon">デザイン差：@(i2.@ref)</div>
-										break;
-									case entryInclusionApplication i3:
-										var t1 = i3.Item switch { string s => s, note n => n.full, _ => string.Empty };
-										<div class="aozora_dictionary_result_detail_item_info_icon">包摂適用：@t1</div>
-										break;
-									case entryIntegrationApplication i4:
-										var t2 = i4.Item switch { string s => s, note n => n.full, _ => string.Empty };
-										<div class="aozora_dictionary_result_detail_item_info_icon">統合適用：@t2</div>
-										break;
-									case object:
-										<div class="aozora_dictionary_result_detail_item_info_icon">入力可能</div>
-										break;
-								}
-								@switch (itemGc.Content.supplement)
-								{
-									case entrySupplement.supplementCommon:
-										<div class="aozora_dictionary_result_detail_item_info_icon">補助漢字と共通</div>
-										break;
-									case entrySupplement.supplementOnly:
-										<div class="aozora_dictionary_result_detail_item_info_icon">補助のみ</div>
-										break;
-								}
-								@foreach (var ucv in itemGc.Content.UCV ?? new entryUCV[0])
-								{
-									<div class="aozora_dictionary_result_detail_item_info_icon">UCV@(ucv.number)</div>
-								}
-								@if (!string.IsNullOrWhiteSpace(item.Note))
-								{
-									<div class="aozora_dictionary_result_detail_item_info_note">※［＃@(item.Note)］</div>
-								}
-							</div>
-							<table>
-								@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
-								{
-									<tr>
-										<th>JIS X 0213</th>
-										<td>@(Aozora.Helpers.YamlValues.Jisx0213NumberToFormated(item.Jisx0213Code))</td>
-									</tr>
-								}
-								@if (item.Unicode.Any())
-								{
-									<tr>
-										<th>Unicode</th>
-										<td>@(string.Join(' ', item.Unicode))</td>
-									</tr>
-								}
-								<tr>
-									<th>画数</th>
-									<td>
-										@if (itemGc.Content.duplicate)
-										{
-											<span title="本来の部首ではありません。">★</span>
-										}
-										@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-					break;
-				case Models.DictionaryResultSingleChar itemRs:
-					break;
+				@GetEntryHtml(item)
 			}
 		}
 	</div>
@@ -244,18 +195,20 @@
 	<li>環境によっては表示されない文字があります。</li>
 	<li>部首の字形が複数ある場合は画数が複数表示されることがあります。</li>
 	<li>注記に文字コードが含まれている場合、字形は元データではなく注記情報に基づいた表記になります。</li>
-	<li>文字コードは表示されている文字に対応しています。字形が誤りの場合は文字コードも誤っている場合があります。</li>
+	<li>文字コードは表示されている文字に対応しています。字形が誤りの場合は文字コードも誤りです。その他の理由の誤りもあります。</li>
 	<li>青空文庫外部で利用する場合、Shift_JISではなくUTF-8などを利用して外字の使用を避けることも可能です。互換性が低下する点には注意してください。</li>
 </ul>
 
 @code {
 	string _SearchText = string.Empty;
 	string SearchText
+
 	{
 		get => _SearchText; set
+
 		{
 			_SearchText = value;
-			//ToDo:検索コマンド。
+			InvokeSearch();
 			StateHasChanged();
 		}
 	}
@@ -268,6 +221,7 @@
 	{
 
 	}
+
 
 	enum SearchOptionTargets
 	{
@@ -288,16 +242,165 @@
 		await base.OnInitializedAsync();
 	}
 
-	List<Models.IDictionaryResultEntry> SearchResults { get; set; } = new();
+	IEnumerable<Models.IDictionaryResultGroup> SearchResults { get; set; } = new Models.IDictionaryResultGroup[0];
 
-	page[] CurrentPages { get; set; } = new page[0];
+	void SelectPageOther(PageOther page)
+	{
+		if (page?.entries is null) return;
+		SearchResults = new[] { new Models.DictionaryResultGroupRadicalOther(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChukiOther(a, page)).ToArray(), page) };
+		StateHasChanged();
+	}
+
 
 	void SelectPage(page page)
 	{
 		if (page?.entries is null) return;
-		CurrentPages = new[] { page };
-		SearchResults.Clear();
-		SearchResults.AddRange(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)));
+		SearchResults = new[] { new Models.DictionaryResultGroupRadical(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)).ToArray(), page) };
 		StateHasChanged();
+	}
+
+	RenderFragment GetEntryHtml(Models.IDictionaryResultEntry item)
+	{
+		switch (item)
+		{
+			case Models.DictionaryResultEntryGaijiChuki itemGc:
+				return GetEntryHtml(item,
+	@<text>
+		@switch (itemGc.Content.Item)
+		{
+			case entryCompatible78Inclusion i1:
+				<div class="aozora_dictionary_result_detail_item_info_icon">
+					78互換包摂：@(
+					i1.@ref
+						)
+				</div>
+				break;
+			case entryDesignVariant i2:
+				<div class="aozora_dictionary_result_detail_item_info_icon">
+					デザイン差：@(
+						i2.@ref
+							)
+				</div>
+				break;
+			case entryInclusionApplication i3:
+				var t1 = i3.Item switch { string s => s, note n => n.full, _ => string.Empty };
+				<div class="aozora_dictionary_result_detail_item_info_icon">包摂適用：@t1</div>
+				break;
+			case entryIntegrationApplication i4:
+				var t2 = i4.Item switch { string s => s, note n => n.full, _ => string.Empty };
+				<div class="aozora_dictionary_result_detail_item_info_icon">統合適用：@t2</div>
+				break;
+			case object:
+				<div class="aozora_dictionary_result_detail_item_info_icon">入力可能</div>
+				break;
+		}
+		@switch (itemGc.Content.supplement)
+		{
+			case entrySupplement.supplementCommon:
+				<div class="aozora_dictionary_result_detail_item_info_icon">補助漢字と共通</div>
+				break;
+			case entrySupplement.supplementOnly:
+				<div class="aozora_dictionary_result_detail_item_info_icon">補助のみ</div>
+				break;
+		}
+		@foreach (var ucv in itemGc.Content.UCV ?? new entryUCV[0])
+		{
+			<div class="aozora_dictionary_result_detail_item_info_icon">
+				UCV@(
+					ucv.number
+						)
+			</div>
+		}
+	</text>
+	,
+	@<text>
+		@if (itemGc.Content.duplicate)
+		{
+			<span title="本来の部首ではありません。索引用の参考です。">★</span>
+		}
+		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
+	</text>
+		);
+			case Models.DictionaryResultSingleChar itemRs:
+				return GetEntryHtml(item, null, null);
+			default:
+				return GetEntryHtml(item, null, null);
+
+		}
+	}
+
+	RenderFragment GetEntryHtml(Models.IDictionaryResultEntry item, RenderFragment? noteAppendHtml, RenderFragment? strokeHtml)
+	{
+		return
+	@<div class="aozora_dictionary_result_detail_item" id="@(item.Guid)">
+		<div class="aozora_dictionary_result_detail_item_character">
+			@{
+				var categories = item.UnicodeCategory.GetEnumerator();
+				var chs = item.Characters.ToArray();
+				chs = chs.Length == 0 ? new[] { "？" } : chs;
+				foreach (var ch in chs)
+				{
+					if (categories.Current == System.Globalization.UnicodeCategory.PrivateUse)
+					{
+						<text>？</text>
+					}
+					else
+					{
+						<text>@ch</text>
+					}
+				}
+			}
+		</div>
+		<div class="aozora_dictionary_result_detail_item_info_container">
+			<div class="aozora_dictionary_result_detail_item_info_note_container">
+				@if (noteAppendHtml is not null)
+				{
+					@noteAppendHtml
+				}
+
+				@if (!string.IsNullOrWhiteSpace(item.Note))
+				{
+					<div class="aozora_dictionary_result_detail_item_info_note">
+						※［＃@(
+							item.Note
+								)］
+					</div>
+				}
+			</div>
+			<table>
+				@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
+				{
+					<tr>
+						<th>JIS X 0213</th>
+						<td>
+							@(
+								Aozora.Helpers.YamlValues.Jisx0213NumberToFormated(item.Jisx0213Code)
+									)
+						</td>
+					</tr>
+				}
+				@if (item.Unicode.Any())
+				{
+					<tr>
+						<th>Unicode</th>
+						<td>
+							@(
+								string.Join(' ', item.Unicode)
+									)
+						</td>
+					</tr>
+				}
+				@if (strokeHtml is not null)
+				{
+					<tr>
+						<th>画数</th>
+						<td>
+							@strokeHtml
+						</td>
+					</tr>
+				}
+			</table>
+		</div>
+	</div>;
 	}
 }

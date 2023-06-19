@@ -51,26 +51,25 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 		Content = content ?? throw new ArgumentNullException(nameof(content));
 		Page = parent;
 		Guid = Guid.NewGuid();
-	}
 
-	public IEnumerable<string> Characters
-	{
-		get
+		switch (Content.note?.Item)
 		{
-			switch (Content?.note?.Item)
-			{
-				case noteUnicode note:
-					return new[] { char.ConvertFromUtf32(Convert.ToInt32(note.code, 16)).ToString() };
-				case noteJisx0213 jisx0213:
-					{
-						var crct = Aozora.Helpers.YamlValues.Jisx0213ToString(jisx0213.men, jisx0213.ku, jisx0213.ten);
-						if (crct is not null) return new[] { crct };
-						break;
-					}
-			}
-			return Content?.characters?.character ?? Array.Empty<string>();
+			case noteUnicode note:
+				Characters = new[] { char.ConvertFromUtf32(Convert.ToInt32(note.code, 16)).ToString() };
+				break;
+			case noteJisx0213 jisx0213:
+				{
+					var crct = Aozora.Helpers.YamlValues.Jisx0213ToString(jisx0213.men, jisx0213.ku, jisx0213.ten);
+					if (crct is not null) Characters = new[] { crct }; else goto default;
+					break;
+				}
+			default:
+				Characters = Content.characters?.character ?? Array.Empty<string>(); ;
+				break;
 		}
 	}
+
+	public IEnumerable<string> Characters { get; init; }
 
 	public (int men, int ku, int ten) Jisx0213Code
 	{
@@ -112,6 +111,82 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 			yield return $"U+{item.Value:X}";
 		}
 	}
+}
+
+public class DictionaryResultEntryGaijiChukiOther : IDictionaryResultEntry
+{
+	public DictionaryResultEntryGaijiChukiOther(PageOtherEntry content, PageOther? page)
+	{
+		Content = content ?? throw new ArgumentNullException(nameof(content));
+		Page = page;
+		Guid = Guid.NewGuid();
+
+		switch (Content.note?.Item)
+		{
+			case noteUnicode note:
+				_Characters = new[] { char.ConvertFromUtf32(Convert.ToInt32(note.code, 16)).ToString() };
+				break;
+			case noteJisx0213 jisx0213:
+				{
+					var crct = Aozora.Helpers.YamlValues.Jisx0213ToString(jisx0213.men, jisx0213.ku, jisx0213.ten);
+					if (crct is not null) _Characters = new[] { crct }; else goto default;
+					break;
+				}
+			default:
+				_Characters = new[] { Content.character };
+				break;
+		}
+	}
+
+	public PageOtherEntry Content { get; init; }
+	public PageOther? Page { get; init; }
+
+	string[] _Characters;
+
+	public IEnumerable<string> Characters => _Characters;
+
+	public (int men, int ku, int ten) Jisx0213Code
+	{
+		get
+		{
+			if (Content?.note?.Item is noteJisx0213 noteJisx0213) return (noteJisx0213.men, noteJisx0213.ku, noteJisx0213.ten);
+			if (Aozora.Helpers.YamlValues.Jisx0213ReverseDictionary.TryGetValue(Characters.First(), out var value)) return value;
+			return DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty;
+		}
+	}
+
+	public IEnumerable<string> Unicode
+	{
+		get
+		{
+			if (Content.note?.Item is noteUnicode noteUnicode) return new[] { $"U+{noteUnicode.code}" };
+			return DictionaryResultEntryGaijiChuki.GetUnicode(Content.character);
+		}
+	}
+
+	public string? Note => Content.note?.full ?? string.Empty;
+
+	IEnumerable<UnicodeCategory?>? _UnicodeCategory;
+	public IEnumerable<UnicodeCategory?> UnicodeCategory
+	{
+		get
+		{
+			if (_UnicodeCategory is not null)
+			{
+				foreach (var item in _UnicodeCategory) yield return item;
+				yield break;
+			}
+			var result = new List<UnicodeCategory?>();
+			if (Content.character is null && Content.character?.Length > 0)
+			{
+				UnicodeCategory? ch = CharUnicodeInfo.GetUnicodeCategory(Content.character, 0);
+				result.Add(ch);
+				yield return ch;
+			}
+			_UnicodeCategory = result.ToArray();
+		}
+	}
+	public Guid Guid { get; init; }
 }
 
 public class DictionaryResultSingleChar : IDictionaryResultEntry
@@ -164,7 +239,15 @@ public class DictionaryResultSingleChar : IDictionaryResultEntry
 	{
 		get
 		{
-			return null;
+			if (Jisx0213Code != DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty)
+			{
+				return $"「？」、第{Jisx0213Code.men + 2}水準{Jisx0213Code.men}-{Jisx0213Code.ku}-{Jisx0213Code.ten}";
+			}
+			else
+			{
+				//Characterが複数文字だった場合は仕様違反になる。
+				return $"「？」、{string.Join(' ', Unicode)}、ページ数-行数";
+			}
 		}
 	}
 

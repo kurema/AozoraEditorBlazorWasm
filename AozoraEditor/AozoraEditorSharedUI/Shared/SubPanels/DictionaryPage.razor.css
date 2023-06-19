@@ -90,6 +90,8 @@
 
         .aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_character {
             grid-column: 1/2;
+            min-width: calc(1em + 4px);
+            text-align: center;
             font-size: 300%;
         }
 
@@ -164,7 +166,7 @@
     .aozora_dictionary_radicals_header > .aozora_dictionary_radicals_header_sub {
     }
 
-.aozora_dictionary_radicals {
+.aozora_dictionary_radicals, .aozora_dictionary_others {
     width: 100%;
     display: flex;
     line-break: auto;
@@ -203,6 +205,18 @@
         border: 1px solid transparent;
     }
 
+    .aozora_dictionary_others > .aozora_dictionary_others_other {
+        height: calc(1em + 8px);
+        padding: 4px;
+        border: 1px solid var(--aozora-sub-dictionary-theme-border-color);
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        vertical-align: middle;
+        user-select: none;
+        cursor: pointer;
+    }
+
 .aozora_dictionary_result_container {
     width: 100%;
     display: flex;
@@ -213,12 +227,14 @@
     margin: 10px 0;
 }
 
-    .aozora_dictionary_result_container > .aozora_dictionary_result {
+    .aozora_dictionary_result_container > .aozora_dictionary_result, .aozora_dictionary_result_container > .aozora_dictionary_result_header {
         border: 1px solid var(--aozora-sub-dictionary-theme-border-color);
         display: flex;
     }
 
-        .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character {
+        .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character,
+        .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character_long,
+        .aozora_dictionary_result_container > .aozora_dictionary_result_header > .aozora_dictionary_result_header_character {
             width: calc(1em + 8px);
             height: calc(1em + 8px);
             margin-right: 3px;
@@ -230,9 +246,21 @@
             cursor: pointer;
         }
 
-            .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character:last-child {
+            .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character:last-child,
+            .aozora_dictionary_result_container > .aozora_dictionary_result_header > .aozora_dictionary_result_header_character:last-child {
                 margin-right: 0px;
             }
+
+        .aozora_dictionary_result_container > .aozora_dictionary_result > .aozora_dictionary_result_character_long {
+            margin-right: 4px;
+            margin-left: 4px;
+            width: auto;
+        }
+
+    .aozora_dictionary_result_container > .aozora_dictionary_result_header {
+        background: var(--aozora-theme-text-color);
+        color: var(--aozora-theme-background);
+    }
 
 a:visited, a, a:active {
     color: var(--aozora-theme-text-color);
