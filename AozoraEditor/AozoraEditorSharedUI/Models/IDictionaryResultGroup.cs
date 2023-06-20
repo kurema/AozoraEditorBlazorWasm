@@ -7,7 +7,12 @@ public interface IDictionaryResultGroup : IEnumerable<IDictionaryResultEntry>
 {
 }
 
-public class DictionaryResultGroupRadical : DictionaryResultGroupBasic
+public interface IHeadersProvider
+{
+	IEnumerable<string> Header { get; }
+}
+
+public class DictionaryResultGroupRadical : DictionaryResultGroupBasic, IHeadersProvider
 {
 	public DictionaryResultGroupRadical(IEnumerable<IDictionaryResultEntry> items, page page) : base(items)
 	{
@@ -15,16 +20,32 @@ public class DictionaryResultGroupRadical : DictionaryResultGroupBasic
 	}
 
 	public page Page { get; init; }
+
+	public IEnumerable<string> Header => Page?.radical?.characters?.character ?? Array.Empty<string>();
 }
 
-public class DictionaryResultGroupRadicalOther : DictionaryResultGroupBasic
+public class DictionaryResultGroupStrokes : DictionaryResultGroupBasic, IHeadersProvider
+{
+	public DictionaryResultGroupStrokes(IEnumerable<IDictionaryResultEntry> items, int stroke) : base(items)
+	{
+		Stroke = stroke;
+	}
+
+	public int Stroke { get; init; }
+
+	public IEnumerable<string> Header => new[] { Stroke.ToString() };
+}
+
+public class DictionaryResultGroupRadicalOther : DictionaryResultGroupBasic, IHeadersProvider
 {
 	public DictionaryResultGroupRadicalOther(IEnumerable<IDictionaryResultEntry> items, PageOther pageOther) : base(items)
 	{
-		PageOther = pageOther ?? throw new ArgumentNullException(nameof(pageOther));
+		Page = pageOther ?? throw new ArgumentNullException(nameof(pageOther));
 	}
 
-	public PageOther PageOther { get; init; }
+	public PageOther Page { get; init; }
+
+	public IEnumerable<string> Header => new[] { Page?.entries?.FirstOrDefault()?.character ?? "？" };
 }
 
 public class DictionaryResultGroupBasic : IDictionaryResultGroup

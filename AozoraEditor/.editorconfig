@@ -1,4 +1,6 @@
 ﻿[*.cs]
-
-# CA1304: CultureInfo を指定します
+# https://ufcpp.net/blog/2023/6/ca-specify-culture/
 dotnet_diagnostic.CA1304.severity = error
+dotnet_diagnostic.CA1305.severity = error
+dotnet_diagnostic.CA1307.severity = error
+dotnet_diagnostic.CA1310.severity = error

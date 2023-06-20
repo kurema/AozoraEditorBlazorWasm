@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -109,6 +110,22 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 		foreach (var item in text.EnumerateRunes())
 		{
 			yield return $"U+{item.Value:X}";
+		}
+	}
+
+	public static Encoding ShiftJIS = CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback) ?? throw new NullReferenceException();
+
+	public static IEnumerable<string> GetShiftJIS(string text)
+	{
+		try
+		{
+			var bytes = ShiftJIS.GetBytes(text).Chunk(2);
+			if (bytes is null) return Array.Empty<string>();
+			return bytes.Select(a => a.Length > 1 ? $"{a[0]:X2}{a[1]:X2}" : $"{a[0]:X2}").ToArray();
+		}
+		catch
+		{
+			return Array.Empty<string>();
 		}
 	}
 }

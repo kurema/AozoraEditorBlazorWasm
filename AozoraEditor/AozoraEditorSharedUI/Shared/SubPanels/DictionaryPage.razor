@@ -18,7 +18,7 @@
 			const string selectedClass = "aozora_dictionary_search_option_item_selected";
 			<!-- aozora_dictionary_search_option_item_selected -->
 			<div class="aozora_dictionary_search_option">
-				@foreach (var item in new SearchOptionTargets[] { SearchOptionTargets.All, SearchOptionTargets.Kanji, SearchOptionTargets.Radical })
+				@foreach (var item in new SearchOptionTargets[] { SearchOptionTargets.All, SearchOptionTargets.Kanji, SearchOptionTargets.Radical, SearchOptionTargets.Note, })
 				{
 					<button @onclick="_=>{SearchOptionTarget=item;}"
 							class="aozora_dictionary_search_option_item @(SearchOptionTarget == item?selectedClass:string.Empty)">
@@ -47,6 +47,25 @@
 </div>
 
 <div class="aozora_dictionary_radicals_container">
+	<details>
+		<summary>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>総画数</h1>
+		</summary>
+
+		<div class="aozora_dictionary_radicals">
+			@if (Aozora.GaijiChuki.Manager.Toc.StrokeCharacters is not null)
+			{
+				foreach (var stroke in Aozora.GaijiChuki.Manager.Toc.StrokeCharacters.Keys.Order())
+				{
+					<button class="aozora_dictionary_radical">
+						<div class="aozora_dictionary_radical_character" @onclick="_=>{SelectStroke(stroke);}">@stroke</div>
+					</button>
+
+				}
+			}
+		</div>
+	</details>
+
 	<details>
 		<summary>
 			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">読み</span></h1>
@@ -119,7 +138,7 @@
 			{
 				foreach (var item in Aozora.GaijiChuki.Manager.Instance.other.PageOther.Where(a => a.entries.Length > 0))
 				{
-					<button class="aozora_dictionary_others_other" @onclick="_=>SelectPageOther(item)">
+					<button class="aozora_dictionary_others_other" @onclick="_=>SelectPage(item)">
 						@item.header
 					</button>
 				}
@@ -141,6 +160,9 @@
 			case Models.DictionaryResultGroupRadical cr:
 				<p>@(string.Join(string.Empty, cr.Page.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', cr.Page.radical?.readings?.reading ?? Array.Empty<string>())))</p>
 				break;
+			case Models.DictionaryResultGroupRadicalOther cro when cro.Page is not null:
+				<p>@cro.Page.header</p>
+				break;
 		}
 	}
 
@@ -149,16 +171,15 @@
 		{
 			if (SearchResults.Count() > 1)
 			{
-				switch (itemG)
+				if (itemG is Models.IHeadersProvider itemHP)
 				{
-					case Models.DictionaryResultGroupRadical rgr:
-						<div class="aozora_dictionary_result_header">
-							@foreach (var pchar in rgr.Page?.radical?.characters?.character ?? new string[0])
-							{
-								<div class="aozora_dictionary_result_header_character">@pchar</div>
-							}
-						</div>
-						break;
+					<div class="aozora_dictionary_result_header">
+						@foreach (var pchar in itemHP.Header)
+						{
+							<div class="aozora_dictionary_result_header_character">@pchar</div>
+						}
+					</div>
+
 				}
 			}
 			foreach (var item in itemG)
@@ -170,8 +191,8 @@
 					{
 						string ch2 = ch;
 						if (ch2.Length == 0 || System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch2, 0) == System.Globalization.UnicodeCategory.PrivateUse) ch2 = "？";
-
-						<button class="@(ch2.Length<=1 ? "aozora_dictionary_result_character":"aozora_dictionary_result_character_long")" onclick="document.getElementById('@(item.Guid)').scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});">@ch2</button>
+						var info = new System.Globalization.StringInfo(ch2);
+						<button class="@( info.LengthInTextElements <=1 ? "aozora_dictionary_result_character":"aozora_dictionary_result_character_long")" onclick="document.getElementById('@(item.Guid)').scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});">@ch2</button>
 					}
 				</div>
 			}
@@ -196,7 +217,9 @@
 	<li>部首の字形が複数ある場合は画数が複数表示されることがあります。</li>
 	<li>注記に文字コードが含まれている場合、字形は元データではなく注記情報に基づいた表記になります。</li>
 	<li>文字コードは表示されている文字に対応しています。字形が誤りの場合は文字コードも誤りです。その他の理由の誤りもあります。</li>
-	<li>青空文庫外部で利用する場合、Shift_JISではなくUTF-8などを利用して外字の使用を避けることも可能です。互換性が低下する点には注意してください。</li>
+	<li>Shift_JISコードは実際にはCP932の場合です。若干の差異があります。</li>
+	<li>青空文庫外部で利用する場合、Shift_JISではなくUTF-8などを利用して外字の使用を避けることも可能です。ただし互換性が低下します。</li>
+	<li>「ページ数-行数」は実際の出現場所に従って書き換えてください。</li>
 </ul>
 
 @code {
@@ -225,7 +248,7 @@
 
 	enum SearchOptionTargets
 	{
-		All, Kanji, Radical,
+		All, Kanji, Radical, Note,
 	}
 
 	string GetSearchOptionTargetsTitle(SearchOptionTargets target) => target switch
@@ -233,18 +256,19 @@
 		SearchOptionTargets.All => "全て",
 		SearchOptionTargets.Kanji => "漢字",
 		SearchOptionTargets.Radical => "部首",
+		SearchOptionTargets.Note => "注記",
 		_ => string.Empty,
 	};
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Task.Run(() => Aozora.GaijiChuki.Manager.LoadContent());
+		await Task.Run(() => Aozora.GaijiChuki.Manager.GetContentOrLoad());
 		await base.OnInitializedAsync();
 	}
 
 	IEnumerable<Models.IDictionaryResultGroup> SearchResults { get; set; } = new Models.IDictionaryResultGroup[0];
 
-	void SelectPageOther(PageOther page)
+	void SelectPage(PageOther page)
 	{
 		if (page?.entries is null) return;
 		SearchResults = new[] { new Models.DictionaryResultGroupRadicalOther(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChukiOther(a, page)).ToArray(), page) };
@@ -256,6 +280,14 @@
 	{
 		if (page?.entries is null) return;
 		SearchResults = new[] { new Models.DictionaryResultGroupRadical(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)).ToArray(), page) };
+		StateHasChanged();
+	}
+
+	void SelectStroke(int stroke)
+	{
+		if (Aozora.GaijiChuki.Manager.Toc.StrokeCharacters is null) return;
+		if (!Aozora.GaijiChuki.Manager.Toc.StrokeCharacters.TryGetValue(stroke, out var memory)) return;
+		SearchResults = new[] { new Models.DictionaryResultGroupStrokes(memory.ToArray().Where(a => !a.entry.duplicate).Select(a => new Models.DictionaryResultEntryGaijiChuki(a.entry, a.page)).ToArray(), stroke) };
 		StateHasChanged();
 	}
 
@@ -322,10 +354,8 @@
 	</text>
 		);
 			case Models.DictionaryResultSingleChar itemRs:
-				return GetEntryHtml(item, null, null);
 			default:
 				return GetEntryHtml(item, null, null);
-
 		}
 	}
 
@@ -367,39 +397,41 @@
 					</div>
 				}
 			</div>
-			<table>
+			<div class="aozora_dictionary_result_detail_item_info_header_box">
 				@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
 				{
-					<tr>
-						<th>JIS X 0213</th>
-						<td>
-							@(
-								Aozora.Helpers.YamlValues.Jisx0213NumberToFormated(item.Jisx0213Code)
-									)
-						</td>
-					</tr>
+					<p>
+						<span class="aozora_dictionary_result_detail_item_info_header">JIS X 0213</span>
+						@(Aozora.Helpers.YamlValues.Jisx0213NumberToFormated(item.Jisx0213Code))
+					</p>
 				}
-				@if (item.Unicode.Any())
-				{
-					<tr>
-						<th>Unicode</th>
-						<td>
-							@(
-								string.Join(' ', item.Unicode)
-									)
-						</td>
-					</tr>
+				@{
+					var sjis = Models.DictionaryResultEntryGaijiChuki.GetShiftJIS(string.Join(string.Empty, item.Characters));
+					if (item.Unicode.Any() || sjis.Any())
+					{
+						<p>
+							@if (item.Unicode.Any())
+							{
+								<span class="aozora_dictionary_result_detail_item_info_header">Unicode</span>
+								@(string.Join(' ', item.Unicode))
+							}
+							@if (sjis.Any())
+							{
+								<span class="aozora_dictionary_result_detail_item_info_header">Shift_JIS</span>
+								@(string.Join(' ', sjis))
+
+							}
+						</p>
+					}
 				}
 				@if (strokeHtml is not null)
 				{
-					<tr>
-						<th>画数</th>
-						<td>
-							@strokeHtml
-						</td>
-					</tr>
+					<p>
+						<span class="aozora_dictionary_result_detail_item_info_header">画数</span>
+						@strokeHtml
+					</p>
 				}
-			</table>
+			</div>
 		</div>
 	</div>;
 	}

@@ -120,6 +120,19 @@
                     align-items: center;
                 }
 
+            .aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > table th {
+                font-weight: normal;
+            }
+
+            .aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > .aozora_dictionary_result_detail_item_info_header_box p {
+                margin: 2px 0;
+            }
+
+            .aozora_dictionary_result_detail_container > .aozora_dictionary_result_detail_item > .aozora_dictionary_result_detail_item_info_container > .aozora_dictionary_result_detail_item_info_header_box .aozora_dictionary_result_detail_item_info_header {
+                border: solid 1px var(--aozora-theme-text-color);
+                margin-right: 2px;
+            }
+
 
 .aozora_dictionary_radicals_container {
 }
