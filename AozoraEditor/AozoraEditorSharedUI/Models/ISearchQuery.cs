@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace AozoraEditor.Shared.Models;
@@ -20,125 +19,6 @@ public interface ISearchQuery
 
 public static partial class SearchQueries
 {
-	public static ISearchQuery Parse(string text)
-	{
-		List<(int index, int length, TokenKind token)> tokens = new();
-		int indexLast = 0;
-		var spanOrigianl = text.AsSpan();
-		int position = 0;
-
-		var matchUnicode = UnicodeRegex().Matches(text);
-		var matchUnicodeEnu = matchUnicode.Select(a => a).GetEnumerator();
-
-		void closeText()
-		{
-			indexLast = position + 1;
-		}
-
-
-
-		while (spanOrigianl.Length > position)
-		{
-			var span = spanOrigianl[position..];
-
-			if (char.IsWhiteSpace(span[0]))
-			{
-				closeText();
-				position++;
-				continue;
-			}
-			if (span[0] is '&' or '＆')
-			{
-				closeText();
-				tokens.Add((position, 1, TokenKind.And));
-				position++;
-				continue;
-			}
-			if (span.StartsWith("and", StringComparison.CurrentCultureIgnoreCase) || span.StartsWith("ａｎｄ", StringComparison.CurrentCultureIgnoreCase))
-			{
-				closeText();
-				tokens.Add((position, 3, TokenKind.And));
-				position += 3;
-				continue;
-			}
-			if (span[0] is '|' or '｜')
-			{
-				closeText();
-				tokens.Add((position, 1, TokenKind.Or));
-				position++;
-				continue;
-			}
-			if (span.StartsWith("or", StringComparison.CurrentCultureIgnoreCase) || span.StartsWith("ｏｒ", StringComparison.CurrentCultureIgnoreCase))
-			{
-				closeText();
-				position += 2;
-
-				continue;
-
-			}
-			if (span[0] is '(' or '（')
-			{
-				closeText();
-				position++;
-
-				continue;
-			}
-			if (span[0] is ')' or '）')
-			{
-				closeText();
-				position++;
-
-				continue;
-			}
-
-			//if (span[0] is 'U' or 'Ｕ' or (>='0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F') or (>= '０' and <= '９') or (>= 'ａ' and <= 'ｆ') or (>= 'Ａ' and <= 'Ｆ'))
-			if (matchUnicodeEnu?.Current.Index == 0)
-			{
-
-				position += matchUnicodeEnu.Current.Length;
-				if (!matchUnicodeEnu.MoveNext()) matchUnicodeEnu = null;
-				continue;
-			}
-
-			{
-				position++;
-			}
-		}
-		throw new NotImplementedException();
-	}
-
-	[GeneratedRegex(@"(U\+)?([a-fA-F0-9ａ-ｆＡ-Ｆ０-９]{4-6})")]
-	private static partial Regex UnicodeRegex();
-
-	private static Dictionary<string, TokenKind>? _PredefinedDictionary;
-
-	private static Dictionary<string, TokenKind> PredefinedDictionary
-	{
-		get
-		{
-			return _PredefinedDictionary ?? new()
-			{
-				{ "&",TokenKind.And },
-				{ "＆",TokenKind.And},
-				{ "and",TokenKind.And},
-				{ "ａｎｄ",TokenKind.And},
-				{ "|",TokenKind.Or },
-				{ "｜",TokenKind.Or },
-				{ "or",TokenKind.Or },
-				{ "ｏｒ",TokenKind.Or },
-				{ "(",TokenKind.BrancketOpen },
-				{ "（",TokenKind.BrancketOpen },
-				{ ")",TokenKind.BrancketClose },
-				{ "）",TokenKind.BrancketClose },
-			};
-		}
-	}
-
-
-	enum TokenKind
-	{
-		Text, BrancketOpen, BrancketClose, And, Or,
-	}
 
 	public class SearchQueryOr : ISearchQuery
 	{
