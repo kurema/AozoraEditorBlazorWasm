@@ -48,3 +48,14 @@
         border-right: 1px solid var(--aozora-left-border-color);
         border-top: 1px solid var(--aozora-left-border-color);
     }
+
+@media (max-width:767px) {
+    .left_panel_container > .left_panel_body {
+        width: 280px;
+        height: calc(90% - 28px);
+        position: absolute;
+        top: 28px;/* ‚±‚ê‚ªŒÅ’è’l‚È‚Ì‚Í—Ç‚­‚È‚¢B */
+        left: 48px;
+        border-radius: 0 8px 8px 0;
+    }
+}

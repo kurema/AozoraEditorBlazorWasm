@@ -20,8 +20,8 @@
 			<div class="aozora_dictionary_search_option">
 				@foreach (var item in new SearchOptionTargets[] { SearchOptionTargets.All, SearchOptionTargets.Kanji, SearchOptionTargets.Radical, SearchOptionTargets.Note, })
 				{
-					<button @onclick="_=>{SearchOptionTarget=item;}"
-							class="aozora_dictionary_search_option_item @(SearchOptionTarget == item?selectedClass:string.Empty)">
+					<button @onclick="_=>{SelectSearchOptionTarget(item);}" title="ダブルクリックで複数選択を有効化"
+							class="aozora_dictionary_search_option_item @(SearchOptionTarget.HasFlag(item)?selectedClass:string.Empty)">
 						@(GetSearchOptionTargetsTitle(item))
 					</button>
 				}
@@ -131,7 +131,7 @@
 	<details>
 		<!-- その他はradical(部首)ではないが、まぁええやろ。 -->
 		<summary>
-			<h1><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>その他</h1>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>その他</h1>
 		</summary>
 		<div class="aozora_dictionary_others">
 			@if (Aozora.GaijiChuki.Manager.Instance?.other?.PageOther is not null)
@@ -239,16 +239,42 @@
 	bool SearchOptionVisible { get; set; } = false;
 
 	SearchOptionTargets SearchOptionTarget { get; set; } = SearchOptionTargets.All;
+	SearchOptionTargets SearchOptionTargetLast { get; set; } = SearchOptionTargets.All;
 
 	void InvokeSearch()
 	{
 
 	}
 
-
+	[Flags]
 	enum SearchOptionTargets
 	{
-		All, Kanji, Radical, Note,
+		All = Kanji | Radical | Note, Kanji = 1, Radical = 2, Note = 4,
+	}
+
+	void SelectSearchOptionTarget(SearchOptionTargets value)
+	{
+		bool isSingle = SearchOptionTarget == SearchOptionTargets.All || (SearchOptionTarget & (SearchOptionTarget - 1)) == 0;
+		SearchOptionTargets result;
+		if (isSingle)
+		{
+			if (SearchOptionTarget.HasFlag(value) && SearchOptionTarget != SearchOptionTargets.All)
+			{
+
+				result = SearchOptionTargetLast ^ value;
+			}
+			else
+			{
+				result = value;
+			}
+		}
+		else
+		{
+			result = SearchOptionTarget ^ value;
+		}
+		SearchOptionTargetLast = SearchOptionTarget;
+		SearchOptionTarget = result;
+		StateHasChanged();
 	}
 
 	string GetSearchOptionTargetsTitle(SearchOptionTargets target) => target switch
@@ -257,7 +283,7 @@
 		SearchOptionTargets.Kanji => "漢字",
 		SearchOptionTargets.Radical => "部首",
 		SearchOptionTargets.Note => "注記",
-		_ => string.Empty,
+		_ => "複合",
 	};
 
 	protected override async Task OnInitializedAsync()

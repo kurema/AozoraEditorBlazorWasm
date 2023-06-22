@@ -115,7 +115,7 @@
 
 		try
 		{
-			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
+			var sjis = Aozora.Aozora2Html.ShiftJisExceptionFallback;
 			if (sjis is null) throw new Exception();
 			var sw = new StreamWriter(ms, sjis);
 			await sw.WriteAsync(text);
@@ -134,6 +134,11 @@
 				await sw.FlushAsync();
 				await saveMs(ms);
 				sw.Close();
+				if (Root?.Dialog is not null && Root.WarnUTF8)
+				{
+					var result = await Root.Dialog.ShowDialog("保存", "Shift_JIS非対応の文字が含まれています。\nUTF-8で保存しました。", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "no_warn", Text = "今後通知しない" }, new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+					if (result.Id is "no_warn") Root.WarnUTF8 = false;
+				}
 			}
 			catch (Exception e)
 			{

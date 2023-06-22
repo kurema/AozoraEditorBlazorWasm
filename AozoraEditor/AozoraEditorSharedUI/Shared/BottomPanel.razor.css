@@ -28,6 +28,8 @@
             grid-row: 1/2;
             grid-column: 1/2;
             user-select: none;
+            overflow-x: scroll;
+            white-space: nowrap;
         }
 
             .bottom_panel_container > .bottom_panel_tab_bar > .bottom_panel_tab_bar_container > li.bottom_panel_tab_item {

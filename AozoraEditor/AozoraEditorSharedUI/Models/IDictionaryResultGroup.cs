@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 using Aozora.GaijiChuki.Xsd;
 
 namespace AozoraEditor.Shared.Models;
@@ -33,7 +34,7 @@ public class DictionaryResultGroupStrokes : DictionaryResultGroupBasic, IHeaders
 
 	public int Stroke { get; init; }
 
-	public IEnumerable<string> Header => new[] { Stroke.ToString() };
+	public IEnumerable<string> Header => new[] { Stroke.ToString(CultureInfo.InvariantCulture.NumberFormat) };
 }
 
 public class DictionaryResultGroupRadicalOther : DictionaryResultGroupBasic, IHeadersProvider

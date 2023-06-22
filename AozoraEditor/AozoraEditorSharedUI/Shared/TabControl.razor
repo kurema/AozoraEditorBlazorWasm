@@ -25,6 +25,9 @@
 							<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
 							<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
 						</MenuItem>
+						<MenuItem Title="通知">
+							<MenuItemCheckbox Title="UTF-8で保存した場合の通知" IsChecked="WarnUTF8" Checked="()=>{WarnUTF8=true;}" UnChecked="()=>{WarnUTF8=false;}" />
+						</MenuItem>
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
 						<MenuItem Title="青空文庫">
@@ -240,6 +243,8 @@
 	LeftPanel? leftPanel { get; set; }
 	public Themes.ThemeControl? Theme { get; private set; }
 
+	public bool WarnUTF8 { get; set; } = true;
+
 	public IEnumerable<string> PreviewCssFiles
 	{
 		get
@@ -264,22 +269,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
@@ -448,7 +453,7 @@
 	{
 		try
 		{
-			var sjis = System.Text.CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", new System.Text.EncoderExceptionFallback(), new System.Text.DecoderExceptionFallback());
+			var sjis = Aozora.Aozora2Html.ShiftJisExceptionFallback;
 			if (sjis is null) throw new Exception();
 			using var sr = new StreamReader(stream, sjis);
 			return await sr.ReadToEndAsync();

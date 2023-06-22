@@ -113,7 +113,7 @@ public class DictionaryResultEntryGaijiChuki : IDictionaryResultEntry
 		}
 	}
 
-	public static Encoding ShiftJIS = CodePagesEncodingProvider.Instance.GetEncoding("shift-jis", EncoderFallback.ExceptionFallback, DecoderFallback.ReplacementFallback) ?? throw new NullReferenceException();
+	public static Encoding ShiftJIS = Aozora.Aozora2Html.ShiftJisExceptionFallback;
 
 	public static IEnumerable<string> GetShiftJIS(string text)
 	{

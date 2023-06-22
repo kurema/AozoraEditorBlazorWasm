@@ -18,7 +18,7 @@
 .dialog_box {
     display: flex;
     flex-direction: column-reverse;
-    width: min-content;
+    width: fit-content;
     min-width: 500px;
     max-width: 90vw;
     min-height: 75px;
@@ -59,6 +59,7 @@
         flex-grow: 1;
         align-items: center;
         padding: 0 10px;
+        flex-shrink: 0;
     }
 
         .dialog_box .dialog_message_row > .dialog_icon {
@@ -80,6 +81,7 @@
             word-wrap: break-word;
             white-space: normal;
             font-family: Segoe WPC,Segoe UI,sans-serif;
+            flex-shrink: 0;
         }
 
             .dialog_box .dialog_message_row > .dialog_message_container > .dialog_message_title {
@@ -92,12 +94,14 @@
                 margin-bottom: 8px;
                 display: flex;
                 align-items: center;
+                flex-shrink: 0;
             }
 
             .dialog_box .dialog_message_row > .dialog_message_container > .dialog_message_detail {
                 line-height: 22px;
                 flex: 1;
                 white-space: pre;
+                flex-shrink: 0;
             }
 
 .text_button {
