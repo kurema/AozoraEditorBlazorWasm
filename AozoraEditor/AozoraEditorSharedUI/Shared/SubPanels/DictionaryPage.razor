@@ -9,7 +9,7 @@
 		<button class="aozora_dictionary_option_button" @onclick="_=>{SearchOptionVisible=!SearchOptionVisible;}">
 			@GetSearchOptionTargetsTitle(SearchOptionTarget)
 		</button>
-		<input data-bind="SearchText" placeholder="漢字・文字コード・部首の読み" />
+		<input @bind="SearchText" placeholder="漢字・文字コード・部首の読み" />
 		<button class="aozora_dictionary_search_info_button" @onclick="_=>{SearchInfoVisible=!SearchInfoVisible;}">
 			@(TabControl.GetMaterialSymbolOutlined("info"))
 		</button>
@@ -231,6 +231,7 @@
 
 		{
 			_SearchText = value;
+			Models.SearchQueries.Parser.Parse(value);
 			InvokeSearch();
 			StateHasChanged();
 		}
@@ -378,7 +379,7 @@
 		}
 		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 	</text>
-		);
+	);
 			case Models.DictionaryResultSingleChar itemRs:
 			default:
 				return GetEntryHtml(item, null, null);

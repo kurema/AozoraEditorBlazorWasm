@@ -6,6 +6,13 @@ public static partial class SearchQueries
 {
 	public static partial class Parser
 	{
+		public static void Parse(string text)
+		{
+			var result = Tokenize(text);
+			var t2 = string.Join(", ", result.Select(x => x.ToString()));
+			Console.WriteLine(t2);
+		}
+
 		static (int index, int length, TokenKind token)[] Tokenize(string text)
 		{
 			List<(int index, int length, TokenKind token)> tokens = new();
@@ -13,8 +20,9 @@ public static partial class SearchQueries
 			var spanOrigianl = text.AsSpan();
 			int position = 0;
 
-			//var matchUnicode = UnicodeRegex().Matches(text);
-			//var matchUnicodeEnu = matchUnicode.Select(a => a).GetEnumerator();
+			var matchUnicode = UnicodeRegex().Matches(text);
+			var matchUnicodeEnu = matchUnicode.Select(a => a).GetEnumerator();
+			matchUnicodeEnu.MoveNext();
 
 			void closeText()
 			{
@@ -41,6 +49,7 @@ public static partial class SearchQueries
 							closeText();
 							tokens.Add((position, dicEntry.Key.Length, dicEntry.Value));
 							position += dicEntry.Key.Length;
+							positionLast = position;
 							hit = true;
 							break;
 						}
@@ -48,13 +57,22 @@ public static partial class SearchQueries
 					if (hit) continue;
 				}
 
-				//if (matchUnicodeEnu?.Current.Index == 0)
-				//{
-				//	position += matchUnicodeEnu.Current.Length;
-				//	if (!matchUnicodeEnu.MoveNext()) matchUnicodeEnu = null;
-				//	throw new NotImplementedException();
-				//	continue;
-				//}
+				Console.WriteLine($"{position} {matchUnicodeEnu?.Current?.Index} {matchUnicodeEnu?.Current?.Groups[1]?.Length} {matchUnicodeEnu?.Current?.Groups[1].Value}");
+				if (matchUnicodeEnu?.Current?.Index == position)
+				{
+					var current = matchUnicodeEnu.Current;
+					if (!matchUnicodeEnu.MoveNext()) matchUnicodeEnu = null;
+
+					if (current.Groups[1].Length is >= 4 and <= 6)
+					{
+						//bool test1 = matchUnicodeEnu.Current.ValueSpan.StartsWith("U", StringComparison.OrdinalIgnoreCase) || matchUnicodeEnu.Current.ValueSpan.StartsWith("Ｕ", StringComparison.OrdinalIgnoreCase);
+						//bool test2 = (!test1 && matchUnicodeEnu.Current.Length == 4) || (test1 && matchUnicodeEnu.Current.Length is > 4 and < 8);
+						tokens.Add((current.Groups[1].Index, current.Groups[1].Length, TokenKind.Unicode));
+						position += current.Length;
+						positionLast = position;
+						continue;
+					}
+				}
 
 				{
 					position++;
@@ -69,8 +87,12 @@ public static partial class SearchQueries
 			return tokens.ToArray();
 		}
 
-		[GeneratedRegex(@"(U\+)?([a-fA-F0-9ａ-ｆＡ-Ｆ０-９]{4-6})")]
+		[GeneratedRegex(@"(?:[UＵ][\+＋])?([a-fA-F0-9ａ-ｆＡ-Ｆ０-９]+)")]
 		private static partial Regex UnicodeRegex();
+
+		[GeneratedRegex(@"^[a-zA-Z0-9ａ-ｚＡ-Ｚ０-９]")]
+		private static partial Regex UnicodeIsAlphabet();
+
 
 		private static Dictionary<string, TokenKind>? _ReservedTokensDictionary;
 
@@ -98,7 +120,7 @@ public static partial class SearchQueries
 
 		enum TokenKind
 		{
-			Text, BrancketOpen, BrancketClose, And, Or,
+			Text, BrancketOpen, BrancketClose, And, Or, Unicode,
 		}
 	}
 }

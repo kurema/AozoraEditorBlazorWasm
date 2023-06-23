@@ -79,7 +79,15 @@ public class CommandEntryFile : ICommandEntry
 
 public class CommandEntrySeparator : ICommandEntry
 {
-	public string Description { get; set; } = String.Empty;
+	public string Description { get; set; } = string.Empty;
+	public RenderFragment Icon { get; set; } = new RenderFragment(_ => { });
+
+	public bool IsEnabled => true;
+}
+
+public class CommandEntrySpacer : ICommandEntry
+{
+	public string Description { get; set; } = string.Empty;
 	public RenderFragment Icon { get; set; } = new RenderFragment(_ => { });
 
 	public bool IsEnabled => true;
