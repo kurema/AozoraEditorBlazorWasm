@@ -144,6 +144,12 @@ public static partial class SearchQueries
 			_WordsNoHit = TextSplited.ToList();
 		}
 
+		public static SearchQueryWord FromCodepoint(params string[] text)
+		{
+			return new SearchQueryWord(text.FirstOrDefault() ?? "");
+			//throw new NotImplementedException();
+		}
+
 
 		public string Text { get; init; }
 

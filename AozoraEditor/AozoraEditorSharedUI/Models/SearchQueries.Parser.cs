@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace AozoraEditor.Shared.Models;
 
@@ -6,14 +9,122 @@ public static partial class SearchQueries
 {
 	public static partial class Parser
 	{
-		public static void Parse(string text)
+		public static ISearchQuery? Parse(string text)
 		{
-			var result = Tokenize(text);
-			var t2 = string.Join(", ", result.Select(x => x.ToString()));
-			Console.WriteLine(t2);
+			var tokens = Tokenize(text);
+			List<List<ISearchQuery>> stack = new() { new() };
+			//TokenKind currentToken = TokenKind.Or; // And or Or.
+			List<List<ISearchQuery>?> stackAnd = new() { null };
+
+			foreach (var token in tokens)
+			{
+				var last = stack.Last();
+				var lastAnd = stackAnd.Last();
+				var span = text.AsSpan().Slice(token.index, token.length);
+				switch (token.token)
+				{
+					case TokenKind.Unicode:
+						{
+							var temp = SearchQueryWord.FromCodepoint(span.ToString());
+							if (lastAnd is not null) lastAnd.Add(temp);
+							else stack.Last().Add(temp);
+						}
+						break;
+					case TokenKind.Text:
+						{
+							var temp = new SearchQueryWord(span.ToString());
+							if (lastAnd is not null) lastAnd.Add(temp);
+							else stack.Last().Add(temp);
+						}
+						break;
+					case TokenKind.BrancketOpen:
+						stack.Add(new());
+						stackAnd.Add(null);
+						break;
+					case TokenKind.BrancketClose:
+						Close();
+						break;
+					case TokenKind.And:
+						if (lastAnd is null)
+						{
+							if (last.Count == 0)
+							{
+								stackAnd.Add(new());
+							}
+							else
+							{
+								stackAnd.Add(new() { last[^1] });
+								last.RemoveAt(last.Count - 1);
+							}
+						}
+						break;
+					case TokenKind.Or:
+						//空白はOr解釈なので特に何もしなくて良い。
+						break;
+				}
+
+			}
+
+			//先頭に空白を追加して閉じる。
+			stack.Insert(0, new());
+			stackAnd.Insert(0, null);
+			while (stack.Count > 1) Close();
+
+			if (stack[0].Count == 0) return null;
+			else if (stack[0].Count == 1) return stack[0][0];
+			else throw new Exception();
+
+			void Close()
+			{
+				var last = stack.Last();
+				var lastAnd = stackAnd.Last();
+
+				CloseAnd();
+				if (last.Count == 0) PopAndContinue(null);
+				if (last.Count == 1) PopAndContinue(last[0]);
+				else
+				{
+					if (lastAnd is not null) PopAndContinue(new SearchQueryAnd(last.ToArray()));
+					else PopAndContinue(new SearchQueryOr(last.ToArray()));
+				}
+			}
+
+			void CloseAnd()
+			{
+				var lastAnd = stackAnd.Last();
+				var last = stack.Last();
+				if (lastAnd is null) return;
+				if (lastAnd.Count == 1) last.Add(lastAnd[0]);
+				else if (lastAnd.Count > 1) last.Add(new SearchQueryAnd(lastAnd.ToArray()));
+				stackAnd[^1] = null;
+			}
+
+			void PopAndContinue(ISearchQuery? target)
+			{
+				if (stack.Count == 0) throw new Exception($"{nameof(stack)} should not be empty.");
+				if (stack.Count == 1)
+				{
+					stack[0].Clear();
+					if (target is not null) stack[0].Add(target);
+					return;
+				}
+				if (stack.Count > 1)
+				{
+					stack.RemoveAt(stack.Count - 1);
+					if (target is not null) stack[^1].Add(target);
+				}
+			}
+
+			//Console.WriteLine(t2);
 		}
 
-		static (int index, int length, TokenKind token)[] Tokenize(string text)
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public static string TokenizeAndFormat(string text)
+		{
+			return string.Join(", ", Tokenize(text).Select(x => x.ToString()));
+		}
+
+		private static (int index, int length, TokenKind token)[] Tokenize(string text)
 		{
 			List<(int index, int length, TokenKind token)> tokens = new();
 			int positionLast = 0;
@@ -57,7 +168,7 @@ public static partial class SearchQueries
 					if (hit) continue;
 				}
 
-				Console.WriteLine($"{position} {matchUnicodeEnu?.Current?.Index} {matchUnicodeEnu?.Current?.Groups[1]?.Length} {matchUnicodeEnu?.Current?.Groups[1].Value}");
+				while (matchUnicodeEnu?.Current?.Index < position) matchUnicodeEnu.MoveNext(); // and には 'a'が含まれるのでスキップされる。
 				if (matchUnicodeEnu?.Current?.Index == position)
 				{
 					var current = matchUnicodeEnu.Current;
@@ -65,8 +176,7 @@ public static partial class SearchQueries
 
 					if (current.Groups[1].Length is >= 4 and <= 6)
 					{
-						//bool test1 = matchUnicodeEnu.Current.ValueSpan.StartsWith("U", StringComparison.OrdinalIgnoreCase) || matchUnicodeEnu.Current.ValueSpan.StartsWith("Ｕ", StringComparison.OrdinalIgnoreCase);
-						//bool test2 = (!test1 && matchUnicodeEnu.Current.Length == 4) || (test1 && matchUnicodeEnu.Current.Length is > 4 and < 8);
+						closeText();
 						tokens.Add((current.Groups[1].Index, current.Groups[1].Length, TokenKind.Unicode));
 						position += current.Length;
 						positionLast = position;

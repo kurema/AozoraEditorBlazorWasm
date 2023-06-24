@@ -1,4 +1,5 @@
 using AozoraEditor.Shared.Snippets;
+using AozoraEditor.Shared.Models;
 using System.Diagnostics;
 
 namespace TestProject;
@@ -30,7 +31,6 @@ public class UnitTest1
 		Assert.Equal("text {0} normal bold", AozoraEditor.Shared.Snippets.Index.InterpolateFinal("text {0} (*/(*normal*)/*) (*bold*)", i => $"{{{i}}}", string.Empty, string.Empty));
 		Assert.Equal("<b>12345</b>", AozoraEditor.Shared.Snippets.Index.InterpolateFinal("(*1(*2(*3*)4*)5*)", i => $"<item num={i}/>", "<b>", "</b>"));
 		Assert.Equal("}}(({()*(}}{{", AozoraEditor.Shared.Snippets.Index.InterpolateFinal("}}(({()*(}}{{", i => $"<item num={i}/>", "<b>", "</b>"));
-
 	}
 
 	[Fact]
@@ -44,5 +44,42 @@ public class UnitTest1
 		Assert.Equal("{content[0]}", Loader.ContentIndex?.Templates["default"].Text[0]);
 		//For break point debugging.
 		//var f= Loader.ContentIndex.ContentsFlat.ToArray().Where(a=>a.Labels.AllValues.Any(a=>a.Text.Contains("Hanni"))).ToArray();
+	}
+
+	[Fact]
+	public void TestSearchQueryTokenize()
+	{
+		Assert.Equal("(0, 1, BrancketOpen), (1, 3, Text), (7, 4, Unicode), (11, 1, BrancketClose), (13, 3, And), (17, 2, Text)", SearchQueries.Parser.TokenizeAndFormat("(テスト U+abcd) and 5画"));
+		Assert.Equal("(0, 1, Text), (1, 5, Unicode), (6, 1, Text), (9, 4, Unicode), (13, 1, Text), (14, 4, Unicode), (18, 1, Text)", SearchQueries.Parser.TokenizeAndFormat("わ01234がU+a123は1234い"));
+		Assert.Equal("(0, 4, Text), (5, 2, Or), (8, 4, Text), (13, 3, And), (17, 6, Unicode), (24, 4, Unicode)", SearchQueries.Parser.TokenizeAndFormat("わがはい or 猫である and abcdef 0001"));
+	}
+
+	[Fact]
+	public void TestSearchQueryParse()
+	{
+		{
+			var parsed = SearchQueries.Parser.Parse("(テスト U+abcd) and 5画");
+			var top = parsed as SearchQueries.SearchQueryAnd;
+			Assert.NotNull(top);
+			Assert.Equal(2, top.Children.Count());
+			Assert.True(top.Children.First() is SearchQueries.SearchQueryOr);
+			Assert.Equal("テスト", ((top?.Children?.First() as SearchQueries.SearchQueryOr)?.Children?.First() as SearchQueries.SearchQueryWord)?.Text);
+		}
+		{
+			var parsed = SearchQueries.Parser.Parse("わ01234がU+a123は1234い");
+			var top = parsed as SearchQueries.SearchQueryOr;
+			Assert.NotNull(top);
+			var list = top.Children.ToArray();
+			var list2 = new[] { "わ", "01234", "が", "a123", "は", "1234", "い" };//文字コードは要修正。
+			for (int i = 0; i < list.Length; i++)
+			{
+				Assert.True(list[i] is SearchQueries.SearchQueryWord);
+				Assert.True((list[i] as SearchQueries.SearchQueryWord)?.Text == list2[i]);
+			}
+		}
+		{
+			var parsed = SearchQueries.Parser.Parse("わ or and or and and か");
+		}
+
 	}
 }
