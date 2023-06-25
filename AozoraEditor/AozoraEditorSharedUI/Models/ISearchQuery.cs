@@ -12,7 +12,9 @@ public interface ISearchQuery
 {
 	IEnumerable<string> WordsNoHit { get; }
 	bool Is(entry entry, page page);
+	bool IsInNote(entry entry, page page);
 	bool Is(PageOtherEntry entry);
+	bool IsInNote(PageOtherEntry entry);
 	bool Is(page page);
 	bool Is(PageOther page);
 }
@@ -50,6 +52,10 @@ public static partial class SearchQueries
 		public bool Is(page page) => Children.Any(a => a.Is(page));
 
 		public bool Is(PageOther page) => Children.Any(a => a.Is(page));
+
+		public bool IsInNote(entry entry, page page) => Children.Any(a => a.IsInNote(entry, page));
+
+		public bool IsInNote(PageOtherEntry entry) => Children.Any(a => a.IsInNote(entry));
 	}
 
 	public class SearchQueryAnd : ISearchQuery
@@ -87,6 +93,11 @@ public static partial class SearchQueries
 		public bool Is(page page) => Children.All(a => a.Is(page));
 
 		public bool Is(PageOther page) => Children.All(a => a.Is(page));
+
+		public bool IsInNote(entry entry, page page) => Children.All(a => a.IsInNote(entry, page));
+
+		public bool IsInNote(PageOtherEntry entry) => Children.All(a => a.IsInNote(entry));
+
 	}
 
 	public class SearchQueryStrokes : ISearchQuery
@@ -127,6 +138,16 @@ public static partial class SearchQueries
 		{
 			return false;
 		}
+
+		public bool IsInNote(entry entry, page page)
+		{
+			return Is(entry, page);
+		}
+
+		public bool IsInNote(PageOtherEntry entry)
+		{
+			return Is(entry);
+		}
 	}
 
 	public class SearchQueryWord : ISearchQuery
@@ -146,7 +167,9 @@ public static partial class SearchQueries
 
 		public static SearchQueryWord FromCodepoint(params string[] text)
 		{
-			return new SearchQueryWord(text.FirstOrDefault() ?? "");
+			var r = string.Join(string.Empty, text.Select(org =>
+			{ try { return char.ConvertFromUtf32(Convert.ToInt32(org, 16)); } catch { return org; } }));
+			return new SearchQueryWord(r);
 			//throw new NotImplementedException();
 		}
 
@@ -163,7 +186,7 @@ public static partial class SearchQueries
 
 		protected (string original, (int men, int ku, int ten) code)[] Jisx0213Code { get; init; }
 
-		bool CheckNote(object? noteItem, params string[]? characters)
+		bool checkCharacters(object? noteItem, params string[]? characters)
 		{
 			switch (noteItem)
 			{
@@ -189,19 +212,9 @@ public static partial class SearchQueries
 			}
 		}
 
-		public bool Is(entry entry, page page)
-		{
-			if (entry is null) return false;
-			if (CheckNote(entry.note?.Item, entry.characters?.character)) return true;
-			return entry.note?.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true;
-		}
+		public bool Is(entry entry, page page) => entry is not null && checkCharacters(entry.note?.Item, entry.characters?.character);
 
-		public bool Is(PageOtherEntry entry)
-		{
-			if (entry is null) return false;
-			if (CheckNote(entry.note?.Item, entry.character)) return true;
-			return entry.note?.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true;
-		}
+		public bool Is(PageOtherEntry entry) => entry is not null && checkCharacters(entry.note?.Item, entry.character);
 
 		public bool Is(page page)
 		{
@@ -215,5 +228,52 @@ public static partial class SearchQueries
 		{
 			return page?.header?.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true;
 		}
+
+		public bool IsInNote(entry entry, page page)
+		{
+			if (entry?.note is null) return false;
+			return entry.note.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true; 
+		}
+
+		public bool IsInNote(PageOtherEntry entry)
+		{
+			if (entry?.note is null) return false;
+			return entry.note.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true;
+		}
+	}
+
+	public class SearchQueryAny : ISearchQuery
+	{
+		public IEnumerable<string> WordsNoHit => new string[0];
+
+		public bool Is(entry entry, page page) => true;
+
+		public bool Is(PageOtherEntry entry) => true;
+
+		public bool Is(page page) => true;
+
+		public bool Is(PageOther page) => true;
+
+		public bool IsInNote(entry entry, page page) => true;
+
+		public bool IsInNote(PageOtherEntry entry) => true;
+	}
+
+	public class SearchQueryNone : ISearchQuery
+	{
+		public IEnumerable<string> WordsNoHit => new string[0];
+
+		public bool Is(entry entry, page page) => false;
+
+		public bool Is(PageOtherEntry entry) => false;
+
+		public bool Is(page page) => false;
+
+		public bool Is(PageOther page) => false;
+
+		public bool IsInNote(entry entry, page page) => false;
+
+		public bool IsInNote(PageOtherEntry entry) => false;
+
 	}
 }

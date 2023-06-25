@@ -49,7 +49,7 @@ public class UnitTest1
 	[Fact]
 	public void TestSearchQueryTokenize()
 	{
-		Assert.Equal("(0, 1, BrancketOpen), (1, 3, Text), (7, 4, Unicode), (11, 1, BrancketClose), (13, 3, And), (17, 2, Text)", SearchQueries.Parser.TokenizeAndFormat("(テスト U+abcd) and 5画"));
+		Assert.Equal("(0, 1, BrancketOpen), (1, 3, Text), (7, 4, Unicode), (11, 1, BrancketClose), (13, 3, And), (17, 1, Strokes)", SearchQueries.Parser.TokenizeAndFormat("(テスト U+abcd) and 5画"));
 		Assert.Equal("(0, 1, Text), (1, 5, Unicode), (6, 1, Text), (9, 4, Unicode), (13, 1, Text), (14, 4, Unicode), (18, 1, Text)", SearchQueries.Parser.TokenizeAndFormat("わ01234がU+a123は1234い"));
 		Assert.Equal("(0, 4, Text), (5, 2, Or), (8, 4, Text), (13, 3, And), (17, 6, Unicode), (24, 4, Unicode)", SearchQueries.Parser.TokenizeAndFormat("わがはい or 猫である and abcdef 0001"));
 	}
@@ -66,11 +66,11 @@ public class UnitTest1
 			Assert.Equal("テスト", ((top?.Children?.First() as SearchQueries.SearchQueryOr)?.Children?.First() as SearchQueries.SearchQueryWord)?.Text);
 		}
 		{
-			var parsed = SearchQueries.Parser.Parse("わ01234がU+a123は1234い");
+			var parsed = SearchQueries.Parser.Parse("わ1234がU+a123は1234い");
 			var top = parsed as SearchQueries.SearchQueryOr;
 			Assert.NotNull(top);
 			var list = top.Children.ToArray();
-			var list2 = new[] { "わ", "01234", "が", "a123", "は", "1234", "い" };//文字コードは要修正。
+			var list2 = new[] { "わ", "\x1234", "が", "\xa123", "は", "\x1234", "い" };//文字コードは要修正。
 			for (int i = 0; i < list.Length; i++)
 			{
 				Assert.True(list[i] is SearchQueries.SearchQueryWord);
@@ -79,7 +79,20 @@ public class UnitTest1
 		}
 		{
 			var parsed = SearchQueries.Parser.Parse("わ or and or and and か");
+			Assert.True(parsed is SearchQueries.SearchQueryAnd qu &&
+				qu.Children.ToArray() is [SearchQueries.SearchQueryWord, SearchQueries.SearchQueryWord]);
 		}
+		{
+			var parsed = SearchQueries.Parser.Parse("わ or か and ば");
+			Assert.True(parsed is SearchQueries.SearchQueryOr por &&
+				por.Children.ToArray() is [SearchQueries.SearchQueryWord, SearchQueries.SearchQueryAnd]
+				);
+		}
+	}
 
+	[Fact]
+	public void TestToHalf()
+	{
+		Assert.Equal("こんにちはabcde0164abc", SearchQueries.Parser.ToHalf("こんにちはａｂｃｄｅ０１６４ＡＢＣ"));
 	}
 }
