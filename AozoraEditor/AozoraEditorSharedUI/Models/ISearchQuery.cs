@@ -11,6 +11,7 @@ namespace AozoraEditor.Shared.Models;
 public interface ISearchQuery
 {
 	IEnumerable<string> WordsNoHit { get; }
+	void ResetWordsNoHit();
 	bool Is(entry entry, page page);
 	bool IsInNote(entry entry, page page);
 	bool Is(PageOtherEntry entry);
@@ -56,6 +57,11 @@ public static partial class SearchQueries
 		public bool IsInNote(entry entry, page page) => Children.Any(a => a.IsInNote(entry, page));
 
 		public bool IsInNote(PageOtherEntry entry) => Children.Any(a => a.IsInNote(entry));
+
+		public void ResetWordsNoHit()
+		{
+			foreach (var child in Children) child.ResetWordsNoHit();
+		}
 	}
 
 	public class SearchQueryAnd : ISearchQuery
@@ -98,6 +104,10 @@ public static partial class SearchQueries
 
 		public bool IsInNote(PageOtherEntry entry) => Children.All(a => a.IsInNote(entry));
 
+		public void ResetWordsNoHit()
+		{
+			foreach (var child in Children) child.ResetWordsNoHit();
+		}
 	}
 
 	public class SearchQueryStrokes : ISearchQuery
@@ -123,10 +133,7 @@ public static partial class SearchQueries
 			return false;
 		}
 
-		public bool Is(PageOtherEntry entry)
-		{
-			return false;
-		}
+		public bool Is(PageOtherEntry entry) => false;
 
 		public bool Is(page page)
 		{
@@ -134,20 +141,14 @@ public static partial class SearchQueries
 			return page.radical.characters.character.Select(Aozora.GaijiChuki.Manager.Toc.GetStrokeCount).Any(strk => strk > 0 && strk == Stroke);
 		}
 
-		public bool Is(PageOther page)
-		{
-			return false;
-		}
+		public bool Is(PageOther page) => false;
 
-		public bool IsInNote(entry entry, page page)
-		{
-			return Is(entry, page);
-		}
+		public bool IsInNote(entry entry, page page) => Is(entry, page);
 
-		public bool IsInNote(PageOtherEntry entry)
-		{
-			return Is(entry);
-		}
+		public bool IsInNote(PageOtherEntry entry) => Is(entry);
+
+		public void ResetWordsNoHit() { }
+
 	}
 
 	public class SearchQueryWord : ISearchQuery
@@ -170,8 +171,18 @@ public static partial class SearchQueries
 			var r = string.Join(string.Empty, text.Select(org =>
 			{ try { return char.ConvertFromUtf32(Convert.ToInt32(org, 16)); } catch { return org; } }));
 			return new SearchQueryWord(r);
-			//throw new NotImplementedException();
 		}
+
+		public static SearchQueryWord? FromJisX0213(string men, string ku, string ten)
+		{
+			if (!int.TryParse(men, out int menN)) return null;
+			if (!int.TryParse(ku, out int kuN)) return null;
+			if (!int.TryParse(ten, out int tenN)) return null;
+			var r = Aozora.Helpers.YamlValues.Jisx0213ToString(menN, kuN, tenN);
+			if (r is null) return null;
+			return new SearchQueryWord(r);
+		}
+
 
 
 		public string Text { get; init; }
@@ -179,6 +190,12 @@ public static partial class SearchQueries
 		protected List<string> _WordsNoHit;
 
 		public IEnumerable<string> WordsNoHit => _WordsNoHit.ToArray();
+
+		public void ResetWordsNoHit()
+		{
+			_WordsNoHit = TextSplited.ToList();
+		}
+
 
 		protected (string original, string code)[] Unicode { get; init; }
 
@@ -232,7 +249,7 @@ public static partial class SearchQueries
 		public bool IsInNote(entry entry, page page)
 		{
 			if (entry?.note is null) return false;
-			return entry.note.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true; 
+			return entry.note.full.Contains(Text, StringComparison.CurrentCultureIgnoreCase) == true;
 		}
 
 		public bool IsInNote(PageOtherEntry entry)
@@ -257,6 +274,8 @@ public static partial class SearchQueries
 		public bool IsInNote(entry entry, page page) => true;
 
 		public bool IsInNote(PageOtherEntry entry) => true;
+
+		public void ResetWordsNoHit() { }
 	}
 
 	public class SearchQueryNone : ISearchQuery
@@ -275,5 +294,6 @@ public static partial class SearchQueries
 
 		public bool IsInNote(PageOtherEntry entry) => false;
 
+		public void ResetWordsNoHit() { }
 	}
 }

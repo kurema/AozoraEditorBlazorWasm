@@ -14,6 +14,7 @@ public static partial class SearchQueries
 			var tokens = Tokenize(text);
 			List<List<ISearchQuery>> stack = new() { new() };
 			List<List<ISearchQuery>?> stackAnd = new() { null };
+			(string men, string ku, string ten) currentJisX0213 = (string.Empty, string.Empty, string.Empty);
 
 			foreach (var token in tokens)
 			{
@@ -22,26 +23,22 @@ public static partial class SearchQueries
 				var span = text.AsSpan().Slice(token.index, token.length);
 				switch (token.token)
 				{
+					case TokenKind.JisX0213Men: currentJisX0213.men = ToHalf(span.ToString()); break;
+					case TokenKind.JisX0213Ku: currentJisX0213.ku = ToHalf(span.ToString()); break;
+					case TokenKind.JisX0213Ten:
+						currentJisX0213.ten = ToHalf(span.ToString());
+						AddQuery(SearchQueryWord.FromJisX0213(currentJisX0213.men, currentJisX0213.ku, currentJisX0213.ten));
+						break;
 					case TokenKind.Unicode:
-						{
-							var temp = SearchQueryWord.FromCodepoint(ToHalf(span.ToString()));
-							if (lastAnd is not null) lastAnd.Add(temp);
-							else stack.Last().Add(temp);
-						}
+						AddQuery(SearchQueryWord.FromCodepoint(ToHalf(span.ToString())));
 						break;
 					case TokenKind.Text:
-						{
-							var temp = new SearchQueryWord(span.ToString());
-							if (lastAnd is not null) lastAnd.Add(temp);
-							else stack.Last().Add(temp);
-						}
+						AddQuery(new SearchQueryWord(span.ToString()));
 						break;
 					case TokenKind.Strokes:
 						{
 							if (!int.TryParse(ToHalf(span), out int strk)) throw new Exception();
-							var temp = new SearchQueryStrokes(strk);
-							if (lastAnd is not null) lastAnd.Add(temp);
-							else stack.Last().Add(temp);
+							AddQuery(new SearchQueryStrokes(strk));
 						}
 						break;
 					case TokenKind.BrancketOpen:
@@ -70,6 +67,12 @@ public static partial class SearchQueries
 						break;
 				}
 
+				void AddQuery(ISearchQuery? query)
+				{
+					if (query is null) return;
+					if (lastAnd is not null) lastAnd.Add(query);
+					else stack.Last().Add(query);
+				}
 			}
 
 			//先頭に空白を追加して全て閉じる。すると先頭に一つだけ残る。
@@ -131,13 +134,14 @@ public static partial class SearchQueries
 			var spanOrigianl = text.AsSpan();
 			int position = 0;
 
-			var matchUnicode = UnicodeRegex().Matches(text);
-			var matchUnicodeEnu = matchUnicode.Select(a => a).GetEnumerator();
+			var matchUnicodeEnu = UnicodeRegex().Matches(text).Select(a => a).GetEnumerator();
 			matchUnicodeEnu.MoveNext();
 
-			var matchStrokes = UnicodeStokes().Matches(text);
-			var matchStrokesEnu = matchStrokes.Select(a => a).GetEnumerator();
+			var matchStrokesEnu = StokesRegex().Matches(text).Select(a => a).GetEnumerator();
 			matchStrokesEnu.MoveNext();
+
+			var matchJisx0213Enu = Jisx0213Regex().Matches(text).Select(a => a).GetEnumerator();
+			matchJisx0213Enu.MoveNext();
 
 			void closeText()
 			{
@@ -147,21 +151,39 @@ public static partial class SearchQueries
 			bool checkRegex(ref IEnumerator<Match>? enumerator, int minLengthInclusive, int maxLengthInclusive, TokenKind tokenKind)
 			{
 				while (enumerator?.Current?.Index < position) enumerator.MoveNext(); // and には 'a'が含まれるのでスキップされる。
-				if (enumerator?.Current?.Index == position)
-				{
-					var current = enumerator.Current;
-					if (!enumerator.MoveNext()) enumerator = null;
+				if ((enumerator?.Current?.Index) != position) return false;
 
-					if (current.Groups[1].Length >= minLengthInclusive && current.Groups[1].Length <= maxLengthInclusive)
-					{
-						closeText();
-						tokens.Add((current.Groups[1].Index, current.Groups[1].Length, tokenKind));
-						position += current.Length;
-						positionLast = position;
-						return true;
-					}
+				var current = enumerator.Current;
+				if (!enumerator.MoveNext()) enumerator = null;
+
+				if (minLengthInclusive < 0 || (current.Groups[1].Length >= minLengthInclusive && current.Groups[1].Length <= maxLengthInclusive))
+				{
+					closeText();
+					tokens.Add((current.Groups[1].Index, current.Groups[1].Length, tokenKind));
+					position += current.Length;
+					positionLast = position;
+					return true;
 				}
 				return false;
+			}
+
+			bool checkRegexJisX0213(ref IEnumerator<Match>? enumerator)
+			{
+				//checkRegex()と多くが共通するが今後書き換えないと思うので別に良い。
+				while (enumerator?.Current?.Index < position) enumerator.MoveNext();
+				if ((enumerator?.Current?.Index) != position) return false;
+
+				var current = enumerator.Current;
+				if (!enumerator.MoveNext()) enumerator = null;
+				closeText();
+				foreach (var (grp, tk) in new (int, TokenKind)[] { (1, TokenKind.JisX0213Men), (2, TokenKind.JisX0213Ku), (3, TokenKind.JisX0213Ten) })
+				{
+					//面・区・点は必ず連続で配置される。
+					tokens.Add((current.Groups[grp].Index, current.Groups[grp].Length, tk));
+				}
+				position += current.Length;
+				positionLast = position;
+				return true;
 			}
 
 			while (spanOrigianl.Length > position)
@@ -193,6 +215,7 @@ public static partial class SearchQueries
 				}
 				if (checkRegex(ref matchUnicodeEnu, 4, 6, TokenKind.Unicode)) continue;
 				if (checkRegex(ref matchStrokesEnu, 1, 2, TokenKind.Strokes)) continue;
+				if (checkRegexJisX0213(ref matchJisx0213Enu)) continue;
 
 				position++;
 			}
@@ -205,14 +228,14 @@ public static partial class SearchQueries
 			return tokens.ToArray();
 		}
 
-		[GeneratedRegex(@"(?:[UＵ][\+＋]|\\x|&#x)?([a-fA-F0-9ａ-ｆＡ-Ｆ０-９]+);?")]
+		[GeneratedRegex(@"(?:[UＵ][\+＋]|\\x|&#x)?([a-fA-Fａ-ｆＡ-Ｆ\d]+);?")]
 		private static partial Regex UnicodeRegex();
 
-		[GeneratedRegex(@"^[a-zA-Z0-9ａ-ｚＡ-Ｚ０-９]")]
-		private static partial Regex UnicodeIsAlphabet();
+		[GeneratedRegex(@"[0０]*(\d+)\s*(画|strokes?|kaku)", RegexOptions.IgnoreCase)]
+		private static partial Regex StokesRegex();
 
-		[GeneratedRegex(@"[0０]*(\d+)画")]
-		private static partial Regex UnicodeStokes();
+		[GeneratedRegex(@"(?:第\d水準)?\s*第?\s*0*(\d)\s*[ー\-面]\s*第?\s*0*(\d{1,2})\s*[ー\-区]\s*第?\s*0*(\d{1,2})\s*点?")]
+		private static partial Regex Jisx0213Regex();
 
 		public static string ToHalf(ReadOnlySpan<char> text)
 		{
@@ -255,7 +278,7 @@ public static partial class SearchQueries
 
 		enum TokenKind
 		{
-			Text, BrancketOpen, BrancketClose, And, Or, Unicode, Strokes,
+			Text, BrancketOpen, BrancketClose, And, Or, Unicode, Strokes, JisX0213Men, JisX0213Ku, JisX0213Ten
 		}
 	}
 }
