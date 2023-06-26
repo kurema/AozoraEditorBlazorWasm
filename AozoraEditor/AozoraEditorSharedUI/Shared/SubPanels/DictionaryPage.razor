@@ -39,7 +39,8 @@
 						</ul>
 					</li>
 					<li>読み仮名は部首のみ検索できます。</li>
-					<li>画数の検索は不確実です。
+					<li>
+						画数の検索は不確実です。
 						<ul>
 							<li>例：5画、5kaku、5strokes</li>
 						</ul>
@@ -154,10 +155,18 @@
 
 <hr />
 
+@if (SearchResults.Any() || !string.IsNullOrEmpty(SearchMessage))
+{
+	<h1>検索結果</h1>
+}
+
+@if (!string.IsNullOrEmpty(SearchMessage))
+{
+	<p>@SearchMessage</p>
+}
+
 @if (SearchResults.Any())
 {
-	<h1>一覧</h1>
-
 	@foreach (var c in SearchResults)
 	{
 		switch (c)
@@ -236,8 +245,8 @@
 
 		{
 			_SearchText = value;
-			Models.SearchQueries.Parser.Parse(value);
-			InvokeSearch();
+			Aozora.GaijiChuki.SearchQueries.Parser.Parse(value);
+			InvokeSearch(value);
 			StateHasChanged();
 		}
 	}
@@ -247,13 +256,19 @@
 	SearchOptionTargets SearchOptionTarget { get; set; } = SearchOptionTargets.All;
 	SearchOptionTargets SearchOptionTargetLast { get; set; } = SearchOptionTargets.All;
 
-	void InvokeSearch()
-	{
+	string SearchMessage { get; set; } = string.Empty;
 
+	void InvokeSearch(string text)
+	{
+		SearchMessage = "検索中";
+		StateHasChanged();
+		var q = Aozora.GaijiChuki.SearchQueries.Parser.Parse(text);
+		SearchResults = Search.Helpers.ExecuteSearch(q, SearchOptionTarget).ToArray();
+		SearchMessage = q?.ToString() ?? string.Empty;
 	}
 
 	[Flags]
-	enum SearchOptionTargets
+	public enum SearchOptionTargets
 	{
 		All = Kanji | Radical | Note, Kanji = 1, Radical = 2, Note = 4,
 	}
@@ -304,6 +319,7 @@
 	{
 		if (page?.entries is null) return;
 		SearchResults = new[] { new Models.DictionaryResultGroupRadicalOther(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChukiOther(a, page)).ToArray(), page) };
+		SearchMessage = string.Empty;
 		StateHasChanged();
 	}
 
@@ -312,6 +328,7 @@
 	{
 		if (page?.entries is null) return;
 		SearchResults = new[] { new Models.DictionaryResultGroupRadical(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)).ToArray(), page) };
+		SearchMessage = string.Empty;
 		StateHasChanged();
 	}
 
@@ -319,8 +336,17 @@
 	{
 		if (Aozora.GaijiChuki.Manager.Toc.StrokeCharacters is null) return;
 		if (!Aozora.GaijiChuki.Manager.Toc.StrokeCharacters.TryGetValue(stroke, out var memory)) return;
-		SearchResults = new[] { new Models.DictionaryResultGroupStrokes(memory.ToArray().Where(a => !a.entry.duplicate).Select(a => new Models.DictionaryResultEntryGaijiChuki(a.entry, a.page)).ToArray(), stroke) };
+		SearchResults = new[] { new Models.DictionaryResultGroupStrokes(memory.ToArray()
+			.Where(a => !a.entry.duplicate)
+			.Select(a => new Models.DictionaryResultEntryGaijiChuki(a.entry, a.page)).ToArray(), stroke) };
+		SearchMessage = string.Empty;
 		StateHasChanged();
+	}
+
+	protected override void OnInitialized()
+	{
+		Search.Init.RegisterGaijiChukiJisx0213();
+		base.OnInitialized();
 	}
 
 	RenderFragment GetEntryHtml(Models.IDictionaryResultEntry item)
@@ -384,12 +410,39 @@
 		}
 		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 	</text>
-	);
+		);
 			case Models.DictionaryResultSingleChar itemRs:
+				{
+					var iccrs = itemRs.IllegalCharCheckResults.ToArray();
+					return GetEntryHtml(item,
+	@<text>
+		<div class="aozora_dictionary_result_detail_item_info_icon">自動生成</div>
+		@if (iccrs.All(a => a is not Aozora.Helpers.Utils.IllegalCharCheckResult.jis_gaiji and not Aozora.Helpers.Utils.IllegalCharCheckResult.non_jis))
+		{
+			<div class="aozora_dictionary_result_detail_item_info_icon">入力可能</div>
+		}
+		else
+		{
+			foreach (var iccr in iccrs.GroupBy(a => a).Select(a => a.First()))
+			{
+				switch (iccr)
+				{
+					case Aozora.Helpers.Utils.IllegalCharCheckResult.jis_gaiji:
+						<div class="aozora_dictionary_result_detail_item_info_icon">JIS外字</div>
+						break;
+					case Aozora.Helpers.Utils.IllegalCharCheckResult.onebyte:
+						<div class="aozora_dictionary_result_detail_item_info_icon">Ascii文字</div>
+						break;
+				}
+			}
+		}
+	</text>, null);
+				}
 			default:
 				return GetEntryHtml(item, null, null);
 		}
 	}
+
 
 	RenderFragment GetEntryHtml(Models.IDictionaryResultEntry item, RenderFragment? noteAppendHtml, RenderFragment? strokeHtml)
 	{
@@ -398,6 +451,7 @@
 		<div class="aozora_dictionary_result_detail_item_character">
 			@{
 				var categories = item.UnicodeCategory.GetEnumerator();
+				categories.MoveNext();
 				var chs = item.Characters.ToArray();
 				chs = chs.Length == 0 ? new[] { "？" } : chs;
 				foreach (var ch in chs)
@@ -410,6 +464,7 @@
 					{
 						<text>@ch</text>
 					}
+					categories.MoveNext();
 				}
 			}
 		</div>

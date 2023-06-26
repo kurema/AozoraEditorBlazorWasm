@@ -221,7 +221,14 @@ public class DictionaryResultSingleChar : IDictionaryResultEntry
 	{
 		get
 		{
-			return new UnicodeCategory?[] { _UnicodeCategory ??= CharUnicodeInfo.GetUnicodeCategory(Character, 0) };
+			try
+			{
+				return new UnicodeCategory?[] { _UnicodeCategory ??= CharUnicodeInfo.GetUnicodeCategory(Character, 0) };
+			}
+			catch
+			{
+				return new UnicodeCategory?[0];
+			}
 		}
 	}
 
@@ -267,6 +274,10 @@ public class DictionaryResultSingleChar : IDictionaryResultEntry
 			}
 		}
 	}
+
+	Aozora.Helpers.Utils.IllegalCharCheckResult[]? _IllegalCharCheckResults = null;
+
+	public ReadOnlyMemory<Aozora.Helpers.Utils.IllegalCharCheckResult> IllegalCharCheckResults => _IllegalCharCheckResults ??= Character.Select(Aozora.Helpers.Utils.IllegalCharCheck).ToArray();
 
 	public Guid Guid { get; }
 }
