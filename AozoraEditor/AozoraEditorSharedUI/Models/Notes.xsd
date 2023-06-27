@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Notes"
+    targetNamespace="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Notes.xsd"
+    elementFormDefault="qualified"
+    xmlns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Notes.xsd"
+    xmlns:mstns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Notes.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:element name="notes">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="text"  type="xs:string" />
+				<xs:element name="tasks">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element ref="task" />
+						</xs:choice>
+						<xs:attribute name="header" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="task">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="task" />
+			</xs:choice>
+			<xs:attribute name="header" type="xs:string" />
+			<xs:attribute name="isChecked" type="xs:boolean" />
+			<xs:attribute name="deadline" type="xs:dateTime" use="optional" />
+			<xs:attribute name="interval" type="xs:duration" use="optional" />
+			<xs:attribute name="stared" type="xs:boolean" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

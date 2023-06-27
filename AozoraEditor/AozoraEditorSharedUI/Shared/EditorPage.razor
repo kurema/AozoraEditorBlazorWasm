@@ -1,9 +1,11 @@
 ﻿@inject IJSRuntime JSRuntime;
 
-<SplitPage @ref="splitPage">
-	<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
-	<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
-</SplitPage>
+<CascadingValue Value="this" Name="Editor">
+	<SplitPage @ref="splitPage">
+		<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
+		<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
+	</SplitPage>
+</CascadingValue>
 
 @code {
 	[CascadingParameter]
@@ -159,6 +161,48 @@
 	{
 		editor?.Content?.SetPosition(position, string.Empty);
 		editor?.Content?.RevealLineInCenter(position.LineNumber);
+	}
+
+	public async Task InsertText(string text, string? source = null)
+	{
+		if (editor?.Content is null) return;
+		var selection = await editor.Content.GetSelection();
+		//var rangeNew = selection is null ? new BlazorMonaco.Range(1, 1, 1, 1) : new BlazorMonaco.Range(selection.StartLineNumber, selection.StartColumn, selection.EndLineNumber, selection.EndColumn);
+		source = source ?? "aozora";
+		Selection selectionEnd;
+		{
+			//改行がある場合、編集後のカーソルは編集前のカーソルと同じ位置になる。
+			int tlength = text.AsSpan().IndexOfAny('\r', '\n') == -1 ? text.Length : 0;
+			int column = selection.StartColumn + tlength;
+			int lineNumber = selection.StartLineNumber;
+			selectionEnd = new Selection()
+				{
+					EndColumn = column,
+					PositionColumn = column,
+					SelectionStartColumn = column,
+					StartColumn = column,
+					EndLineNumber = lineNumber,
+					PositionLineNumber = lineNumber,
+					SelectionStartLineNumber = lineNumber,
+					StartLineNumber = lineNumber,
+				};
+		}
+		try
+		{
+			await editor.Content.ExecuteEdits(source, new()
+			{
+				new()
+				{
+					Text=text,
+					Range=selection,
+					ForceMoveMarkers=true,
+				},
+			}, new List<Selection>() { selectionEnd });
+		}
+		catch
+		{
+			Root?.AppendAppMessage("外字の挿入に失敗しました。", "外字");
+		}
 	}
 
 	[CascadingParameter(Name = nameof(Root))]

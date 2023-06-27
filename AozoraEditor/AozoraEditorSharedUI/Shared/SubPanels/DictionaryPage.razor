@@ -1,4 +1,8 @@
-﻿@using Aozora.GaijiChuki.Xsd
+﻿@inject IJSRuntime jsRuntime
+
+@using Aozora.GaijiChuki.Xsd
+@using AozoraEditor.Shared.Models.DictionaryResultEntries;
+@using AozoraEditor.Shared.Models.DictionaryResultGroups;
 
 <div class="aozora_dictionary_search_container">
 	<div class="aozora_dictionary_search_border">
@@ -171,10 +175,10 @@
 	{
 		switch (c)
 		{
-			case Models.DictionaryResultGroupRadical cr:
+			case DictionaryResultGroupRadical cr:
 				<p>@(string.Join(string.Empty, cr.Page.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', cr.Page.radical?.readings?.reading ?? Array.Empty<string>())))</p>
 				break;
-			case Models.DictionaryResultGroupRadicalOther cro when cro.Page is not null:
+			case DictionaryResultGroupRadicalOther cro when cro.Page is not null:
 				<p>@cro.Page.header</p>
 				break;
 		}
@@ -318,7 +322,7 @@
 	void SelectPage(PageOther page)
 	{
 		if (page?.entries is null) return;
-		SearchResults = new[] { new Models.DictionaryResultGroupRadicalOther(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChukiOther(a, page)).ToArray(), page) };
+		SearchResults = new[] { new Models.DictionaryResultGroups.DictionaryResultGroupRadicalOther(page.entries.Select(a => new Models.DictionaryResultEntries.DictionaryResultEntryGaijiChukiOther(a, page)).ToArray(), page) };
 		SearchMessage = string.Empty;
 		StateHasChanged();
 	}
@@ -327,7 +331,7 @@
 	void SelectPage(page page)
 	{
 		if (page?.entries is null) return;
-		SearchResults = new[] { new Models.DictionaryResultGroupRadical(page.entries.Select(a => new Models.DictionaryResultEntryGaijiChuki(a, page)).ToArray(), page) };
+		SearchResults = new[] { new Models.DictionaryResultGroups.DictionaryResultGroupRadical(page.entries.Select(a => new Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki(a, page)).ToArray(), page) };
 		SearchMessage = string.Empty;
 		StateHasChanged();
 	}
@@ -336,9 +340,9 @@
 	{
 		if (Aozora.GaijiChuki.Manager.Toc.StrokeCharacters is null) return;
 		if (!Aozora.GaijiChuki.Manager.Toc.StrokeCharacters.TryGetValue(stroke, out var memory)) return;
-		SearchResults = new[] { new Models.DictionaryResultGroupStrokes(memory.ToArray()
+		SearchResults = new[] { new Models.DictionaryResultGroups.DictionaryResultGroupStrokes(memory.ToArray()
 			.Where(a => !a.entry.duplicate)
-			.Select(a => new Models.DictionaryResultEntryGaijiChuki(a.entry, a.page)).ToArray(), stroke) };
+			.Select(a => new Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki(a.entry, a.page)).ToArray(), stroke) };
 		SearchMessage = string.Empty;
 		StateHasChanged();
 	}
@@ -353,7 +357,7 @@
 	{
 		switch (item)
 		{
-			case Models.DictionaryResultEntryGaijiChuki itemGc:
+			case Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki itemGc:
 				return GetEntryHtml(item,
 	@<text>
 		@switch (itemGc.Content.Item)
@@ -411,7 +415,7 @@
 		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 	</text>
 		);
-			case Models.DictionaryResultSingleChar itemRs:
+			case DictionaryResultSingleChar itemRs:
 				{
 					var iccrs = itemRs.IllegalCharCheckResults.ToArray();
 					return GetEntryHtml(item,
@@ -474,18 +478,43 @@
 				{
 					@noteAppendHtml
 				}
+				@{
+					var content = GetClipboardContent(item);
 
-				@if (!string.IsNullOrWhiteSpace(item.Note))
-				{
 					<div class="aozora_dictionary_result_detail_item_info_note">
-						※［＃@(
-							item.Note
-								)］
+						@if (!string.IsNullOrWhiteSpace(item.Note))
+						{
+							<text>
+								※［＃@(item.Note)］
+							</text>
+						}
+						<button class="aozora_dictionary_result_detail_button" onclick="navigator.clipboard.writeText(this.getAttribute('aozora-note'))" aozora-note="@content">
+							@(TabControl.GetMaterialSymbolOutlined("content_copy"))
+						</button>
+						<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{if(Editor is not null) await Editor.InsertText(content,"aozora-dictionary");}'>
+							@(TabControl.GetMaterialSymbolOutlined("content_paste"))
+						</button>
+						@{
+							int page = -1;
+							if (!(item is Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki gc && int.TryParse(gc.Content?.docPage, out page)))
+							{
+								if (!(item is Models.DictionaryResultEntries.DictionaryResultEntryGaijiChukiOther gco && int.TryParse(gco.Content?.docPage, out page))) page = -1;
+							}
+							Console.WriteLine((item as Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki)?.Content?.docPage);
+							if (page >= 0)
+							{
+								<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{await OpenInNewTab($"_content/AozoraEditorSharedUI/documents/gaiji_chuki.pdf#page={page}");}'>
+									@(
+								TabControl.GetMaterialSymbolOutlined("open_in_new_down")
+											)
+								</button>
+							}
+						}
 					</div>
 				}
 			</div>
 			<div class="aozora_dictionary_result_detail_item_info_header_box">
-				@if (item.Jisx0213Code != Models.DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
+				@if (item.Jisx0213Code != DictionaryResultEntryGaijiChuki.Jisx0213CodeEmpty && item.Characters.Count() < 2)
 				{
 					<p>
 						<span class="aozora_dictionary_result_detail_item_info_header">JIS X 0213</span>
@@ -493,7 +522,7 @@
 					</p>
 				}
 				@{
-					var sjis = Models.DictionaryResultEntryGaijiChuki.GetShiftJIS(string.Join(string.Empty, item.Characters));
+					var sjis = DictionaryResultEntryGaijiChuki.GetShiftJIS(string.Join(string.Empty, item.Characters));
 					if (item.Unicode.Any() || sjis.Any())
 					{
 						<p>
@@ -520,6 +549,40 @@
 				}
 			</div>
 		</div>
-	</div>;
+	</div>
+	;
+	}
+
+	public string GetClipboardContent(Models.IDictionaryResultEntry item)
+	{
+		var note = item.Note is null ? string.Empty : $"※［＃{item.Note}］";
+		switch (item)
+		{
+			case DictionaryResultEntryGaijiChuki itemGc:
+				{
+					return itemGc.Content.Item switch
+					{
+						entryCompatible78Inclusion i1 => i1.@ref,
+						entryDesignVariant i2 => i2.@ref,
+						entryInclusionApplication i3 => i3.Item switch { string s => s, note n => $"※［＃{n.full}］", _ => string.Empty },
+						entryIntegrationApplication i4 => i4.Item switch { string s => s, note n => $"※［＃{n.full}］", _ => string.Empty },
+						object => string.Join(string.Empty, item.Characters),
+						_ => note,
+					};
+				}
+			case DictionaryResultSingleChar itemRs:
+				return itemRs.IllegalCharCheckResults.ToArray().All(a => a is not Aozora.Helpers.Utils.IllegalCharCheckResult.jis_gaiji and not Aozora.Helpers.Utils.IllegalCharCheckResult.non_jis)
+					? string.Join(string.Empty, item.Characters)
+					: note;
+			default: return note;
+		}
+	}
+
+	[CascadingParameter(Name = nameof(Editor))]
+	public EditorPage? Editor { get; private set; }
+
+	public async Task OpenInNewTab(string url)
+	{
+		await jsRuntime.InvokeVoidAsync("open", url, "_blank");
 	}
 }

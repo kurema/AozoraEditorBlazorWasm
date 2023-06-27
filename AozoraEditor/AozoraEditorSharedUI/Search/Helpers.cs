@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Aozora.GaijiChuki;
+using Aozora.GaijiChuki.Xsd;
 using AozoraEditor.Shared.Models;
+using AozoraEditor.Shared.Models.DictionaryResultEntries;
+using AozoraEditor.Shared.Models.DictionaryResultGroups;
 using AozoraEditor.Shared.Shared.SubPanels;
 
 namespace AozoraEditor.Shared.Search;
@@ -27,17 +30,26 @@ public static class Helpers
 			return target.Length == 1 && from <= target[0] && target[0] <= to;
 		}
 
-		if (targets.HasFlag(DictionaryPage.SearchOptionTargets.Radical))
+		ISearchQuery q2 = q, q3 = new SearchQueries.SearchQueryAny();
 		{
-			//ToDo: 画数絞り込みの挙動は画数検索→内容絞り込み。
-			foreach (var item in contents?.kanji?.page?.Where(q.Is) ?? Array.Empty<Aozora.GaijiChuki.Xsd.page>())
+			if (q is SearchQueries.SearchQueryAnd qand && qand.Children.Count() > 1)
 			{
-				yield return new DictionaryResultGroupRadical(item.entries.Select(a => new DictionaryResultEntryGaijiChuki(a, item)).ToArray(), item);
+				q2 = qand.Children.First();
+				q3 = new SearchQueries.SearchQueryAnd(qand.Children.Skip(1));
 			}
 		}
-		foreach (var item in contents?.other?.PageOther?.Where(q.Is) ?? Array.Empty<Aozora.GaijiChuki.Xsd.PageOther>())
+
+		if (targets.HasFlag(DictionaryPage.SearchOptionTargets.Radical))
 		{
-			yield return new DictionaryResultGroupRadicalOther(item.entries.Select(a => new DictionaryResultEntryGaijiChukiOther(a, item)).ToArray(), item);
+			//and指定なら最初を部首指定、残りを絞り込み認識する。"夂 and 7画" なら部首「夂」かつ総画数7画の文字一覧になる。逆だと挙動が変わる。
+			foreach (var item in contents?.kanji?.page?.Where(q2.Is) ?? Array.Empty<Aozora.GaijiChuki.Xsd.page>())
+			{
+				yield return new DictionaryResultGroupRadical(item.entries.Where(e => q3.Is(e, item)).Select(a => new DictionaryResultEntryGaijiChuki(a, item)).ToArray(), item);
+			}
+		}
+		foreach (var item in contents?.other?.PageOther?.Where(q2.Is) ?? Array.Empty<Aozora.GaijiChuki.Xsd.PageOther>())
+		{
+			yield return new DictionaryResultGroupRadicalOther(item.entries.Where(q3.Is).Select(a => new DictionaryResultEntryGaijiChukiOther(a, item)).ToArray(), item);
 		}
 	}
 

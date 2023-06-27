@@ -1,0 +1,5 @@
+<xsd xmlns='http://microsoft.com/dotnet/tools/xsd/'>
+  <generateClasses language='CS' namespace='AozoraEditor.Shared.Models.Notes' options="properties">
+    <schema>Notes.xsd</schema>
+  </generateClasses>
+</xsd>
