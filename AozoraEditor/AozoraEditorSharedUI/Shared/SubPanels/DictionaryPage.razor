@@ -176,10 +176,10 @@
 		switch (c)
 		{
 			case DictionaryResultGroupRadical cr:
-				<p>@(string.Join(string.Empty, cr.Page.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', cr.Page.radical?.readings?.reading ?? Array.Empty<string>())))</p>
+				<p class="aozora_dictionary_result_radical">@(string.Join(string.Empty, cr.Page.radical?.characters?.character ?? Array.Empty<string>())) (@(string.Join('・', cr.Page.radical?.readings?.reading ?? Array.Empty<string>())))</p>
 				break;
 			case DictionaryResultGroupRadicalOther cro when cro.Page is not null:
-				<p>@cro.Page.header</p>
+				<p class="aozora_dictionary_result_radical">@cro.Page.header</p>
 				break;
 		}
 	}
@@ -414,7 +414,7 @@
 		}
 		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 	</text>
-		);
+	);
 			case DictionaryResultSingleChar itemRs:
 				{
 					var iccrs = itemRs.IllegalCharCheckResults.ToArray();
@@ -503,7 +503,7 @@
 							Console.WriteLine((item as Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki)?.Content?.docPage);
 							if (page >= 0)
 							{
-								<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{await OpenInNewTab($"_content/AozoraEditorSharedUI/documents/gaiji_chuki.pdf#page={page}");}'>
+								<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{await OpenPdfPage(page);}'>
 									@(
 								TabControl.GetMaterialSymbolOutlined("open_in_new_down")
 											)
@@ -551,6 +551,11 @@
 		</div>
 	</div>
 	;
+	}
+
+	public async Task OpenPdfPage(int page)
+	{
+		await OpenInNewTab($"_content/AozoraEditorSharedUI/documents/gaiji_chuki.pdf#page={page}");
 	}
 
 	public string GetClipboardContent(Models.IDictionaryResultEntry item)

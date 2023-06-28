@@ -145,7 +145,7 @@
 {cssLinks}
   </head>
   <body>
-		{Html}
+	{Html}
   </body>
 </html>																																																	</head>
 ";
@@ -159,14 +159,17 @@
 			var js = new Aozora.JstreamString(text);
 			var output = new Aozora.Helpers.OutputString();
 			var message = new Aozora.Helpers.OutputString();
-			var parser = new Aozora.Aozora2Html(js, output, message) { Section = Aozora.Aozora2Html.SectionKind.tail,
+			var parser = new Aozora.Aozora2Html(js, output, message)
+				{
+					Section = Aozora.Aozora2Html.SectionKind.tail,
 					Template = new Aozora.Helpers.TemplateBasic(),
 					ExtendedOption = new()
 					{
 						UseGeneralImage = true,
 						WarnUnknownCommand = true,
+						NoIllegalCharCheckInCommand = true,
 					}
-			};
+				};
 			try
 			{
 				while (true) { if (!parser.Parse()) break; }

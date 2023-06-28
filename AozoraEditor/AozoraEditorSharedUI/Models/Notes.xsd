@@ -9,7 +9,15 @@
 	<xs:element name="notes">
 		<xs:complexType>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element name="text"  type="xs:string" />
+				<xs:element name="text"  >
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="header" type="xs:string" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="tasks">
 					<xs:complexType>
 						<xs:choice minOccurs="0" maxOccurs="unbounded">

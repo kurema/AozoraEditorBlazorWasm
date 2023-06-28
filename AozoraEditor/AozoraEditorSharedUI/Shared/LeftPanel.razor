@@ -19,7 +19,7 @@
 					<span>検索</span>
 					break;
 				case "Notes":
-					<span>メモ</span>
+					<AozoraEditor.Shared.Shared.LeftPanels.Notes />
 					break;
 				default:
 					break;
@@ -29,8 +29,6 @@
 </div>
 
 @code {
-
-
 	System.Collections.ObjectModel.ObservableCollection<TabEntry> tabEntries { get; }
 
 	record TabEntry(string Description, string Key, RenderFragment icon) { }

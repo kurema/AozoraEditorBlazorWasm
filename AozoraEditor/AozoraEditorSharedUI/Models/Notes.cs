@@ -30,7 +30,7 @@ namespace AozoraEditor.Shared.Models.Notes {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("tasks", typeof(notesTasks))]
-        [System.Xml.Serialization.XmlElementAttribute("text", typeof(string))]
+        [System.Xml.Serialization.XmlElementAttribute("text", typeof(notesText))]
         public object[] Items {
             get {
                 return this.itemsField;
@@ -202,6 +202,42 @@ namespace AozoraEditor.Shared.Models.Notes {
             }
             set {
                 this.staredFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraE" +
+        "ditorSharedUI/Models/Notes.xsd")]
+    public partial class notesText {
+        
+        private string headerField;
+        
+        private string valueField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string header {
+            get {
+                return this.headerField;
+            }
+            set {
+                this.headerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
             }
         }
     }

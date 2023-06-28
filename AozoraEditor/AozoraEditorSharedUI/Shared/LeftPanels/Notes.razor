@@ -1,5 +1,198 @@
-﻿<Header title="ノート" />
+﻿@using Models.Notes;
 
+<div class="aozora_left_panel_notes_container">
+	<div class="aozora_left_panel_notes_header">
+		<p class="aozora_left_panel_notes_header_title">ノート</p>
+	</div>
+
+	<div class="aozora_left_panel_notes_index_container_background"></div>
+
+	<div class="aozora_left_panel_notes_index_container">
+		<button class="aozora_left_panel_notes_index_item @(null == Selected? "aozora_left_panel_notes_index_item_selected":string.Empty)" @onclick="_=>Selected=null">
+			@(TabControl.GetMaterialSymbolOutlined("list"))
+		</button>
+
+		@if (Content?.Items is not null)
+		{
+			foreach (var item in Content.Items)
+			{
+				<button class="aozora_left_panel_notes_index_item @(item == Selected? "aozora_left_panel_notes_index_item_selected":string.Empty)" @onclick="_=>Selected=item">
+					<p>@GetHeaderOfItem(item)</p>
+				</button>
+			}
+		}
+
+		<button class="aozora_left_panel_notes_index_item" @onclick="_=>AddNote()">
+			@(TabControl.GetMaterialSymbolOutlined("add"))
+		</button>
+
+	</div>
+
+	<div class="aozora_left_panel_notes_body">
+		@switch (Selected)
+		{
+			case notesTasks itemTask:
+				<text>タスク</text>
+				break;
+			case notesText itemText:
+				<div class="aozora_left_panel_notes_body_note">
+					<input @bind="itemText.header" placeholder="タイトル" />
+					<textarea @bind="itemText.Value" placeholder="本文" />
+				</div>
+				break;
+			default:
+				<div class="aozora_left_panel_notes_body_toc">
+					@if (Content?.Items is not null)
+					{
+						foreach (var item in Content.Items)
+						{
+							<p>@GetHeaderOfItem(item)</p>
+						}
+					}
+				</div>
+				break;
+		}
+	</div>
+
+</div>
+
+<style>
+	.aozora_left_panel_notes_container {
+		--aozora-left-notes-background: #fdfce8;
+		--aozora-left-notes-border-color: #b0afa1;
+		--aozora-left-notes-header-background: #211914;
+		--aozora-left-notes-header-color: white;
+		--aozora-left-notes-tab-background: #f0efdc;
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto 1fr;
+		width: 100%;
+		height: 100%;
+	}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_header {
+			background: var(--aozora-left-notes-header-background);
+			color: var(--aozora-left-notes-header-color);
+			text-align: center;
+			grid-column: 1/3;
+			grid-row: 1/2;
+		}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_header > p {
+				font-weight: bold;
+			}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
+			grid-column: 2/3;
+			grid-row: 2/3;
+			overflow-y: scroll;
+			display: flex;
+			flex-direction: column;
+			/* Firefoxでは縦書きでレイアウトがおかしくなるので強引に */
+			min-width: 1.4em;
+			margin-right: 2px;
+		}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container > .aozora_left_panel_notes_index_item {
+				background: var(--aozora-left-notes-tab-background);
+				border: solid 1px var(--aozora-left-notes-border-color);
+				margin-top: 2px;
+				cursor: default;
+				user-select: none;
+			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container > .aozora_left_panel_notes_index_item > p {
+					/*transform: rotate(90deg);*/
+					line-height: 1em;
+					margin: 2px;
+					display: inline-block;
+					writing-mode: vertical-rl;
+				}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container > .aozora_left_panel_notes_index_item.aozora_left_panel_notes_index_item_selected {
+					border-left: solid 1px var(--aozora-left-notes-background);
+					background: var(--aozora-left-notes-background);
+				}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container_background {
+			border-left: solid 1px var(--aozora-left-notes-border-color);
+			grid-column: 2/3;
+			grid-row: 2/3;
+		}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_body {
+			grid-column: 1/2;
+			grid-row: 2/3;
+			/*overflow-y: scroll;*/
+			background: var(--aozora-left-notes-background);
+			border-top: solid 1px var(--aozora-left-notes-border-color);
+		}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note {
+				display: grid;
+				grid-template-rows: auto 1fr;
+				width: 100%;
+				height: 100%;
+			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > input {
+					grid-row: 1/2;
+					width: 100%;
+					-webkit-appearance: none;
+					appearance: none;
+					border: none;
+					background: transparent;
+					font-size: 150%;
+					outline: none;
+					padding: 0;
+				}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > textarea {
+					grid-row: 2/3;
+					width: 100%;
+					height: 100%;
+					resize: none;
+					box-sizing: border-box;
+					display: block;
+					-webkit-appearance: none;
+					appearance: none;
+					border: none;
+					background: transparent;
+					padding: 0;
+					outline: none;
+				}
+</style>
 @code {
+	public notes Content { get; set; } = new()
+		{
+			Items = new[]{
+				new notesText(){header="登場人物",Value="登場人物をメモするの楽ですね。"},
+				new notesText(){header="その他",Value="なんか知らんがその他。"},
+	}
+		};
 
+	object? Selected { get; set; }
+
+	static string GetHeaderOfItem(object item)
+	{
+		return item switch
+		{
+			notesTasks itemTask => string.IsNullOrEmpty(itemTask.header) ? "メモ" : itemTask.header,
+			notesText itemText => string.IsNullOrEmpty(itemText.header) ? "メモ" : itemText.header,
+			_ => string.Empty,
+		};
+	}
+
+	void AddNote()
+	{
+		var item = new notesText() { header = string.Empty, Value = string.Empty };
+		if (Content?.Items is null) Content = new() { Items = new[] { item } };
+		else
+		{
+			var items = Content.Items;
+			Array.Resize(ref items, items.Length + 1);
+			items[^1] = item;
+			Content.Items = items;
+		}
+	}
 }
