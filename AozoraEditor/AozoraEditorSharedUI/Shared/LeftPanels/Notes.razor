@@ -12,9 +12,9 @@
 			@(TabControl.GetMaterialSymbolOutlined("list"))
 		</button>
 
-		@if (Content?.Items is not null)
+		@if (Root?.Notes?.Items is not null)
 		{
-			foreach (var item in Content.Items)
+			foreach (var item in Root.Notes.Items)
 			{
 				<button class="aozora_left_panel_notes_index_item @(item == Selected? "aozora_left_panel_notes_index_item_selected":string.Empty)" @onclick="_=>Selected=item">
 					<p>@GetHeaderOfItem(item)</p>
@@ -32,21 +32,41 @@
 		@switch (Selected)
 		{
 			case notesTasks itemTask:
-				<text>タスク</text>
+				<div class="aozora_left_panel_notes_body_tasks">
+					<input @bind="itemTask.header" class="aozora_left_panel_notes_body_general_header" placeholder="タイトル" />
+					@foreach (var item in itemTask.Items)
+					{
+						@GetTaskUi(item)
+						;
+					}
+				</div>
 				break;
 			case notesText itemText:
 				<div class="aozora_left_panel_notes_body_note">
-					<input @bind="itemText.header" placeholder="タイトル" />
+					<input class="aozora_left_panel_notes_body_general_header" @bind="itemText.header" placeholder="タイトル" />
 					<textarea @bind="itemText.Value" placeholder="本文" />
 				</div>
 				break;
 			default:
 				<div class="aozora_left_panel_notes_body_toc">
-					@if (Content?.Items is not null)
+					@if (Root?.Notes?.Items is not null)
 					{
-						foreach (var item in Content.Items)
+						foreach (var item in Root.Notes.Items)
 						{
-							<p>@GetHeaderOfItem(item)</p>
+							<button class="aozora_left_panel_notes_body_toc_item">
+								<div class="aozora_left_panel_notes_body_toc_item_icon">
+									@switch (item)
+									{
+										case notesTasks itemTask:
+											@(TabControl.GetMaterialSymbolOutlined("task"))
+											break;
+										case notesText itemText:
+											@(TabControl.GetMaterialSymbolOutlined("note"))
+											break;
+									}
+								</div>
+								<div class="aozora_left_panel_notes_body_toc_item_header">@GetHeaderOfItem(item)</div>
+							</button>
 						}
 					}
 				</div>
@@ -57,6 +77,42 @@
 </div>
 
 <style>
+	.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc {
+		width: 100%;
+		height: 100%;
+		overflow-y: scroll;
+		display: flex;
+		flex-direction: column;
+	}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item {
+			/*border: solid 1px var(--aozora-left-notes-border-color);*/
+			margin: 12px 12px 0 12px;
+			padding: 7px;
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			align-items: center;
+			gap: 5px;
+			/*box-shadow: 0px 0px 4px 3px rgba(0,0,0,0.2) inset;*/
+			box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.2) inset;
+			transition: box-shadow 0.4s;
+			cursor: default;
+			overflow:hidden;
+			user-select:none;
+		}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item:hover {
+				box-shadow: 0px 0px 10px 4px rgba(0,0,0,0.2) inset;
+			}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_icon {
+				grid-column: 1/2;
+			}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_header {
+				grid-column: 2/3;
+			}
+
 	.aozora_left_panel_notes_container {
 		--aozora-left-notes-background: #fdfce8;
 		--aozora-left-notes-border-color: #b0afa1;
@@ -64,10 +120,12 @@
 		--aozora-left-notes-header-color: white;
 		--aozora-left-notes-tab-background: #f0efdc;
 		display: grid;
-		grid-template-columns: 1fr auto;
-		grid-template-rows: auto 1fr;
+		grid-template-columns: minmax(0,1fr) auto;
+		grid-template-rows: auto minmax(0,1fr);
 		width: 100%;
 		height: 100%;
+		flex: 1 0 0;
+		min-height: 0;
 	}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_header {
@@ -80,6 +138,7 @@
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_header > p {
 				font-weight: bold;
+				margin: 10px 0;
 			}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
@@ -118,6 +177,7 @@
 			border-left: solid 1px var(--aozora-left-notes-border-color);
 			grid-column: 2/3;
 			grid-row: 2/3;
+			height: 100%;
 		}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_body {
@@ -126,6 +186,9 @@
 			/*overflow-y: scroll;*/
 			background: var(--aozora-left-notes-background);
 			border-top: solid 1px var(--aozora-left-notes-border-color);
+			display: flex;
+			width: 100%;
+			height: 100%;
 		}
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note {
@@ -133,18 +196,11 @@
 				grid-template-rows: auto 1fr;
 				width: 100%;
 				height: 100%;
+				flex: 1 0 0;
 			}
 
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > input {
 					grid-row: 1/2;
-					width: 100%;
-					-webkit-appearance: none;
-					appearance: none;
-					border: none;
-					background: transparent;
-					font-size: 150%;
-					outline: none;
-					padding: 0;
 				}
 
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > textarea {
@@ -161,15 +217,63 @@
 					padding: 0;
 					outline: none;
 				}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body .aozora_left_panel_notes_body_general_header {
+				width: 100%;
+				-webkit-appearance: none;
+				appearance: none;
+				border: none;
+				background: transparent;
+				font-size: 150%;
+				outline: none;
+				padding: 0;
+			}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks {
+				overflow-y: scroll;
+				flex: 1 0 0;
+			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry {
+					display: grid;
+					grid-template-columns: auto 1fr auto;
+				}
+
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title {
+						border: none;
+						background: transparent;
+						-webkit-appearance: none;
+						appearance: none;
+						grid-column: 2/3;
+						white-space: pre-line;
+						word-break: break-all;
+					}
+
+						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
+						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title:active {
+							outline: none;
+							box-sizing: border-box;
+							overflow-wrap: anywhere;
+							/*width: 100%;*/
+							padding: 0;
+							display: inline-block;
+						}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks ul {
+					padding: 0;
+					margin: 4px;
+				}
+
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks ul li {
+						list-style: none;
+					}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > ul ul {
+					padding-left: 24px;
+				}
 </style>
 @code {
-	public notes Content { get; set; } = new()
-		{
-			Items = new[]{
-				new notesText(){header="登場人物",Value="登場人物をメモするの楽ですね。"},
-				new notesText(){header="その他",Value="なんか知らんがその他。"},
-	}
-		};
+
 
 	object? Selected { get; set; }
 
@@ -186,13 +290,36 @@
 	void AddNote()
 	{
 		var item = new notesText() { header = string.Empty, Value = string.Empty };
-		if (Content?.Items is null) Content = new() { Items = new[] { item } };
+		if (Root is null) return;
+		var content = Root.Notes;
+		if (content?.Items is null) Root.Notes = content = new() { Items = new[] { item } };
 		else
 		{
-			var items = Content.Items;
+			var items = content.Items;
 			Array.Resize(ref items, items.Length + 1);
 			items[^1] = item;
-			Content.Items = items;
+			content.Items = items;
 		}
 	}
+
+	public RenderFragment GetTaskUi(task t, bool top = false)
+	{
+		return
+	@<ul>
+		<li>
+			<div class="aozora_left_panel_notes_body_task_entry">
+				<input type="checkbox" @bind="t.isChecked" />
+				<input @bind="t.header" class="aozora_left_panel_notes_body_task_title" />
+			</div>
+			@foreach (var item in t?.Items ?? Array.Empty<task>())
+			{
+				if (item is not null)
+					@GetTaskUi(item)
+			}
+		</li>
+	</ul>;
+	}
+
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; private set; }
 }

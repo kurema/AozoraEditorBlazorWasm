@@ -12,6 +12,8 @@
         background: var(--aozora-left-background-tabs);
         border-right: 1px solid var(--aozora-left-border-color);
         border-top: 1px solid var(--aozora-left-border-color);
+        overflow-y: scroll;
+        min-height: 0;
     }
 
         .left_panel_container > .left_panel_tabs_container > .left_panel_tabs_items {
@@ -47,6 +49,7 @@
         background: var(--aozora-left-background-body);
         border-right: 1px solid var(--aozora-left-border-color);
         border-top: 1px solid var(--aozora-left-border-color);
+        min-height: 0;
     }
 
 @media (max-width:767px) {

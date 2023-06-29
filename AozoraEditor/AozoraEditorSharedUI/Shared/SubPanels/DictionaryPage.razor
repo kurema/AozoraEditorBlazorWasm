@@ -240,6 +240,38 @@
 	<li>「ページ数-行数」は実際の出現場所に従って書き換えてください。</li>
 </ul>
 
+<h1>参考</h1>
+<ul>
+	<li>
+		青空文庫
+		<ul>
+			<li><a href="https://www.aozora.gr.jp/gaiji_chuki/" target="_blank">青空文庫・外字注記辞書</a></li>
+		</ul>
+	</li>
+	<li>
+		aozorahack
+		<ul>
+			<li><a href="https://github.com/aozorahack/aozora2html/tree/master/vendor/jis2ucs" target="_blank">JIS2UCS</a> (aozora2html内)</li>
+		</ul>
+	</li>
+	<li>
+		藤原隆男 (京都市立芸術大学)
+		<ul>
+			<li><a href="https://web.archive.org/web/http://w3.kcua.ac.jp/~fujiwara/jis2000/jis2004/jisx0213-2004-mono.html" target="_blank">JIS X 0213:2004 vs Unicode mapping table</a> (アーカイブ)</li>
+		</ul>
+
+	</li>
+	<li>
+		kurema
+		<ul>
+			<li><a href="https://github.com/kurema/AozoraGaijiChukiXml" target="_blank">AozoraGaijiChukiXml - 非公式XML版</a></li>
+		</ul>
+		<ul>
+			<li><a href="https://github.com/kurema/AozoraGaijiChukiXml" target="_blank">JISX0213Table - JIS X 0213バイナリ版</a> (aozora2htmlSharpに統合済み)</li>
+		</ul>
+	</li>
+</ul>
+
 @code {
 	string _SearchText = string.Empty;
 	string SearchText
@@ -414,7 +446,7 @@
 		}
 		@(Aozora.GaijiChuki.Manager.Tools.GetStrokesText(itemGc.Content, itemGc.Page))
 	</text>
-	);
+		);
 			case DictionaryResultSingleChar itemRs:
 				{
 					var iccrs = itemRs.IllegalCharCheckResults.ToArray();
