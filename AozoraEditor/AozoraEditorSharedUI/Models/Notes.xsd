@@ -20,9 +20,12 @@
 				</xs:element>
 				<xs:element name="tasks">
 					<xs:complexType>
-						<xs:choice minOccurs="0" maxOccurs="unbounded">
-							<xs:element ref="task" />
-						</xs:choice>
+						<xs:sequence>
+							<xs:element name="detail" type="xs:string" minOccurs="0" />
+							<xs:choice minOccurs="0" maxOccurs="unbounded">
+								<xs:element ref="task" />
+							</xs:choice>
+						</xs:sequence>
 						<xs:attribute name="header" type="xs:string" />
 					</xs:complexType>
 				</xs:element>
