@@ -21,7 +21,7 @@ public interface IMenuParent
 
 public enum MenuPosition
 {
-	Bottom, Right
+	Bottom, Right, ClickedPositionBottomRight
 }
 
 public interface IMenuItem
@@ -32,12 +32,12 @@ public interface IMenuItem
 	IMenuParent? Parent { get; }
 }
 
-public interface IMenuItemBasic: IMenuItem
+public interface IMenuItemBasic : IMenuItem
 {
 	Task InvokeAsync();
 	string Title { get; }
 	ElementReference? ElementHeader { get; set; }
-	Task ShowAsync();
+	Task ShowAsync(double posX = -1, double posY = -1);
 	EventCallback OnHeaderSelected { get; set; }
 	RenderFragment? Icon { get; }
 }

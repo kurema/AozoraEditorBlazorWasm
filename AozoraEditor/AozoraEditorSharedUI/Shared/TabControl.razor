@@ -305,6 +305,7 @@
 	public void HideMenuBar()
 	{
 		MenuBar?.Hide();
+		CurrentMenu?.Hide();
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -516,4 +517,6 @@
 		if (!string.IsNullOrWhiteSpace(message) && bottomPanel?.AutoOpen == true) OutputVisible = true;
 		StateHasChanged();
 	}
+
+	public IMenuParent? CurrentMenu { get; set; }
 }

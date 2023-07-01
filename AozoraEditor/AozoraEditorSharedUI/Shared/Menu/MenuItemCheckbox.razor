@@ -30,7 +30,7 @@
 	[Parameter]
 	public EventCallback UnChecked{ get; set; }
 	public ElementReference? ElementHeader { get; set; }
-	public Task ShowAsync() => Task.CompletedTask;
+	public Task ShowAsync(double posX = -1, double posY = -1) => Task.CompletedTask;
 	[Parameter]
 	public EventCallback OnHeaderSelected { get; set; }
 	public RenderFragment? Icon => @<span class="material-symbols-outlined">@(IsChecked ? "check" : string.Empty)</span>;

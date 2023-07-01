@@ -98,7 +98,7 @@
 		StateHasChanged();
 	}
 
-	public async Task ShowAsync()
+	public async Task ShowAsync(double posX = -1, double posY = -1)
 	{
 		if (HasChild) IsChildrenVisible = true;
 		StateHasChanged();
@@ -118,6 +118,10 @@
 			case MenuPosition.Right:
 				x = (r1?.X + r1?.Width - 1) ?? 0;
 				y = (r2?.Y - 5) ?? 0;//margin: 4px + 1px;
+				break;
+			case MenuPosition.ClickedPositionBottomRight:
+				x = Math.Max(posX, 0);
+				y = Math.Max(posY, 0);
 				break;
 		}
 		x = Math.Max(0, Math.Min(x, s1.Width - r3?.Width ?? 0));
@@ -173,6 +177,12 @@
 				break;
 		}
 	}
+
+	[Parameter]
+	public double ClickedPositionX { get; set; }
+
+	[Parameter]
+	public double ClickedPositionY { get; set; }
 
 	public RenderFragment GetMenuItem(IMenuItemBasic item)
 	{
