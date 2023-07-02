@@ -21,7 +21,7 @@
 					<p class="aozora_left_panel_notes_index_item_title">@GetHeaderOfItem(item)</p>
 					@if (EditMode)
 					{
-						<div class="aozora_left_panel_notes_index_item_close">@(TabControl.GetMaterialSymbolOutlined("close"))</div>
+						<div class="aozora_left_panel_notes_index_item_close" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>DeleteItem(item)">@(TabControl.GetMaterialSymbolOutlined("close"))</div>
 					}
 				</button>
 			}
@@ -80,13 +80,13 @@
 								<div class="aozora_left_panel_notes_body_toc_item_header">@GetHeaderOfItem(item)</div>
 								@if (EditMode)
 								{
-									<button class="aozora_left_panel_notes_body_toc_item_up" @onclick:preventDefault @onclick:stopPropagation="true">
+									<button @onclick="_=>MoveItem(item,-1)" class="aozora_left_panel_notes_body_toc_item_up" @onclick:preventDefault @onclick:stopPropagation="true" disabled="@(Root.Notes.Items.FirstOrDefault()==item?"disabled":null)">
 										@(TabControl.GetMaterialSymbolOutlined("arrow_upward"))
 									</button>
-									<button class="aozora_left_panel_notes_body_toc_item_down" @onclick:preventDefault @onclick:stopPropagation="true">
+									<button @onclick="_=>MoveItem(item,+1)" class="aozora_left_panel_notes_body_toc_item_down" @onclick:preventDefault @onclick:stopPropagation="true" disabled="@(Root.Notes.Items.LastOrDefault()==item?"disabled":null)">
 										@(TabControl.GetMaterialSymbolOutlined("arrow_downward"))
 									</button>
-									<button class="aozora_left_panel_notes_body_toc_item_delete" @onclick:preventDefault @onclick:stopPropagation="true">
+									<button class="aozora_left_panel_notes_body_toc_item_delete" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>DeleteItem(item)">
 										@(TabControl.GetMaterialSymbolOutlined("delete"))
 									</button>
 								}
@@ -142,28 +142,37 @@
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up {
 				grid-row: 1/2;
 				grid-column: 3/4;
-				backdrop-filter: blur(6px);
 				padding: 5px 2.5px 5px 5px;
 			}
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_down {
 				grid-row: 1/2;
 				grid-column: 4/5;
-				backdrop-filter: blur(6px);
 				padding: 5px 2.5px 5px 2.5px;
 			}
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete {
 				grid-row: 1/2;
 				grid-column: 5/6;
-				backdrop-filter: blur(6px);
 				padding: 5px 5px 5px 2.5px;
 			}
 
-				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up:hover,
-				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_down:hover,
-				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete:hover {
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up,
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_down,
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete {
+				backdrop-filter: blur(6px);
+			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up:hover:not(:disabled),
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_down:hover:not(:disabled),
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete:hover:not(:disabled) {
 					background-color: var(--aozora-button-color-hover);
+				}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up:disabled,
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_down:disabled,
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete:disabled {
+					opacity: 40%;
 				}
 
 	.aozora_left_panel_notes_container {
@@ -210,7 +219,7 @@
 					/*box-shadow: 0px 0px 10px 4px rgba(255,255,255,0.4) inset;*/
 					background: rgba(255,255,255,0.3);
 					/*background: white;
-																											color: black;*/
+																																				color: black;*/
 				}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
@@ -341,7 +350,7 @@
 						-webkit-appearance: none;
 						appearance: none;
 						/*white-space: pre-line;
-																												word-break: break-all;*/
+																																					word-break: break-all;*/
 					}
 
 						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
@@ -392,6 +401,24 @@
 
 	void AddTask() => AddContentItem(new notesTasks() { header = string.Empty, Items = new[] { new task() { header = string.Empty } } });
 
+	void MoveItem(object target, int shift)
+	{
+		if (Root?.Notes?.Items is null) return;
+
+		var index = Array.IndexOf(Root.Notes.Items, target);
+		if (index < 0) return;
+		var shifted = index + shift;
+		if (shifted < 0 || Root.Notes.Items.Length <= shifted) return;
+		(Root.Notes.Items[index], Root.Notes.Items[shifted]) = (Root.Notes.Items[shifted], Root.Notes.Items[index]);
+	}
+
+	void DeleteItem(object item)
+	{
+		if (Root?.Notes?.Items is null) return;
+		var items = Root.Notes.Items.ToList();
+		items.Remove(item);
+		Root.Notes.Items = items.ToArray();
+	}
 
 	void AddContentItem(object item)
 	{
