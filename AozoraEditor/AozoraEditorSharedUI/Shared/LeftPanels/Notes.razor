@@ -45,7 +45,15 @@
 		{
 			case notesTasks itemTask:
 				<div class="aozora_left_panel_notes_body_tasks">
-					<input @bind="itemTask.header" class="aozora_left_panel_notes_body_general_header" placeholder="タイトル" />
+					<div class="aozora_left_panel_notes_body_tasks_header">
+						<textarea @bind="itemTask.header" rows="1" class="aozora_left_panel_notes_body_general_header" placeholder="タイトル" />
+						@if (EditMode)
+						{
+							<button @onclick="_=>DeleteItem(itemTask)">
+								@(TabControl.GetMaterialSymbolOutlined("delete"))
+							</button>
+						}
+					</div>
 					@foreach (var item in itemTask.Items)
 					{
 						@GetTaskUi(item)
@@ -55,12 +63,30 @@
 				break;
 			case notesText itemText:
 				<div class="aozora_left_panel_notes_body_note">
-					<input class="aozora_left_panel_notes_body_general_header" @bind="itemText.header" placeholder="タイトル" />
+					<textarea rows="1" class="aozora_left_panel_notes_body_general_header" @bind="itemText.header" placeholder="タイトル" />
 					<textarea @bind="itemText.Value" placeholder="本文" />
+					@if (EditMode)
+					{
+						<button @onclick="_=>DeleteItem(itemText)">
+							@(TabControl.GetMaterialSymbolOutlined("delete"))
+						</button>
+					}
 				</div>
 				break;
 			default:
 				<div class="aozora_left_panel_notes_body_toc">
+					<div class="aozora_left_panel_notes_body_toc_add">
+						<div class="aozora_left_panel_notes_body_toc_add_icon_plus">
+							@(TabControl.GetMaterialSymbolOutlined("add"))
+						</div>
+						<button class="aozora_left_panel_notes_body_toc_add_icon" @onclick="_=>AddNote()">
+							@(TabControl.GetMaterialSymbolOutlined("note"))
+						</button>
+						<button class="aozora_left_panel_notes_body_toc_add_icon" @onclick="_=>AddTask()">
+							@(TabControl.GetMaterialSymbolOutlined("task"))
+						</button>
+					</div>
+
 					@if (Root?.Notes?.Items is not null)
 					{
 						foreach (var item in Root.Notes.Items)
@@ -137,6 +163,7 @@
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_header {
 				grid-column: 2/6;
 				grid-row: 1/2;
+				line-break: anywhere;
 			}
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_up {
@@ -174,6 +201,29 @@
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc .aozora_left_panel_notes_body_toc_item > .aozora_left_panel_notes_body_toc_item_delete:disabled {
 					opacity: 40%;
 				}
+
+		.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc > .aozora_left_panel_notes_body_toc_add {
+			margin: 12px 12px 0 12px;
+			display: flex;
+			justify-items: center;
+			align-items: center;
+			flex-direction: row;
+		}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc > .aozora_left_panel_notes_body_toc_add > .aozora_left_panel_notes_body_toc_add_icon {
+				box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.2) inset;
+				transition: box-shadow 0.4s;
+			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc > .aozora_left_panel_notes_body_toc_add > .aozora_left_panel_notes_body_toc_add_icon:hover {
+					box-shadow: 0px 0px 10px 4px rgba(0,0,0,0.2) inset;
+				}
+
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc > .aozora_left_panel_notes_body_toc_add > .aozora_left_panel_notes_body_toc_add_icon_plus,
+			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc > .aozora_left_panel_notes_body_toc_add > .aozora_left_panel_notes_body_toc_add_icon {
+				padding: 5px;
+			}
+
 
 	.aozora_left_panel_notes_container {
 		--aozora-left-notes-background: #fdfce8;
@@ -219,7 +269,7 @@
 					/*box-shadow: 0px 0px 10px 4px rgba(255,255,255,0.4) inset;*/
 					background: rgba(255,255,255,0.3);
 					/*background: white;
-																																				color: black;*/
+																																																																					color: black;*/
 				}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
@@ -294,19 +344,18 @@
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note {
 				display: grid;
 				grid-template-rows: auto 1fr;
+				grid-template-columns: 1fr auto;
 				width: 100%;
 				height: 100%;
 				flex: 1 0 0;
 			}
 
-				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > input {
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > button {
+					grid-column: 2/3;
 					grid-row: 1/2;
 				}
 
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > textarea {
-					grid-row: 2/3;
-					width: 100%;
-					height: 100%;
 					resize: none;
 					box-sizing: border-box;
 					display: block;
@@ -316,9 +365,24 @@
 					background: transparent;
 					padding: 0;
 					outline: none;
+					grid-column: 1/3;
 				}
 
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > textarea:first-child {
+						grid-row: 1/2;
+						/*検索した限りCSSのみではみ出た時の自動リサイズはできないっぽい。*/
+						/*height: 1em;*/
+					}
+
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_note > textarea:nth-child(2) {
+						grid-row: 2/3;
+						width: 100%;
+						height: 100%;
+					}
+
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body .aozora_left_panel_notes_body_general_header {
+				resize: none;
+				box-sizing: border-box;
 				width: 100%;
 				-webkit-appearance: none;
 				appearance: none;
@@ -327,12 +391,28 @@
 				font-size: 150%;
 				outline: none;
 				padding: 0;
+				outline: none;
+				overflow-y: scroll;
+				line-break: anywhere;
 			}
 
 			.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks {
 				overflow-y: scroll;
 				flex: 1 0 0;
 			}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_header {
+					display: grid;
+					grid-template-columns: 1fr auto;
+				}
+
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_header > :first-child {
+						grid-column: 1/2;
+					}
+
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_header > button {
+						grid-column: 2/3;
+					}
 
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry {
 					display: grid;
@@ -350,7 +430,7 @@
 						-webkit-appearance: none;
 						appearance: none;
 						/*white-space: pre-line;
-																																					word-break: break-all;*/
+																																																																						word-break: break-all;*/
 					}
 
 						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
@@ -418,6 +498,7 @@
 		var items = Root.Notes.Items.ToList();
 		items.Remove(item);
 		Root.Notes.Items = items.ToArray();
+		if (Selected == item) Selected = null;
 	}
 
 	void AddContentItem(object item)
