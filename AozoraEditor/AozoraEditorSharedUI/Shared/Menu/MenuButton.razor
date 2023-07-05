@@ -1,0 +1,56 @@
+﻿@implements IMenuParent
+@inject IJSRuntime JSRuntime;
+
+<button @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClicked()">
+	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? TabControl.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
+</button>
+
+<CascadingValue Value="this">
+	@ChildContent
+</CascadingValue>
+
+@code {
+	[Parameter]
+	public string Header { get; set; } = string.Empty;
+
+	[Parameter]
+	public string? HeaderMaterial { get; set; }
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	public ElementReference? ElementBox { get; set; }
+
+	public int ZIndex => 256;
+
+	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
+
+	public void AddItem(IMenuItem menuItem)
+	{
+		ChildMenus.Add(menuItem);
+		StateHasChanged();
+	}
+
+	public void Hide()
+	{
+		foreach (var item in ChildMenus)
+		{
+			item.Hide();
+		}
+	}
+
+	[Parameter]
+	public MenuPosition ChildPosition { get; set; } = MenuPosition.Bottom;
+
+	public async Task ItemClicked()
+	{
+		var item = ChildMenus?.FirstOrDefault();
+		if (item is not IMenuItemBasic itemB) return;
+		Hide();
+		await itemB.InvokeAsync();
+		StateHasChanged();
+		return;
+	}
+
+	public void NotifyStateHasChanged() => StateHasChanged();
+}

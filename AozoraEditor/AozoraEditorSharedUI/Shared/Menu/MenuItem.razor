@@ -112,12 +112,12 @@
 		switch (Parent?.ChildPosition)
 		{
 			case MenuPosition.Bottom:
-				x = r2?.X ?? 0;
+				x = r2?.X ?? r1?.X ?? 0;
 				y = (r1?.Y + r1?.Height - 1) ?? 0;
 				break;
 			case MenuPosition.Right:
 				x = (r1?.X + r1?.Width - 1) ?? 0;
-				y = (r2?.Y - 5) ?? 0;//margin: 4px + 1px;
+				y = (r2?.Y - 5) ?? r1?.Y ?? 0;//margin: 4px + 1px;
 				break;
 			case MenuPosition.ClickedPositionBottomRight:
 				x = Math.Max(posX, 0);
