@@ -1,7 +1,7 @@
 ﻿@implements IMenuParent
 @inject IJSRuntime JSRuntime;
 
-<button @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClicked()">
+<button class="menubutton" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClicked()">
 	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? TabControl.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
 </button>
 
@@ -25,6 +25,12 @@
 
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
+	//[Parameter]
+	//public EventCallback<EventArgs> OnOpened { get; set; }
+
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; set; }
+
 	public void AddItem(IMenuItem menuItem)
 	{
 		ChildMenus.Add(menuItem);
@@ -37,6 +43,7 @@
 		{
 			item.Hide();
 		}
+		if (Root is not null) Root.CurrentMenu = null;
 	}
 
 	[Parameter]
@@ -46,9 +53,19 @@
 	{
 		var item = ChildMenus?.FirstOrDefault();
 		if (item is not IMenuItemBasic itemB) return;
-		Hide();
-		await itemB.InvokeAsync();
-		StateHasChanged();
+		if (itemB.IsChildrenVisible)
+		{
+			if (Root is not null) Root.CurrentMenu = null;
+			itemB.Hide();
+		}
+		else
+		{
+			Root?.HideMenuBar();
+			//await OnOpened.InvokeAsync();
+			if (Root is not null) Root.CurrentMenu = this;
+			await itemB.InvokeAsync();
+		}
+		//StateHasChanged();
 		return;
 	}
 

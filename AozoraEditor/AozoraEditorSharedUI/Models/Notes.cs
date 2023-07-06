@@ -50,21 +50,9 @@ namespace AozoraEditor.Shared.Models.Notes {
         "ditorSharedUI/Models/Notes.xsd")]
     public partial class notesTasks {
         
-        private string detailField;
-        
         private task[] itemsField;
         
         private string headerField;
-        
-        /// <remarks/>
-        public string detail {
-            get {
-                return this.detailField;
-            }
-            set {
-                this.detailField = value;
-            }
-        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("task")]
@@ -117,6 +105,8 @@ namespace AozoraEditor.Shared.Models.Notes {
         private bool staredField;
         
         private bool staredFieldSpecified;
+        
+        private string detailField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("task")]
@@ -214,6 +204,17 @@ namespace AozoraEditor.Shared.Models.Notes {
             }
             set {
                 this.staredFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string detail {
+            get {
+                return this.detailField;
+            }
+            set {
+                this.detailField = value;
             }
         }
     }

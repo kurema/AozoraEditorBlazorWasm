@@ -21,7 +21,6 @@
 				<xs:element name="tasks">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="detail" type="xs:string" minOccurs="0" />
 							<xs:choice minOccurs="0" maxOccurs="unbounded">
 								<xs:element ref="task" />
 							</xs:choice>
@@ -43,6 +42,7 @@
 			<xs:attribute name="deadline" type="xs:dateTime" use="optional" />
 			<xs:attribute name="interval" type="xs:duration" use="optional" />
 			<xs:attribute name="stared" type="xs:boolean" />
+			<xs:attribute name="detail" type="xs:string" use="optional" />
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

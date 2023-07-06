@@ -25,6 +25,9 @@
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; set; }
+
 	public ElementReference? ElementBox { get; set; }
 
 	public int ZIndex => 256;
@@ -56,8 +59,10 @@
 			StateHasChanged();
 			return;
 		}
+		Root?.HideMenuBar();
 		Hide();
 		await item.InvokeAsync();
+		if (Root is not null) Root.CurrentMenu = this;
 		StateHasChanged();
 		return;
 	}

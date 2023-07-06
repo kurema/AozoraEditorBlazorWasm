@@ -1,0 +1,3 @@
+button.menubutton:hover {
+    background-color: var(--aozora-button-color-hover);
+}

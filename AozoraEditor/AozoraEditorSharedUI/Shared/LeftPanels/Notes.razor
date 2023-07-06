@@ -54,22 +54,24 @@
 							</button>
 						}
 					</div>
-					<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>AddTask(itemTask)">
-						<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
-						<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
-					</button>
-@*					<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="無意味">
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="1" />
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="2" />
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="3" />
-						</AozoraEditor.Shared.Shared.Menu.MenuItem>
-					</AozoraEditor.Shared.Shared.Menu.MenuButton>*@
+					<div class="aozora_left_panel_notes_body_tasks_add_header">
+						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>AddTaskItem(itemTask)">
+							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
+							<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
+						</button>
+						<div class="aozora_left_panel_notes_body_tasks_add_more">
+							<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
+								<AozoraEditor.Shared.Shared.Menu.MenuItem Title="無意味">
+									<AozoraEditor.Shared.Shared.Menu.MenuItem Title="空のアイテムをクリア" OnHeaderSelected="_=>ClearEmpty(itemTask)" />
+								</AozoraEditor.Shared.Shared.Menu.MenuItem>
+							</AozoraEditor.Shared.Shared.Menu.MenuButton>
+						</div>
+					</div>
+
 					@foreach (var item in itemTask.Items)
 					{
 						@GetTaskUi(item)
 					}
-					@*<input class="aozora_left_panel_notes_body_task_title_new" placeholder="新規タスク" />*@
 				</div>
 				break;
 			case notesText itemText:
@@ -280,7 +282,7 @@
 					/*box-shadow: 0px 0px 10px 4px rgba(255,255,255,0.4) inset;*/
 					background: rgba(255,255,255,0.3);
 					/*background: white;
-																																																																																												color: black;*/
+																																																																																																												color: black;*/
 				}
 
 		.aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
@@ -412,27 +414,34 @@
 				flex: 1 0 0;
 			}
 
-				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add {
-					display: flex;
-					flex-direction: row;
-					/*color: #1a73e8;*/
-					border-radius: 1.5em;
-					padding: 0.5em;
-					margin: 0.2em 0.5em;
-					align-self: stretch;
-					user-select: none;
-					box-sizing: border-box;
-					width: calc(100% - calc(0.5em * 2));
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add_header {
+					display: grid;
+					grid-template-columns: 1fr auto;
+					align-items: center;
 				}
 
-					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add:hover {
-						background: var(--aozora-button-color-hover);
+					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add_header > .aozora_left_panel_notes_body_tasks_add {
+						display: flex;
+						flex-direction: row;
+						/*color: #1a73e8;*/
+						border-radius: 1.5em;
+						padding: 0.5em;
+						margin: 0.2em 0.5em;
+						align-self: stretch;
+						user-select: none;
+						box-sizing: border-box;
+						/*width: calc(100% - calc(0.5em * 2));*/
+						grid-column: 1/2;
 					}
 
-					.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add > .aozora_left_panel_notes_body_tasks_add_title {
-						display: flex;
-						align-items: center;
-					}
+						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_add_header > .aozora_left_panel_notes_body_tasks_add:hover {
+							background: var(--aozora-button-color-hover);
+						}
+
+				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_header > .aozora_left_panel_notes_body_tasks_add > .aozora_left_panel_notes_body_tasks_add_title {
+					display: flex;
+					align-items: center;
+				}
 
 				.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_header {
 					display: grid;
@@ -463,7 +472,7 @@
 						-webkit-appearance: none;
 						appearance: none;
 						/*white-space: pre-line;
-																																																																																													word-break: break-all;*/
+																																																																																																													word-break: break-all;*/
 					}
 
 						.aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
@@ -548,7 +557,7 @@
 		}
 	}
 
-	public RenderFragment GetTaskUi(task t, bool top = false)
+	RenderFragment GetTaskUi(task t, bool top = false)
 	{
 		return
 	@<ul>
@@ -567,16 +576,42 @@
 	;
 	}
 
-	public void AddTask(notesTasks target)
+	void AddTaskItem(notesTasks target)
 	{
 		if (target is null) return;
 		var ntask = new task() { header = string.Empty };
-		if (target.Items is null) target.Items = new task[] { ntask };
+		if (target.Items is null) { target.Items = new task[] { ntask }; return; }
+		//最後が空の場合は追加しないコード。一度にポチポチ追加してから入力するケースを想定しコメントアウト。
+		//if (target.Items.Length >= 1 && string.IsNullOrWhiteSpace(target.Items[^1].header) && string.IsNullOrWhiteSpace(target.Items[^1].detail)) return;
 		var items = target.Items;
 		Array.Resize(ref items, items.Length + 1);
 		items[^1] = ntask;
 		target.Items = items;
 	}
+
+	static void ClearEmpty(notesTasks target)
+	{
+		if (target is null) return;
+		if (target.Items is null) { target.Items = new task[0]; return; }
+		foreach (var item in target.Items)
+		{
+			ClearEmpty(item);
+		}
+		target.Items = target.Items.Where(CheckNotEmpty).ToArray();
+
+		static void ClearEmpty(task target)
+		{
+			if (target is null) return;
+			foreach (var item in target.Items ?? Array.Empty<task>())
+			{
+				ClearEmpty(item);
+			}
+			target.Items = target.Items?.Where(CheckNotEmpty)?.ToArray();
+		}
+
+		static bool CheckNotEmpty(task a) => !string.IsNullOrWhiteSpace(a.header) || !string.IsNullOrWhiteSpace(a.detail) || a.Items is not null and { Length: > 0 };
+	}
+
 
 	[CascadingParameter(Name = nameof(Root))]
 	public TabControl? Root { get; private set; }
