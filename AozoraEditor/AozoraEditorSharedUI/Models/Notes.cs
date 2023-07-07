@@ -54,6 +54,12 @@ namespace AozoraEditor.Shared.Models.Notes {
         
         private string headerField;
         
+        private bool showCompletedField;
+        
+        public notesTasks() {
+            this.showCompletedField = true;
+        }
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("task")]
         public task[] Items {
@@ -73,6 +79,18 @@ namespace AozoraEditor.Shared.Models.Notes {
             }
             set {
                 this.headerField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(true)]
+        public bool showCompleted {
+            get {
+                return this.showCompletedField;
+            }
+            set {
+                this.showCompletedField = value;
             }
         }
     }

@@ -28,6 +28,24 @@
 		StateHasChanged();
 	}
 
+	public async Task ShowAsync(double x,double y)
+	{
+		var item = ChildMenus?.FirstOrDefault();
+		if (item is not IMenuItemBasic itemB) return;
+		if (itemB.IsChildrenVisible)
+		{
+			if (Root is not null) Root.CurrentMenu = null;
+			itemB.Hide();
+		}
+		else
+		{
+			Root?.HideMenuBar();
+			if (Root is not null) Root.CurrentMenu = this;
+			await itemB.ShowAsync(x, y);
+		}
+		return;
+	}
+
 	public ElementReference? ElementBox { get; set; }
 
 	public MenuPosition ChildPosition => MenuPosition.ClickedPositionBottomRight;
@@ -39,4 +57,7 @@
 	//public double ClickedPositionY { get; set; }
 
 	public void NotifyStateHasChanged() => StateHasChanged();
+
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; set; }
 }

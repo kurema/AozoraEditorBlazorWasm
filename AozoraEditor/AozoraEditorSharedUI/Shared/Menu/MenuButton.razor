@@ -1,7 +1,7 @@
 ﻿@implements IMenuParent
 @inject IJSRuntime JSRuntime;
 
-<button class="menubutton" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClicked()">
+<button class="menubutton" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClickedAsync()">
 	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? TabControl.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
 </button>
 
@@ -49,7 +49,7 @@
 	[Parameter]
 	public MenuPosition ChildPosition { get; set; } = MenuPosition.Bottom;
 
-	public async Task ItemClicked()
+	async Task ItemClickedAsync()
 	{
 		var item = ChildMenus?.FirstOrDefault();
 		if (item is not IMenuItemBasic itemB) return;
