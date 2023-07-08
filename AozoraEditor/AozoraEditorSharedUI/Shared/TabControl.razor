@@ -499,9 +499,8 @@
 	public Models.Notes.notes Notes { get; set; } = new()
 		{
 			Items = new object[]{
-				new Models.Notes.notesText(){header="登場人物",Value="登場人物をメモするの楽ですね。"},
-				new Models.Notes.notesText(){header="その他",Value="なんか知らんがその他。"},
-				new Models.Notes.notesTasks(){header="タスク",Items=new Models.Notes.task[]{ new() { header="食事" ,Items=new Models.Notes.task[]{ new() { header="朝食" }} } } },
+				new Models.Notes.notesText(){header="ようこそ",Value="メモをしましょう。\nアイデア・頻出語句・登場人物、なんでもメモしておくと便利です。\nタスクも記録しておけます。"},
+				new Models.Notes.notesTasks(){header="タスク",Items=new Models.Notes.task[]{ new() { header=string.Empty } } },
 	}
 		};
 }

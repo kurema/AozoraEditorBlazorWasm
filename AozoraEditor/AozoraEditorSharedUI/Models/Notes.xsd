@@ -27,6 +27,7 @@
 						</xs:sequence>
 						<xs:attribute name="header" type="xs:string" />
 						<xs:attribute name="showCompleted" type="xs:boolean" default="true" use="optional" />
+						<xs:attribute name="showCompletedSub" type="xs:boolean" default="true" use="optional" />
 					</xs:complexType>
 				</xs:element>
 			</xs:choice>

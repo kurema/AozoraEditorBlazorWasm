@@ -56,8 +56,11 @@ namespace AozoraEditor.Shared.Models.Notes {
         
         private bool showCompletedField;
         
+        private bool showCompletedSubField;
+        
         public notesTasks() {
             this.showCompletedField = true;
+            this.showCompletedSubField = true;
         }
         
         /// <remarks/>
@@ -91,6 +94,18 @@ namespace AozoraEditor.Shared.Models.Notes {
             }
             set {
                 this.showCompletedField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        [System.ComponentModel.DefaultValueAttribute(true)]
+        public bool showCompletedSub {
+            get {
+                return this.showCompletedSubField;
+            }
+            set {
+                this.showCompletedSubField = value;
             }
         }
     }

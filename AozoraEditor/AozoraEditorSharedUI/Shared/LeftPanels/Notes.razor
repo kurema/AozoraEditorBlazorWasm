@@ -67,18 +67,28 @@
 						<div class="aozora_left_panel_notes_body_tasks_add_more">
 							<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
 								<AozoraEditor.Shared.Shared.Menu.MenuItem Title="タスクメニュー">
-									<AozoraEditor.Shared.Shared.Menu.MenuItem Title="空のアイテムをクリア" OnHeaderSelected="_=>ClearEmpty(itemTask)" />
+									<AozoraEditor.Shared.Shared.Menu.MenuItem Title="空のアイテムをクリア" OnHeaderSelected="_=>ClearEmpty(itemTask)" IconMaterialSymbols="mop" />
 									<AozoraEditor.Shared.Shared.Menu.MenuItemCheckbox Title="完了したタスクを表示する" IsChecked="itemTask.showCompleted"
 																					  Checked="_=>{itemTask.showCompleted=true;}" UnChecked="_=>{itemTask.showCompleted=false;}" />
+									<AozoraEditor.Shared.Shared.Menu.MenuItemCheckbox Title="完了したサブタスクを表示する" IsChecked="itemTask.showCompletedSub"
+																					  Checked="_=>{itemTask.showCompletedSub=true;}" UnChecked="_=>{itemTask.showCompletedSub=false;}" />
 								</AozoraEditor.Shared.Shared.Menu.MenuItem>
 							</AozoraEditor.Shared.Shared.Menu.MenuButton>
 						</div>
 					</div>
-
-					@foreach (var item in itemTask.Items)
-					{
-						if (item.isChecked && !itemTask.showCompleted) continue;
-						@GetTaskUi(item,itemTask,itemTask)
+					@{
+						bool noTask = true;
+						foreach (var item in itemTask.Items)
+						{
+							if (item.isChecked && !itemTask.showCompleted) continue;
+							@GetTaskUi(item,itemTask,itemTask)
+							noTask = false;
+						}
+						if (noTask)
+						{
+							<p class="aozora_left_panel_notes_body_tasks_complete_main">すべてのタスクが完了しました！</p>
+							<p class="aozora_left_panel_notes_body_tasks_complete_sub">おめでとうございます</p>
+						}
 					}
 				</div>
 				break;
@@ -231,6 +241,7 @@
 			items[^1] = item;
 			content.Items = items;
 		}
+		Selected = item;
 	}
 
 	RenderFragment GetTaskUi(task t, object? parent, notesTasks root)
@@ -258,9 +269,8 @@
 				<div class="aozora_left_panel_notes_body_task_entry_menu">
 					<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
 						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="タスクメニュー">
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="削除" OnHeaderSelected="_=>DeleteTask(parent,t)" />
-							<AozoraEditor.Shared.Shared.Menu.MenuSeparater />
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="サブタスクを追加" OnHeaderSelected="_=>AddTaskItem(t)" />
+							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="サブタスクを追加" OnHeaderSelected="_=>AddTaskItem(t)" IconMaterialSymbols="subdirectory_arrow_right" />
+							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="削除" OnHeaderSelected="_=>DeleteTask(parent,t)" IconMaterialSymbols="delete" />
 						</AozoraEditor.Shared.Shared.Menu.MenuItem>
 					</AozoraEditor.Shared.Shared.Menu.MenuButton>
 				</div>
@@ -268,6 +278,7 @@
 			@foreach (var item in t?.Items ?? Array.Empty<task>())
 			{
 				if (item is null) continue;
+				if (item.isChecked && !root.showCompletedSub) continue;
 				@GetTaskUi(item,t,root)
 			}
 		</li>
