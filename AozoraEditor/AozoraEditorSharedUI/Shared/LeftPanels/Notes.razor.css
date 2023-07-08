@@ -11,6 +11,7 @@
     .aozora_left_panel_notes_container input,
     .aozora_left_panel_notes_container textarea {
         color: var(--aozora-theme-text-color);
+        resize: none;
     }
 
     .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc {
@@ -270,6 +271,7 @@
             overflow-y: scroll;
             flex: 1 0 0;
         }
+
             .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_complete_main {
                 text-align: center;
             }
@@ -324,11 +326,47 @@
 
             .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry {
                 display: grid;
-                grid-template-columns: auto 1fr auto auto auto auto;
+                grid-template-columns: auto 1fr auto auto auto auto auto;
+                grid-template-rows: auto auto auto;
+                place-content: center;
+                place-items: center;
             }
 
-                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > button:disabled {
-                    opacity: 40%;
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > :first-child {
+                    grid-column: 1/2;
+                    grid-row: 1/4;
+                }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > * {
+                    grid-row: 1/2;
+                }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_detail {
+                    grid-row: 2/3;
+                    grid-column: 2/8;
+                    width: 100%;
+                    min-width: 0;
+                    opacity: 60%;
+                }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > button {
+                    backdrop-filter: blur(6px);
+                }
+
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > button:disabled {
+                        opacity: 40%;
+                    }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_star {
+                    grid-column: 7/8;
+                }
+
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_star.aozora_left_panel_notes_body_task_entry_star_off.aozora_left_panel_notes_body_task_entry_star_off {
+                        opacity: 0;
+                    }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry:hover > .aozora_left_panel_notes_body_task_entry_star.aozora_left_panel_notes_body_task_entry_star_off {
+                    opacity: 1;
                 }
 
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_menu {
@@ -340,13 +378,15 @@
                     opacity: 1;
                 }
 
-                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title {
-                    grid-column: 2/3;
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > textarea.aozora_left_panel_notes_body_task_title {
+                    grid-column: 2/6;
                     min-width: 0;
+                    width: 100%;
                 }
 
-                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
-                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > input.aozora_left_panel_notes_body_task_title_new {
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry textarea.aozora_left_panel_notes_body_task_title,
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > textarea.aozora_left_panel_notes_body_task_title_new,
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_detail {
                     border: none;
                     background: transparent;
                     -webkit-appearance: none;
@@ -355,10 +395,12 @@
 																																																																																																																																																												word-break: break-all;*/
                 }
 
-                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title,
-                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry input.aozora_left_panel_notes_body_task_title:active,
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry textarea.aozora_left_panel_notes_body_task_title,
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry textarea.aozora_left_panel_notes_body_task_title:active,
                     .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > input.aozora_left_panel_notes_body_task_title_new,
-                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > input.aozora_left_panel_notes_body_task_title_new:active {
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > input.aozora_left_panel_notes_body_task_title_new:active,
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_detail,
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_detail:active {
                         outline: none;
                         box-sizing: border-box;
                         overflow-wrap: anywhere;

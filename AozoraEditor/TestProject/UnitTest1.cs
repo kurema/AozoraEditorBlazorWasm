@@ -59,10 +59,43 @@ public class UnitTest1
 		}
 	}
 
+	//[Fact]
+	//public void TestSearchInvoke()
+	//{
+	//	var e = Helpers.ExecuteSearch(Aozora.GaijiChuki.SearchQueries.Parser.Parse("黒色火薬"), AozoraEditor.Shared.Shared.SubPanels.DictionaryPage.SearchOptionTargets.All);
+	//}
+
 	[Fact]
-	public void TestSearchInvoke()
+	public void TestXsDuration()
 	{
-		var e = Helpers.ExecuteSearch(Aozora.GaijiChuki.SearchQueries.Parser.Parse("黒色火薬"), AozoraEditor.Shared.Shared.SubPanels.DictionaryPage.SearchOptionTargets.All);
+		{
+			Assert.True(XsDuration.TryParse("P5Y2M10D", out var d));
+			Assert.True(d == new XsDuration(5, 2, 10));
+		}
+		{
+			Assert.True(XsDuration.TryParse("P5Y2M10DT15H", out var d));
+			Assert.True(d == new XsDuration(5, 2, 10, 15, 0, 0));
+		}
+		{
+			Assert.True(XsDuration.TryParse("-P10D", out var d));
+			Assert.True(d == new XsDuration(0, 0, -10));
+		}
+		{
+			const string text = "P5Y2M10D";
+			Assert.True(XsDuration.TryParse(text, out var d));
+			Assert.Equal(text, d.ToString());
+		}
+		{
+			const string text = "P5Y2M10DT15H";
+			Assert.True(XsDuration.TryParse(text, out var d));
+			Assert.Equal(text, d.ToString());
+		}
+		{
+			const string text = "-P10D";
+			Assert.True(XsDuration.TryParse(text, out var d));
+			Assert.Equal(text, d.ToString());
+		}
+
 	}
 
 }

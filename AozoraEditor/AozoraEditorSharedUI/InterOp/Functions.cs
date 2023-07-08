@@ -21,6 +21,11 @@ namespace AozoraEditor.Shared.InterOp
 			return await runtime.InvokeAsync<Size>("window.GetWindowSize");
 		}
 
+		public static async Task UpdateTextAreaSize(IJSRuntime runtime, string key)
+		{
+			await runtime.InvokeVoidAsync("window.UpdateTextAreaSize", key);
+		}
+
 		public class BoundingClientRect
 		{
 			public double X { get; set; }

@@ -4,7 +4,6 @@
     },
 
     registerAozora: function (suggestionsCS) {
-
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
         monaco.languages.setMonarchTokensProvider('aozora', {
@@ -60,3 +59,12 @@ window.DownloadFileFromStream = async (fileName, contentStreamReference) => {
 window.GetBoundingClientRect = (element, parm) => { return element.getBoundingClientRect(); };
 
 window.GetWindowSize = (parm) => { return { Width: document.body.clientWidth, Height: document.body.clientHeight }; };
+
+window.UpdateTextAreaSize = (key) => {
+    const elems = document.querySelectorAll(key);
+    elems.forEach(elem => {
+        elem.style.height = "auto";
+        elem.style.height = elem.scrollHeight + "px";
+    });
+
+}
