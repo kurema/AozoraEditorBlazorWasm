@@ -50,7 +50,7 @@
 		@switch (Selected)
 		{
 			case notesTasks itemTask:
-				<div class="aozora_left_panel_notes_body_tasks">
+				<div class="aozora_left_panel_notes_body_tasks" @onclick="_=>SelectedTask=null">
 					<div class="aozora_left_panel_notes_body_tasks_header">
 						<textarea @bind="itemTask.header" rows="1" class="aozora_left_panel_notes_body_general_header" placeholder="タイトル" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" />
 						@if (EditMode)
@@ -61,7 +61,7 @@
 						}
 					</div>
 					<div class="aozora_left_panel_notes_body_tasks_add_header">
-						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>AddTaskItem(itemTask)">
+						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;}">
 							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
 							<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
 						</button>
@@ -79,12 +79,14 @@
 					</div>
 					@{
 						bool noTask = true;
-						foreach (var item in itemTask.Items)
-						{
-							if (item.isChecked && !itemTask.showCompleted) continue;
-							@GetTaskUi(item,itemTask,itemTask)
-							noTask = false;
-						}
+						<div class="aozora_left_panel_notes_body_tasks_items" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>{}">
+							@foreach (var item in itemTask.Items)
+							{
+								if (item.isChecked && !itemTask.showCompleted) continue;
+								@GetTaskUi(item,itemTask,itemTask)
+								noTask = false;
+							}
+						</div>
 						if (noTask)
 						{
 							<p class="aozora_left_panel_notes_body_tasks_complete_main">すべてのタスクが完了しました！</p>
@@ -95,7 +97,7 @@
 				break;
 			case notesText itemText:
 				<div class="aozora_left_panel_notes_body_note">
-					<textarea rows="1" class="aozora_left_panel_notes_body_general_header" @bind="itemText.header" placeholder="タイトル" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" />
+					<textarea rows="1" class="aozora_left_panel_notes_body_general_header autoresize" @bind="itemText.header" placeholder="タイトル" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" />
 					<textarea @bind="itemText.Value" placeholder="本文" />
 					@if (EditMode)
 					{
@@ -264,7 +266,7 @@
 	protected override async void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		await InterOp.Functions.UpdateTextAreaSize(jsRuntime, ".aozora_left_panel_notes_container textarea");
+		await InterOp.Functions.UpdateTextAreaSize(jsRuntime, ".aozora_left_panel_notes_container textarea.autoresize");
 	}
 
 	RenderFragment GetTaskUi(task t, object? parent, notesTasks root)
@@ -274,7 +276,7 @@
 		<li>
 			<div class="aozora_left_panel_notes_body_task_entry">
 				<input type="checkbox" checked="@(t.isChecked)" @onchange='e=>CheckChanged(e,t,parent)' />
-				<textarea @bind="t.header" class="aozora_left_panel_notes_body_task_title" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" rows="1" placeholder="タイトル" @onfocus="_=>SelectedTask=t" />
+				<textarea @bind="t.header" class="aozora_left_panel_notes_body_task_title autoresize" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" rows="1" placeholder="タイトル" @onfocus="_=>SelectedTask=t" />
 				@if (EditMode)
 				{
 					var tasks = GetTasks(parent);
@@ -303,8 +305,31 @@
 				</button>
 				@if (SelectedTask == t || !string.IsNullOrEmpty(t.detail))
 				{
-					<textarea class="aozora_left_panel_notes_body_task_detail" @bind="t.detail" placeholder="詳細" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" rows="1" @onfocus="_=>SelectedTask=t" />
-					<Microsoft.AspNetCore.Components.Forms.InputDate @bind-Value="t.deadline" />
+					<textarea class="aozora_left_panel_notes_body_task_detail autoresize" @bind="t.detail" placeholder="詳細" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" rows="1" @onfocus="_=>SelectedTask=t" />
+				}
+				@if (SelectedTask == t)
+				{
+					if (t.deadlineSpecified)
+					{
+						<div class="aozora_left_panel_notes_body_task_entry_deadline">
+							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;}">
+								@(TabControl.GetMaterialSymbolOutlined("close"))
+							</button>
+							<Microsoft.AspNetCore.Components.Forms.InputDate @bind-Value="t.deadline" />
+						</div>
+					}
+					else
+					{
+						<div class="aozora_left_panel_notes_body_task_entry_deadline">
+							<button @onclick="_=>{t.deadline=DateTime.Today;t.deadlineSpecified=true;}" title="期限を追加">
+								@(TabControl.GetMaterialSymbolOutlined("calendar_month"))
+							</button>
+						</div>
+					}
+				}
+				else
+				{
+
 				}
 			</div>
 			@foreach (var item in t?.Items ?? Array.Empty<task>())

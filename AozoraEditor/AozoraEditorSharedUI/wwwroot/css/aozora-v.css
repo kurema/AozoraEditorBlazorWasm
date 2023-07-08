@@ -63,7 +63,7 @@ body {
     justify-content: flex-start;
     width: 100%;
     line-height: 1.8em;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 a {

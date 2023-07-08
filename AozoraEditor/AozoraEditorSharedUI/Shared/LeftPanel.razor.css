@@ -12,7 +12,7 @@
         background: var(--aozora-left-background-tabs);
         border-right: 1px solid var(--aozora-left-border-color);
         border-top: 1px solid var(--aozora-left-border-color);
-        overflow-y: scroll;
+        overflow-y: auto;
         min-height: 0;
     }
 

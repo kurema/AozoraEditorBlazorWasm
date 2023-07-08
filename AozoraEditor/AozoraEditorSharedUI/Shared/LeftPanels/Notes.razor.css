@@ -17,7 +17,7 @@
     .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc {
         width: 100%;
         height: 100%;
-        overflow-y: scroll;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
     }
@@ -146,12 +146,13 @@
     .aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container {
         grid-column: 2/3;
         grid-row: 2/3;
-        overflow-y: scroll;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         /* Firefoxでは縦書きでレイアウトがおかしくなるので強引に */
         min-width: 1.4em;
         margin-right: 2px;
+        overflow-x: hidden;
     }
 
         .aozora_left_panel_notes_container > .aozora_left_panel_notes_index_container > .aozora_left_panel_notes_index_item {
@@ -204,7 +205,7 @@
     .aozora_left_panel_notes_container > .aozora_left_panel_notes_body {
         grid-column: 1/2;
         grid-row: 2/3;
-        /*overflow-y: scroll;*/
+        /*overflow-y: auto;*/
         background: var(--aozora-left-notes-background);
         border-top: solid 1px var(--aozora-left-notes-border-color);
         display: flex;
@@ -263,12 +264,12 @@
             outline: none;
             padding: 0;
             outline: none;
-            overflow-y: scroll;
+            overflow-y: auto;
             line-break: anywhere;
         }
 
         .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks {
-            overflow-y: scroll;
+            overflow-y: auto;
             flex: 1 0 0;
         }
 
@@ -327,14 +328,23 @@
             .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry {
                 display: grid;
                 grid-template-columns: auto 1fr auto auto auto auto auto;
-                grid-template-rows: auto auto auto;
+                grid-template-rows: repeat(auto);
                 place-content: center;
                 place-items: center;
             }
 
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_deadline {
+                    grid-column: 2/8;
+                    grid-row: 3/4;
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                }
+
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > :first-child {
                     grid-column: 1/2;
                     grid-row: 1/4;
+                    align-self: flex-start;
                 }
 
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > * {
@@ -413,15 +423,15 @@
                 width: 100%;
             }
 
-            .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks ul {
+            .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_items ul {
                 padding: 0;
                 margin: 4px 0 4px 4px;
             }
 
-                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks ul li {
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_items ul li {
                     list-style: none;
                 }
 
-            .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > ul ul {
-                padding-left: 24px;
+            .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks > .aozora_left_panel_notes_body_tasks_items > ul ul {
+                padding-left: 1em;
             }

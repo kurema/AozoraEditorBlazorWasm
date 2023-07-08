@@ -62,7 +62,7 @@ namespace AozoraEditor.Shared.Models
 				Days = nums[2] * sign,
 				Hours = nums[3] * sign,
 				Minutes = nums[4] * sign,
-				Seconds = d * sign,
+				Seconds = sec * sign,
 			};
 			return true;
 		}

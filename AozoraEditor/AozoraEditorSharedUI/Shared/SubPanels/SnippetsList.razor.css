@@ -101,7 +101,7 @@
     .snippet > .snippet_labels {
         grid-row: 2/3;
         grid-column: 1/5;
-        overflow: scroll;
+        overflow: auto;
     }
 
         .snippet > .snippet_labels > table {
