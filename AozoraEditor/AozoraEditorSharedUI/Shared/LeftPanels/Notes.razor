@@ -79,7 +79,7 @@
 					</div>
 					@{
 						bool noTask = true;
-						<div class="aozora_left_panel_notes_body_tasks_items" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>{}">
+						<div class="aozora_left_panel_notes_body_tasks_items" @onclick:stopPropagation="true" @onclick="_=>{}">
 							@foreach (var item in itemTask.Items)
 							{
 								if (item.isChecked && !itemTask.showCompleted) continue;
@@ -312,10 +312,16 @@
 					if (t.deadlineSpecified)
 					{
 						<div class="aozora_left_panel_notes_body_task_entry_deadline">
-							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;}">
+							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;}" title="期限をクリア">
 								@(TabControl.GetMaterialSymbolOutlined("close"))
 							</button>
 							<Microsoft.AspNetCore.Components.Forms.InputDate @bind-Value="t.deadline" />
+							@if (!string.IsNullOrEmpty(t.interval))
+							{
+								<div title="繰り返し">
+									@(TabControl.GetMaterialSymbolOutlined("repeat"))
+								</div>
+							}
 						</div>
 					}
 					else
@@ -345,6 +351,7 @@
 
 	static void CheckChanged(Microsoft.AspNetCore.Components.ChangeEventArgs args, task task, object? parent)
 	{
+		//Console.WriteLine(args.Value);
 		if (args.Value is not bool b) return;
 		task.isCheckedSpecified = true;
 		task.isChecked = b;
