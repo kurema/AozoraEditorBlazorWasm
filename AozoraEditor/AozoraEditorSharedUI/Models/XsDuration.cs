@@ -80,6 +80,41 @@ namespace AozoraEditor.Shared.Models
 			}
 		}
 
+		public IEnumerable<int> ValuesInt
+		{
+			get
+			{
+				yield return Years;
+				yield return Months;
+				yield return Days;
+				yield return Hours;
+				yield return Minutes;
+			}
+		}
+
+		public bool IsSingleUnit => Values.Count(a => a != 0) is 0 or 1;
+
+		public Units FirstUnit
+		{
+			get
+			{
+				if (Years != 0) return Units.Years;
+				if (Months != 0) return Units.Months;
+				if (Days != 0) return Units.Days;
+				if (Hours != 0) return Units.Hours;
+				if (Minutes != 0) return Units.Minutes;
+				if (Seconds != 0) return Units.Seconds;
+				return Units.Days;
+			}
+		}
+
+		public int FirstValue => ValuesInt.FirstOrDefault(a => a != 0);
+
+		public enum Units
+		{
+			Years, Months, Days, Hours, Minutes, Seconds
+		}
+
 		public override string ToString()
 		{
 			sbyte positive = Values.FirstOrDefault(a => a != 0) >= 0 ? (sbyte)1 : (sbyte)-1;
@@ -96,6 +131,23 @@ namespace AozoraEditor.Shared.Models
 			if (Hours != 0) sb.Append(inv, $"{Hours * positive}H");
 			if (Minutes != 0) sb.Append(inv, $"{Minutes * positive}M");
 			if (Seconds != 0) sb.Append(inv, $"{Seconds * positive}S");
+			return sb.ToString();
+		}
+
+		public string ToStringJapanese()
+		{
+			sbyte positive = Values.FirstOrDefault(a => a != 0) >= 0 ? (sbyte)1 : (sbyte)-1;
+
+			var sb = new StringBuilder();
+			var inv = System.Globalization.CultureInfo.InvariantCulture;
+			if (positive < 0) sb.Append("-");
+			if (Years != 0) sb.Append(inv, $"{Years * positive}年");
+			if (Months != 0) sb.Append(inv, $"{Months * positive}ヶ月");
+			if (Days != 0) sb.Append(inv, $"{Days * positive}日");
+			if (Hours == 0 && Minutes == 0 && Seconds == 0) return sb.ToString();
+			if (Hours != 0) sb.Append(inv, $"{Hours * positive}時間");
+			if (Minutes != 0) sb.Append(inv, $"{Minutes * positive}分");
+			if (Seconds != 0) sb.Append(inv, $"{Seconds * positive}秒");
 			return sb.ToString();
 		}
 

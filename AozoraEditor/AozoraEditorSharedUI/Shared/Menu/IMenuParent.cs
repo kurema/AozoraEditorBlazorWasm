@@ -30,6 +30,8 @@ public interface IMenuItem
 	bool IsChildrenVisible { get; }
 	bool HasChild { get; }
 	IMenuParent? Parent { get; }
+	Func<bool>? IsVisible { get; }
+
 }
 
 public interface IMenuItemBasic : IMenuItem

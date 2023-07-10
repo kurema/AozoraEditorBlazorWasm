@@ -8,10 +8,40 @@
     min-height: 0;
 }
 
+    .aozora_left_panel_notes_container button:not(:hover) > .aozora_left_panel_notes_container_not_hover_icon {
+        display: inherit;
+    }
+
+    .aozora_left_panel_notes_container button:hover > .aozora_left_panel_notes_container_not_hover_icon {
+        display: none;
+    }
+
+    .aozora_left_panel_notes_container button:not(:hover) > .aozora_left_panel_notes_container_hover_icon {
+        display: none;
+    }
+
+    .aozora_left_panel_notes_container button:hover > .aozora_left_panel_notes_container_hover_icon {
+        display: inherit;
+    }
+
+
     .aozora_left_panel_notes_container input,
     .aozora_left_panel_notes_container textarea {
         color: var(--aozora-theme-text-color);
         resize: none;
+        background: transparent;
+        border: none;
+        outline: none;
+    }
+
+    .aozora_left_panel_notes_container select {
+        background: transparent;
+        border: 1px solid var(--aozora-left-notes-border-color);
+        outline: none;
+    }
+
+    .aozora_left_panel_notes_container button:hover {
+        background-color: var(--aozora-button-color-hover);
     }
 
     .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_toc {
@@ -339,6 +369,32 @@
                     display: flex;
                     flex-direction: row;
                     width: 100%;
+                    align-items: center;
+                }
+
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_deadline .aozora_left_panel_notes_body_task_entry_deadline_date {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        margin-right: 0.5em;
+                        font-size: 80%;
+                    }
+
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_deadline .aozora_left_panel_notes_body_task_entry_deadline_date_past {
+                        color: var(--aozora-left-notes-task-deadline-past);
+                    }
+
+                    .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_deadline .aozora_left_panel_notes_body_task_entry_deadline_date_today {
+                        color: var(--aozora-left-notes-task-deadline-today);
+                    }
+
+                .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > .aozora_left_panel_notes_body_task_entry_repeat {
+                    grid-column: 2/8;
+                    grid-row: 4/5;
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    align-items: center;
                 }
 
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > :first-child {

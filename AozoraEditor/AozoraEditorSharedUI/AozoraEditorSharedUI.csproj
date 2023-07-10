@@ -12,6 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Models\Version.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Models\Version.xml" />
     <EmbeddedResource Include="Snippets\snippets2.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

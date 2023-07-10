@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime jsRuntime
 @using Models.Notes;
+@using AozoraEditor.Shared.Shared.Menu;
 
 <div class="aozora_left_panel_notes_container">
 	<div class="aozora_left_panel_notes_header">
@@ -61,26 +62,28 @@
 						}
 					</div>
 					<div class="aozora_left_panel_notes_body_tasks_add_header">
-						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;}">
+						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;ForceRefresh();}">
 							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
 							<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
 						</button>
 						<div class="aozora_left_panel_notes_body_tasks_add_more">
-							<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
-								<AozoraEditor.Shared.Shared.Menu.MenuItem Title="タスクメニュー">
-									<AozoraEditor.Shared.Shared.Menu.MenuItem Title="空のアイテムをクリア" OnHeaderSelected="_=>ClearEmpty(itemTask)" IconMaterialSymbols="mop" />
-									<AozoraEditor.Shared.Shared.Menu.MenuItemCheckbox Title="完了したタスクを表示する" IsChecked="itemTask.showCompleted"
-																					  Checked="_=>{itemTask.showCompleted=true;}" UnChecked="_=>{itemTask.showCompleted=false;}" />
-									<AozoraEditor.Shared.Shared.Menu.MenuItemCheckbox Title="完了したサブタスクを表示する" IsChecked="itemTask.showCompletedSub"
-																					  Checked="_=>{itemTask.showCompletedSub=true;}" UnChecked="_=>{itemTask.showCompletedSub=false;}" />
-								</AozoraEditor.Shared.Shared.Menu.MenuItem>
-							</AozoraEditor.Shared.Shared.Menu.MenuButton>
+							<MenuButton HeaderMaterial="more_vert">
+								<MenuItem Title="タスクメニュー">
+									<MenuItem Title="空のタスクをクリア" OnHeaderSelected="_=>ClearEmpty(itemTask)" IconMaterialSymbols="mop" />
+									<MenuItem Title="完了したタスクをクリア" OnHeaderSelected="_=>itemTask.Items=itemTask?.Items.Where(a=>a.isChecked!=true).ToArray()" IconMaterialSymbols="mop" />
+									<MenuSeparater />
+									<MenuItemCheckbox Title="完了したタスクを表示する" IsChecked="itemTask.showCompleted"
+													  Checked="_=>{itemTask.showCompleted=true;}" UnChecked="_=>{itemTask.showCompleted=false;}" />
+									<MenuItemCheckbox Title="完了したサブタスクを表示する" IsChecked="itemTask.showCompletedSub"
+													  Checked="_=>{itemTask.showCompletedSub=true;}" UnChecked="_=>{itemTask.showCompletedSub=false;}" />
+								</MenuItem>
+							</MenuButton>
 						</div>
 					</div>
 					@{
 						bool noTask = true;
 						<div class="aozora_left_panel_notes_body_tasks_items" @onclick:stopPropagation="true" @onclick="_=>{}">
-							@foreach (var item in itemTask.Items)
+							@foreach (var item in itemTask.Items.OrderBy(a => a.isChecked))
 							{
 								if (item.isChecked && !itemTask.showCompleted) continue;
 								@GetTaskUi(item,itemTask,itemTask)
@@ -271,11 +274,12 @@
 
 	RenderFragment GetTaskUi(task t, object? parent, notesTasks root)
 	{
+		t.isCheckedSpecified = true;
 		return
 	@<ul>
 		<li>
 			<div class="aozora_left_panel_notes_body_task_entry">
-				<input type="checkbox" checked="@(t.isChecked)" @onchange='e=>CheckChanged(e,t,parent)' />
+				<input type="checkbox" @bind="@(t.isChecked)" @bind:after="()=>AfterChanged(t,parent)" />
 				<textarea @bind="t.header" class="aozora_left_panel_notes_body_task_title autoresize" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" rows="1" placeholder="タイトル" @onfocus="_=>SelectedTask=t" />
 				@if (EditMode)
 				{
@@ -292,12 +296,24 @@
 					</button>
 				}
 				<div class="aozora_left_panel_notes_body_task_entry_menu">
-					<AozoraEditor.Shared.Shared.Menu.MenuButton HeaderMaterial="more_vert">
-						<AozoraEditor.Shared.Shared.Menu.MenuItem Title="タスクメニュー">
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="サブタスクを追加" OnHeaderSelected="_=>AddTaskItem(t)" IconMaterialSymbols="subdirectory_arrow_right" />
-							<AozoraEditor.Shared.Shared.Menu.MenuItem Title="削除" OnHeaderSelected="_=>DeleteTask(parent,t)" IconMaterialSymbols="delete" />
-						</AozoraEditor.Shared.Shared.Menu.MenuItem>
-					</AozoraEditor.Shared.Shared.Menu.MenuButton>
+					<MenuButton HeaderMaterial="more_vert">
+						<MenuItem Title="タスクメニュー">
+							<MenuItem Title="サブタスクを追加" OnHeaderSelected="_=>AddTaskItem(t)" IconMaterialSymbols="subdirectory_arrow_right" />
+							<MenuItem Title="削除" OnHeaderSelected="_=>DeleteTask(parent,t)" IconMaterialSymbols="delete" />
+							<MenuSeparater />
+							<MenuItem Title="期限: 今日" OnHeaderSelected="_=>{t.deadlineSpecified=true;t.deadline=DateTime.Today;}" IconMaterialSymbols="today"
+									  IsVisible="()=>!t.deadlineSpecified || t.deadline != DateTime.Today" />
+							<MenuItem Title="期限: 明日" OnHeaderSelected="_=>{t.deadlineSpecified=true;t.deadline=DateTime.Today.AddDays(1);}" IconMaterialSymbols="today"
+									  IsVisible="()=>!t.deadlineSpecified || t.deadline != DateTime.Today.AddDays(1)" />
+							<MenuItem Title="期限を削除" OnHeaderSelected="_=>{t.deadlineSpecified=false;t.deadline=default;t.interval=string.Empty;}" IconMaterialSymbols="calendar_month"
+									  IsVisible="()=>t.deadlineSpecified" />
+							<MenuSeparater IsVisible="()=>t.deadlineSpecified" />
+							<MenuItem Title="繰り返し: 毎日" IsVisible="@(()=>t.deadlineSpecified && t.interval!="P1D")" OnHeaderSelected="@(_=>{t.interval="P1D";})" IconMaterialSymbols="event_repeat" />
+							<MenuItem Title="繰り返し: 毎週" IsVisible="@(()=>t.deadlineSpecified && t.interval!="P7D")" OnHeaderSelected="@(_=>{t.interval="P7D";})" IconMaterialSymbols="event_repeat" />
+							<MenuItem Title="繰り返し: 毎月" IsVisible="@(()=>t.deadlineSpecified && t.interval!="P1M")" OnHeaderSelected="@(_=>{t.interval="P1M";})" IconMaterialSymbols="event_repeat" />
+							<MenuItem Title="繰り返し: なし" IsVisible="@(()=>t.deadlineSpecified && !string.IsNullOrEmpty(t.interval))" OnHeaderSelected="@(_=>{t.interval=string.Empty;})" IconMaterialSymbols="event_repeat" />
+						</MenuItem>
+					</MenuButton>
 				</div>
 				<button class="aozora_left_panel_notes_body_task_entry_star @(t.stared ? "aozora_left_panel_notes_body_task_entry_star_on":"aozora_left_panel_notes_body_task_entry_star_off")"
 				@onclick="_=>t.stared=!t.stared">
@@ -312,17 +328,62 @@
 					if (t.deadlineSpecified)
 					{
 						<div class="aozora_left_panel_notes_body_task_entry_deadline">
-							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;}" title="期限をクリア">
-								@(TabControl.GetMaterialSymbolOutlined("close"))
-							</button>
-							<Microsoft.AspNetCore.Components.Forms.InputDate @bind-Value="t.deadline" />
-							@if (!string.IsNullOrEmpty(t.interval))
-							{
-								<div title="繰り返し">
-									@(TabControl.GetMaterialSymbolOutlined("repeat"))
+							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;t.interval=string.Empty;}" title="期限をクリア">
+								<div class="aozora_left_panel_notes_container_not_hover_icon">
+									@(TabControl.GetMaterialSymbolOutlined("calendar_month"))
 								</div>
-							}
+								<div class="aozora_left_panel_notes_container_hover_icon">
+									@(TabControl.GetMaterialSymbolOutlined("cancel"))
+								</div>
+							</button>
+							<input type="date" @bind="t.deadline" />
 						</div>
+						@if (string.IsNullOrEmpty(t.interval))
+						{
+							<div class="aozora_left_panel_notes_body_task_entry_repeat">
+								<button title="繰り返しを追加" @onclick="@(_=>t.interval="P1D")">
+									@(TabControl.GetMaterialSymbolOutlined("event_repeat"))
+								</button>
+							</div>
+						}
+						else
+						{
+							<div class="aozora_left_panel_notes_body_task_entry_repeat">
+								<button title="繰り返しを削除" @onclick="@(_=>t.interval=string.Empty)">
+									<div class="aozora_left_panel_notes_container_not_hover_icon">
+										@(TabControl.GetMaterialSymbolOutlined("event_repeat"))
+									</div>
+									<div class="aozora_left_panel_notes_container_hover_icon">
+										@(TabControl.GetMaterialSymbolOutlined("cancel"))
+									</div>
+								</button>
+								@{
+									if (Models.XsDuration.TryParse(t.interval, out var duration))
+									{
+										if (duration.IsSingleUnit)
+										{
+											var preselected = duration.FirstUnit;
+											int first = duration.FirstValue;
+											if (preselected is not Models.XsDuration.Units.Years and not Models.XsDuration.Units.Months and not Models.XsDuration.Units.Days)
+											{
+												preselected = Models.XsDuration.Units.Days;
+												first = 1;
+											}
+											<input type="number" style="width:4em;" value="@first" @onchange="e=>IntervalValueChanged(e,t)" min="1" />
+											<select @onchange="e=>IntervalSelectionChanged(e,t)">
+												<option value="years" selected="@(preselected== Models.XsDuration.Units.Years ? "selected":null)">年</option>
+												<option value="months" selected="@(preselected== Models.XsDuration.Units.Months ? "selected":null)">月</option>
+												<option value="days" selected="@(preselected== Models.XsDuration.Units.Days ? "selected":null)">日</option>
+											</select>
+										}
+										else
+										{
+											<input @bind="t.interval" />
+										}
+									}
+								}
+							</div>
+						}
 					}
 					else
 					{
@@ -335,7 +396,24 @@
 				}
 				else
 				{
-
+					if (t.deadlineSpecified)
+					{
+						const string iconStyle = "font-size:18px;";
+						<div class="aozora_left_panel_notes_body_task_entry_deadline" @onclick="_=>SelectedTask=t">
+							<span class="aozora_left_panel_notes_body_task_entry_deadline_date @((t.deadline - DateTime.Today).TotalDays switch{
+								<0 => "aozora_left_panel_notes_body_task_entry_deadline_date_past",
+								0 =>"aozora_left_panel_notes_body_task_entry_deadline_date_today",
+								_ =>"aozora_left_panel_notes_body_task_entry_deadline_date_future",
+							})">
+								@(TabControl.GetMaterialSymbolOutlined("calendar_month", iconStyle))
+								@(GetDateRelative(t.deadline))
+							</span>
+							@if (!string.IsNullOrEmpty(t.interval))
+							{
+								@(TabControl.GetMaterialSymbolOutlined("repeat", iconStyle))
+							}
+						</div>
+					}
 				}
 			</div>
 			@foreach (var item in t?.Items ?? Array.Empty<task>())
@@ -345,17 +423,94 @@
 				@GetTaskUi(item,t,root)
 			}
 		</li>
-	</ul>
+			</ul>
 	;
 	}
 
-	static void CheckChanged(Microsoft.AspNetCore.Components.ChangeEventArgs args, task task, object? parent)
+	void AfterChanged(task task, object? parent)
 	{
-		//Console.WriteLine(args.Value);
-		if (args.Value is not bool b) return;
-		task.isCheckedSpecified = true;
-		task.isChecked = b;
+		var b = task.isChecked;
+		if (!b) return;
 		if (string.IsNullOrEmpty(task.interval)) return;
+		if (!Models.XsDuration.TryParse(task.interval, out var d)) return;
+		task[]? subitems;
+		if (task.Items is null or { Length: 0 })
+		{
+			subitems = task.Items;
+		}
+		else
+		{
+			//子Itemsを全部コピーするのは大変複雑なので雑にXML形式にシリアライズしてからデシリアライズしている。
+			//パフォーマンス上よくないけど無視して良いし、元々xsd.exeで生成したものだから確実にシリアライズは出来る。
+			try
+			{
+				System.Xml.Serialization.XmlSerializer xs = new(typeof(task[]));
+				var ms = new MemoryStream();
+				xs.Serialize(ms, task.Items);
+				ms.Seek(0, SeekOrigin.Begin);
+				subitems = (task[]?)xs.Deserialize(ms);
+				UncheckSubtasks(subitems);
+			}
+			catch
+			{
+				Console.WriteLine("タスクのサブアイテムをコピーするのに失敗しました。");
+				subitems = null;
+			}
+		}
+
+		var cloned = new task()
+			{
+				header = task.header,
+				detail = task.detail,
+				deadline = d.GetAppended(task.deadline),
+				Items = subitems,
+				deadlineSpecified = true,
+				interval = task.interval,
+				isChecked = false,
+				isCheckedSpecified = true,
+				stared = task.stared,
+				staredSpecified = task.staredSpecified
+			};
+		switch (parent)
+		{
+			case task pt:
+				AddTaskItem(pt);
+				pt.Items[^1] = cloned;
+				break;
+			case notesTasks pnt:
+				AddTaskItem(pnt);
+				pnt.Items[^1] = cloned;
+				break;
+		}
+		ForceRefresh();
+	}
+
+	void ForceRefresh()
+	{
+		//「完了したタスクを隠す」の場合、チェックボックスが再利用されてチェック状態がおかしくなるBlazorのバグがある。
+		//Selectedを空にして強制再描画を行うことで対処している。これには当然様々な問題がある。パフォーマンスやスクロール位置の保持など。
+		//…と思ったが、@bindと@bind:after=""の組み合わせでは適切に動作した。
+		//次コミットで削除。
+		//Task.Run(() =>
+		//{
+		//	var temp = Selected;
+		//	Selected = null;
+		//	StateHasChanged();
+		//	Selected = temp;
+		//	StateHasChanged();
+		//});
+	}
+
+	static void UncheckSubtasks(task[]? tasks)
+	{
+		if (tasks is null) return;
+		foreach (var item in tasks)
+		{
+			if (item is null) continue;
+			if (item.Items is not null) UncheckSubtasks(item.Items);
+			item.isChecked = false;
+			item.isCheckedSpecified = false;
+		}
 	}
 
 	static void DeleteTask(object? target, task t)
@@ -431,4 +586,57 @@
 	public TabControl? Root { get; private set; }
 
 	object? selectedItemInContextMenu { get; set; }
+
+	void IntervalSelectionChanged(ChangeEventArgs e, task t)
+	{
+		if (!Models.XsDuration.TryParse(t.interval, out var duration)) return;
+		if (!duration.IsSingleUnit) return;
+		var fv = duration.FirstValue;
+		switch (e.Value)
+		{
+			case "years": t.interval = new Models.XsDuration(fv, 0, 0).ToString(); break;
+			case "months": t.interval = new Models.XsDuration(0, fv, 0).ToString(); break;
+			case "days": t.interval = new Models.XsDuration(0, 0, fv).ToString(); break;
+		}
+	}
+
+	void IntervalValueChanged(ChangeEventArgs e, task t)
+	{
+		if (!Models.XsDuration.TryParse(t.interval, out var duration)) return;
+		if (!duration.IsSingleUnit) return;
+		if (!int.TryParse(e.Value?.ToString(), out int value)) return;
+		switch (duration.FirstUnit)
+		{
+			case Models.XsDuration.Units.Years: t.interval = new Models.XsDuration(value, 0, 0).ToString(); break;
+			case Models.XsDuration.Units.Months: t.interval = new Models.XsDuration(0, value, 0).ToString(); break;
+			case Models.XsDuration.Units.Days: t.interval = new Models.XsDuration(0, 0, value).ToString(); break;
+		}
+	}
+
+	public static string GetDateRelative(DateTime d)
+	{
+		var days = (d - DateTime.Today).TotalDays;
+
+		//var culture= System.Globalization.CultureInfo.CurrentCulture;
+		switch (days)
+		{
+			case < 0 and >= -7: return $"{-days}日前 ({d:ddd})";
+			case 0: return "今日";
+			case 1: return "明日";
+			case 2: return "明後日";
+
+			case < 0:
+			default:
+				if (d.Year == DateTime.Today.Year)
+				{
+					return $"{d:M}({d:ddd})";
+				}
+				else
+				{
+					return d.ToShortDateString();
+				}
+
+			case < 7: return $"{days}日後 ({d:ddd})";
+		}
+	}
 }

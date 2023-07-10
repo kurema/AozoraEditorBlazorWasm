@@ -284,16 +284,16 @@
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
 		{
-			if (e.FileCount != 1 || e.File?.Name == null) return;
-			try
-			{
-				var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-				await LoadFile(stream, e.File.Name);
-			}
-			catch
-			{
-				await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-			}
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
+	{
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
 			return _CommonCommands ??= new ICommandEntry[]
 	{
@@ -418,7 +418,20 @@
 
 	public async Task ShowVersionInfo()
 	{
-		await ShowDialog("青空文庫形式エディタ", "作者：kurema\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+		AozoraEditor.Shared.Models.Version.version? v = null;
+		try
+		{
+			using var stream = typeof(TabControl).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Models.Version.xml") ?? throw new Exception("Loading resouce failed!");
+			using var sr = new StreamReader(stream);
+			var xs = new System.Xml.Serialization.XmlSerializer(typeof(AozoraEditor.Shared.Models.Version.version));
+			v = (AozoraEditor.Shared.Models.Version.version?)xs.Deserialize(sr);
+		}
+		catch
+		{
+		}
+		v = v ?? new() { commit = "placeholder", date = DateTime.Now, version1 = "placeholder" };
+
+		await ShowDialog("青空文庫形式エディタ", $"作者：kurema\nバージョン：{v.version1}\nコミット：{v.commit}\n日付：{v.date:F}\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
 	}
 
 	public async Task<Dialogs.DialogOption?> ShowDialog(string title, string text, RenderFragment? icon, params Dialogs.DialogOption[] options)

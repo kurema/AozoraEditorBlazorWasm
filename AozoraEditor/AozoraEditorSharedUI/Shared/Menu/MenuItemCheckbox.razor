@@ -35,6 +35,9 @@
 	public EventCallback OnHeaderSelected { get; set; }
 	public RenderFragment? Icon => @<span class="material-symbols-outlined">@(IsChecked ? "check" : string.Empty)</span>;
 
+	[Parameter]
+	public Func<bool>? IsVisible { get; set; }
+
 	protected override void OnInitialized()
 	{
 		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");

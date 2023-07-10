@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Version"
+    targetNamespace="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Version.xsd"
+    elementFormDefault="qualified"
+    xmlns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Version.xsd"
+    xmlns:mstns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Version.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:element name="version">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="version" type="xs:string" />
+				<xs:element name="commit" type="xs:string" />
+				<xs:element name="date" type="xs:dateTime" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

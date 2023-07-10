@@ -5,6 +5,7 @@
 <div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
 	@foreach (var item in ChildMenus)
 	{
+		if (item.IsVisible?.Invoke() == false) continue;
 		switch (item)
 		{
 			case IMenuItemBasic basic:
@@ -162,6 +163,9 @@
 
 	[Parameter]
 	public EventCallback OnHeaderSelected { get; set; }
+
+	[Parameter]
+	public Func<bool>? IsVisible { get; set; }
 
 	public void NotifyStateHasChanged() => StateHasChanged();
 
