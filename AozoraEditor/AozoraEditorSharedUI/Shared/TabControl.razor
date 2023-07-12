@@ -9,6 +9,7 @@
 				<MenuBar @ref="MenuBar">
 					<MenuItem Title="ファイル">
 						<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
+						<MenuItem Title="新規作成 (markdown)" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="note_add" />
 						<MenuItem Title="開く" />
 					</MenuItem>
 					<MenuItem Title="設定">
@@ -283,22 +284,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
@@ -386,6 +387,19 @@
 		Pages.Add(page);
 		ActivateTab(page);
 	}
+
+	public void AddEditorTabMarkdown()
+	{
+		AddEditorTabMarkdown(string.Empty, "new.md");
+	}
+
+	public void AddEditorTabMarkdown(string text, string fileName)
+	{
+		var page = new TabPages.EditorMarkdownTab(GetNewGuid(), text, fileName) { };
+		Pages.Add(page);
+		ActivateTab(page);
+	}
+
 
 	private Guid GetNewGuid()
 	{

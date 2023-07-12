@@ -1,0 +1,88 @@
+﻿<CascadingValue Value="this" Name="Editor">
+	<SplitPage @ref="splitPage">
+		<Left><StandaloneCodeEditor Id="@EditorId" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
+		<Right><iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewHtml"></iframe></Right>
+	</SplitPage>
+</CascadingValue>
+
+@code {
+	SplitPage? splitPage { get; set; }
+
+	string EditorId => Id.ToString();
+
+	public StandaloneCodeEditor? Editor;
+
+	[Parameter]
+	public string PreviewHtml { get; set; } = $@"<html><head><link href=""_content/AozoraEditorSharedUI/emoji/MaterialSymbols.css"" rel=""stylesheet"" /><link href=""_content/AozoraEditorSharedUI/css/preview-default.css"" rel=""stylesheet"" /></head><body><div class=""top_message"">プレビューの作成には<span class=""material-symbols-outlined"" style=""vertical-align:middle;"">play_arrow</span>を押してください。</div></body></html>";
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	[Parameter]
+	public string OriginalText { get; set; } = string.Empty;
+
+	private string _FileName = "new.txt";
+	public string FileName
+	{
+		get => _FileName;
+		set { _FileName = value; TitleChanged?.Invoke(this, new()); }
+	}
+
+	public event EventHandler? TitleChanged;
+
+	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+	{
+		return new StandaloneEditorConstructionOptions
+			{
+				AutomaticLayout = true,
+				Language = "markdown",
+				Value = OriginalText,
+				Folding = true,
+				WordWrap = "on",
+				//Theme = "vs",// テーマ切り替えるとおかしくなるので要修正。
+				Suggest = new SuggestOptions()
+				{
+					SnippetsPreventQuickSuggestions = false,
+				},
+				UnicodeHighlight = new UnicodeHighlightOptions()
+				{
+					AmbiguousCharacters = false,
+					InvisibleCharacters = false,
+				}
+			};
+	}
+
+	protected override void OnInitialized()
+	{
+		Id = Guid.NewGuid();
+		base.OnInitialized();
+	}
+
+	public async Task<string?> GetText()
+	{
+		if (Editor is null) return null;
+		return await Editor.GetValue();
+	}
+
+	public async Task ShowPreview()
+	{
+		if (splitPage is null) return;
+		PreviewHtml = "<html><body><p>プレビュー作成中です<br />この間、UIがフリーズすることがあります。</p></body></html>";
+		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		StateHasChanged();
+		if (Editor is null) return;
+		var text = await Editor.GetValue();
+		try
+		{
+			PreviewHtml = Markdig.Markdown.ToHtml(text);
+		}
+		catch
+		{
+			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
+		}
+		StateHasChanged();
+	}
+
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; set; }
+}

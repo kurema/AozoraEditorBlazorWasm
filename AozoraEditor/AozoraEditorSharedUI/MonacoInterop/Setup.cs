@@ -43,7 +43,7 @@ internal static partial class Setup
 		await Global.DefineTheme("aozora-theme", new StandaloneThemeData()
 		{
 			Base = "vs",
-			Inherit = false,
+			Inherit = true,
 			Rules = new()
 			{
 				new TokenThemeRule{Token="ruby",Foreground="808080"},
@@ -59,7 +59,7 @@ internal static partial class Setup
 		await Global.DefineTheme("aozora-theme-dark", new StandaloneThemeData()
 		{
 			Base = "vs-dark",
-			Inherit = false,
+			Inherit = true,
 			Rules = new()
 			{
 				new TokenThemeRule{Token="ruby",Foreground="808080"},

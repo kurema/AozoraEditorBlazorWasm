@@ -40,11 +40,11 @@
 			<div class="aozora_left_panel_notes_index_item_icon_hover">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
 		</button>
 
-		<AozoraEditor.Shared.Shared.Menu.ContextMenu @ref="menuItemcontext">
-			<AozoraEditor.Shared.Shared.Menu.MenuItem Title="タブ関係">
-				<AozoraEditor.Shared.Shared.Menu.MenuItem Title="削除" OnHeaderSelected="_=>DeleteItem(selectedItemInContextMenu)" IconMaterialSymbols="delete" />
-			</AozoraEditor.Shared.Shared.Menu.MenuItem>
-		</AozoraEditor.Shared.Shared.Menu.ContextMenu>
+		<ContextMenu @ref="menuItemcontext">
+			<MenuItem Title="タブ関係">
+				<MenuItem Title="削除" OnHeaderSelected="_=>DeleteItem(selectedItemInContextMenu)" IconMaterialSymbols="delete" />
+			</MenuItem>
+		</ContextMenu>
 	</div>
 
 	<div class="aozora_left_panel_notes_body">
@@ -62,7 +62,7 @@
 						}
 					</div>
 					<div class="aozora_left_panel_notes_body_tasks_add_header">
-						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;ForceRefresh();}">
+						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;}">
 							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
 							<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
 						</button>
@@ -423,7 +423,7 @@
 				@GetTaskUi(item,t,root)
 			}
 		</li>
-			</ul>
+	</ul>
 	;
 	}
 
@@ -482,23 +482,6 @@
 				pnt.Items[^1] = cloned;
 				break;
 		}
-		ForceRefresh();
-	}
-
-	void ForceRefresh()
-	{
-		//「完了したタスクを隠す」の場合、チェックボックスが再利用されてチェック状態がおかしくなるBlazorのバグがある。
-		//Selectedを空にして強制再描画を行うことで対処している。これには当然様々な問題がある。パフォーマンスやスクロール位置の保持など。
-		//…と思ったが、@bindと@bind:after=""の組み合わせでは適切に動作した。
-		//次コミットで削除。
-		//Task.Run(() =>
-		//{
-		//	var temp = Selected;
-		//	Selected = null;
-		//	StateHasChanged();
-		//	Selected = temp;
-		//	StateHasChanged();
-		//});
 	}
 
 	static void UncheckSubtasks(task[]? tasks)

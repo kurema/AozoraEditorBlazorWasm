@@ -1,0 +1,92 @@
+﻿@implements ITabPage
+
+@code {
+
+	public EditorMarkdownTab(Guid id, string text, string fileName)
+	{
+		Id = id;
+		OriginalText = text;
+		_FileName = fileName;
+	}
+
+	public RenderFragment Title =>@<span>@Content?.FileName</span>;
+
+	public RenderFragment Body =>@<MarkdownPage Id="@Id" OriginalText="@OriginalText" @ref="Content" />;
+
+	[Parameter]
+	public string OriginalText { get; set; } = string.Empty;
+
+	string _FileName = string.Empty;
+
+	public string FileName
+	{
+		get => Content?.FileName ?? _FileName; set
+		{
+			_FileName = value;
+			if (Content is not null) Content.FileName = value;
+		}
+	}
+
+
+	MarkdownPage? _Content;
+	public MarkdownPage? Content
+	{
+		get => _Content;
+		private set
+		{
+			_Content = value;
+			if (_Content is not null)
+			{
+				_Content.FileName = _FileName;
+				_Content.Root = this.Root;
+				var currentContent = _Content;
+				currentContent.TitleChanged += (_, e) =>
+				{
+					TitleChanged?.Invoke(this, e);
+					Root?.NotifyStateChanged();
+				};
+				Root?.NotifyStateChanged();
+
+				PanelSwitchCommands.Clear();
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("difference", "差分を表示");
+					com.Clicked += async (_, _) =>
+					{
+						if (Root is null) return;
+						var text = await currentContent.GetText();
+						if (text is null) return;
+						Root.ShowDiffTab(currentContent.FileName, currentContent.OriginalText, text);
+					};
+					PanelSwitchCommands.Add(com);
+				}
+
+				MainCommands.Clear();
+				//{
+				//	var com = CommandEntry.FromMaterialSymbolOutlined("save", "ファイルを保存");
+				//	com.Clicked += async (_, _) =>
+				//	{
+				//		await currentContent.DownloadText();
+				//	};
+				//	MainCommands.Add(com);
+				//}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("play_arrow", "プレビューを作成");
+					com.Clicked += async (_, _) =>
+					{
+						await currentContent.ShowPreview();
+					};
+					MainCommands.Add(com);
+				}
+			}
+		}
+	}
+
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
+
+	public Guid Id { get; set; }
+
+	public event EventHandler? TitleChanged;
+
+	public TabControl? Root { get; set; }
+}
