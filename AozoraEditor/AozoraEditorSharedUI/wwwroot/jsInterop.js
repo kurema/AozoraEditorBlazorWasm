@@ -7,7 +7,7 @@
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
         monaco.languages.setMonarchTokensProvider('aozora', {
-            defaultToken: 'invalid',
+            defaultToken: 'text',//textというtokenがあるのか、適切なのかはよく分からないがinvalidよりマシ
             keywords,
             tokenizer: {
                 root: [

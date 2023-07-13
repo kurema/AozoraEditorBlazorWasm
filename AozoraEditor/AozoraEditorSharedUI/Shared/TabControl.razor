@@ -8,8 +8,10 @@
 			<div class="tab_control_top_left">
 				<MenuBar @ref="MenuBar">
 					<MenuItem Title="ファイル">
-						<MenuItem Title="新規作成" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="note_add" />
-						<MenuItem Title="新規作成 (markdown)" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="note_add" />
+						<MenuItem Title="新規作成" IconMaterialSymbols="note_add" >
+							<MenuItem Title="青空文庫形式テキスト" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="book" />
+							<MenuItem Title="Markdownドキュメント" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="draft" />
+						</MenuItem>
 						<MenuItem Title="開く" />
 					</MenuItem>
 					<MenuItem Title="設定">

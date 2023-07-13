@@ -59,6 +59,23 @@
 					};
 					PanelSwitchCommands.Add(com);
 				}
+				PanelSwitchCommands.Add(new CommandEntrySeparator());
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("preview", "プレビュー");
+					com.Clicked += (_, _) =>
+					{
+						currentContent.CurrentContent = MarkdownPage.MarkdownPageContents.Preview;
+					};
+					PanelSwitchCommands.Add(com);
+				}
+				{
+					var com = CommandEntry.FromMaterialSymbolOutlined("close", "閉じる");
+					com.Clicked += (_, _) =>
+					{
+						currentContent.CurrentContent = null;
+					};
+					PanelSwitchCommands.Add(com);
+				}
 
 				MainCommands.Clear();
 				//{

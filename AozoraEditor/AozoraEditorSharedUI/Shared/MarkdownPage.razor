@@ -1,11 +1,37 @@
-﻿<CascadingValue Value="this" Name="Editor">
+﻿@using Markdig;
+@using Markdig.Syntax;
+@using Markdig.Renderers.Html;
+
+<CascadingValue Value="this" Name="Editor">
 	<SplitPage @ref="splitPage">
 		<Left><StandaloneCodeEditor Id="@EditorId" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
-		<Right><iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin" srcdoc="@PreviewHtml"></iframe></Right>
+		<Right><iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin allow-popups" srcdoc="@PreviewHtml"></iframe></Right>
 	</SplitPage>
 </CascadingValue>
 
 @code {
+	public enum MarkdownPageContents
+	{
+		Preview,
+	}
+
+	MarkdownPageContents? _CurrentContent;
+	public MarkdownPageContents? CurrentContent
+	{
+		get => _CurrentContent;
+		set
+		{
+			_CurrentContent = value;
+
+			if (splitPage is not null)
+			{
+				if (value is null) splitPage.DisplayMode = SplitPage.DisplayModes.MainFull;
+				else splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+			}
+			StateHasChanged();
+		}
+	}
+
 	SplitPage? splitPage { get; set; }
 
 	string EditorId => Id.ToString();
@@ -39,7 +65,6 @@
 				Value = OriginalText,
 				Folding = true,
 				WordWrap = "on",
-				//Theme = "vs",// テーマ切り替えるとおかしくなるので要修正。
 				Suggest = new SuggestOptions()
 				{
 					SnippetsPreventQuickSuggestions = false,
@@ -72,15 +97,24 @@
 		StateHasChanged();
 		if (Editor is null) return;
 		var text = await Editor.GetValue();
+		PreviewHtml = ConvertToHtml(text) ?? "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
+		StateHasChanged();
+	}
+
+	public static string? ConvertToHtml(string markdown)
+	{
+		var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 		try
 		{
-			PreviewHtml = Markdig.Markdown.ToHtml(text);
+			var doc = Markdown.Parse(markdown, pipeline);
+			foreach (var link in doc.Descendants<Markdig.Syntax.Inlines.LinkInline>()) link.GetAttributes().AddPropertyIfNotExist("target", "_blank");
+			foreach (var link in doc.Descendants<Markdig.Syntax.Inlines.AutolinkInline>()) link.GetAttributes().AddPropertyIfNotExist("target", "_blank");
+			return doc.ToHtml(pipeline);
 		}
 		catch
 		{
-			PreviewHtml = "<html><body><p>プレビュー作成に失敗しました。</p></body></html>";
+			return null;
 		}
-		StateHasChanged();
 	}
 
 	[CascadingParameter(Name = nameof(Root))]
