@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="AppModel"
+    targetNamespace="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Project.xsd"
+    elementFormDefault="qualified"
+    xmlns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Project.xsd"
+    xmlns:mstns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Project.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<xs:element name="project">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="notes">
+					<xs:complexType>
+						<xs:choice>
+							<xs:element ref="content"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="snippet">
+					<xs:complexType>
+						<xs:choice>
+							<xs:element ref="content"/>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="content">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="default" />
+				<xs:element name="text" type="xs:string" />
+				<xs:element name="file">
+					<xs:complexType>
+						<xs:attribute name="path" type="xs:string" />
+						<xs:attribute name="type" use="optional" default=""/>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
