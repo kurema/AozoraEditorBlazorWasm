@@ -6,20 +6,34 @@
     xmlns:mstns="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Models/Project.xsd"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
-	<xs:element name="project">
+	<xs:element name="Project">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="Toc">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="entry">
+								<xs:complexType>
+									<xs:choice>
+										<xs:element ref="File" />
+									</xs:choice>
+									<xs:attribute name="title" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="notes">
 					<xs:complexType>
 						<xs:choice>
-							<xs:element ref="content"/>
+							<xs:element ref="Content"/>
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="snippet">
 					<xs:complexType>
 						<xs:choice>
-							<xs:element ref="content"/>
+							<xs:element ref="Content"/>
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
@@ -27,19 +41,38 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="content">
+	<xs:element name="Content">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element name="default" />
-				<xs:element name="text" type="xs:string" />
-				<xs:element name="file">
+				<xs:element name="None" />
+				<xs:element name="Text"  >
 					<xs:complexType>
-						<xs:attribute name="path" type="xs:string" />
-						<xs:attribute name="type" use="optional" default=""/>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="path" />
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 				</xs:element>
+				<xs:element ref="File" />
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="File">
+		<xs:complexType>
+			<xs:attribute name="path" type="xs:string" />
+			<xs:attribute name="type" use="optional" default=""/>
+			<xs:attribute name="encoding" >
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Binary" />
+						<xs:enumeration value="UTF-8" />
+						<xs:enumeration value="Shift_JIS" />
+						<xs:enumeration value="NotSpecified" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
