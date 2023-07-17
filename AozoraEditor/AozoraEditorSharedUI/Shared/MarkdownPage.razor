@@ -23,6 +23,7 @@
 		{
 			if (_SplitVertical == value) return;
 			_SplitVertical = value;
+			if (Root is not null) Root.SplitVerticalDefault = value;
 			if (splitPage is null) return;
 			if (splitPage.DisplayMode is SplitPage.DisplayModes.Separated or SplitPage.DisplayModes.SeparetedVertical) splitPage.DisplayMode = SeparetedValue;
 		}

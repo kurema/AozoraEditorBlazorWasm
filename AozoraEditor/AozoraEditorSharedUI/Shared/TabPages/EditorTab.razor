@@ -27,6 +27,11 @@
 		}
 	}
 
+	public static CommandEntryToggle GetSplitToggleCommand(bool defaultSplit) =>
+	new CommandEntryToggle(
+		TabControl.GetMaterialSymbolOutlined("splitscreen_left", "font-variation-settings:'FILL' 1;"),
+		TabControl.GetMaterialSymbolOutlined("splitscreen", "font-variation-settings:'FILL' 1;"), "水平分割", "垂直分割", defaultSplit);
+
 
 	EditorPage? _Content;
 	public EditorPage? Content
@@ -39,6 +44,7 @@
 			{
 				_Content.FileName = _FileName;
 				_Content.Root = this.Root;
+				_Content.SplitVertical = Root?.SplitVerticalDefault ?? true;
 				var currentContent = _Content;
 				currentContent.TitleChanged += (_, e) =>
 				{
@@ -49,8 +55,7 @@
 
 				PanelSwitchCommands.Clear();
 				{
-					var com = new CommandEntryToggle(TabControl.GetMaterialSymbolOutlined("splitscreen_left", "font-variation-settings:'FILL' 1;"),
-					TabControl.GetMaterialSymbolOutlined("splitscreen", "font-variation-settings:'FILL' 1;"), "分割切り替え", "分割切り替え",true);
+					var com = EditorTab.GetSplitToggleCommand(currentContent.SplitVertical);
 					com.Checked += (_, _) => currentContent.SplitVertical = true;
 					com.UnChecked += (_, _) => currentContent.SplitVertical = false;
 					PanelSwitchCommands.Add(com);
