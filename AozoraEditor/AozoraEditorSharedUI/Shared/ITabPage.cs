@@ -51,6 +51,46 @@ public class CommandEntry : ICommandEntry
 	public bool IsEnabled { get; set; } = true;
 }
 
+public class CommandEntryToggle : ICommandEntry
+{
+	public string Description { get; set; }
+	public string DescriptionUnchecked { get; set; }
+	public RenderFragment Icon { get; set; }
+
+	public RenderFragment IconUnchecked { get; set; }
+
+	public bool IsEnabled { get; set; } = true;
+
+	public event EventHandler? Checked;
+	public event EventHandler? UnChecked;
+
+	public CommandEntryToggle(RenderFragment icon, RenderFragment iconUnchecked, string description, string descriptionUnchecked, bool isChecked = true)
+	{
+		Icon = icon ?? throw new ArgumentNullException(nameof(icon));
+		IconUnchecked = iconUnchecked ?? throw new ArgumentNullException(nameof(iconUnchecked));
+		Description = description ?? string.Empty;
+		DescriptionUnchecked = descriptionUnchecked ?? string.Empty;
+		_IsChecked = isChecked;
+	}
+
+	bool _IsChecked = false;
+
+	public bool IsChecked
+	{
+		get => _IsChecked; set
+		{
+			if (value == _IsChecked) return;
+			_IsChecked = value;
+			if (IsChecked) Checked?.Invoke(this, EventArgs.Empty); else UnChecked?.Invoke(this, EventArgs.Empty);
+			StateHasChangedRequested?.Invoke(this, EventArgs.Empty);
+		}
+	}
+
+	public event EventHandler? StateHasChangedRequested;
+
+	public void OnClick() => IsChecked = !IsChecked;
+}
+
 public class CommandEntryFile : ICommandEntry
 {
 	public const long MaxFileSize = 256 * 1024 * 1024;//256 MB. This should be enough.

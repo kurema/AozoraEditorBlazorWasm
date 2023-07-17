@@ -5,13 +5,12 @@
 
 @code {
 	[Parameter]
-	public RenderFragment? Left{ get; set; }
+	public RenderFragment? Left { get; set; }
 	[Parameter]
 	public RenderFragment? Right { get; set; }
 
 	string ClassMain { get; set; } = "PanelFull";
 	string ClassSub { get; set; } = "PanelNone";
-
 
 	DisplayModes _DisplayMode = DisplayModes.MainFull;
 	public DisplayModes DisplayMode
@@ -30,6 +29,10 @@
 					ClassMain = "PanelHalfLeft";
 					ClassSub = "PanelHalfRight";
 					break;
+				case DisplayModes.SeparetedVertical:
+					ClassMain = "PanelHalfTop";
+					ClassSub = "PanelHalfBottom";
+					break;
 			}
 			_DisplayMode = value;
 			StateHasChanged();
@@ -45,7 +48,7 @@
 
 	public enum DisplayModes
 	{
-		MainFull, Separated,
+		MainFull, Separated, SeparetedVertical,
 	}
 
 }

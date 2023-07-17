@@ -15,6 +15,20 @@
 		Preview,
 	}
 
+	bool _SplitVertical = true;
+	public bool SplitVertical
+	{
+		get => _SplitVertical;
+		set
+		{
+			if (_SplitVertical == value) return;
+			_SplitVertical = value;
+			if (splitPage is null) return;
+			if (splitPage.DisplayMode is SplitPage.DisplayModes.Separated or SplitPage.DisplayModes.SeparetedVertical) splitPage.DisplayMode = SeparetedValue;
+		}
+	}
+	SplitPage.DisplayModes SeparetedValue => SplitVertical ? SplitPage.DisplayModes.Separated : SplitPage.DisplayModes.SeparetedVertical;
+
 	MarkdownPageContents? _CurrentContent;
 	public MarkdownPageContents? CurrentContent
 	{
@@ -26,7 +40,7 @@
 			if (splitPage is not null)
 			{
 				if (value is null) splitPage.DisplayMode = SplitPage.DisplayModes.MainFull;
-				else splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+				else splitPage.DisplayMode = SeparetedValue;
 			}
 			StateHasChanged();
 		}
@@ -93,7 +107,7 @@
 	{
 		if (splitPage is null) return;
 		PreviewHtml = "<html><body><p>プレビュー作成中です<br />この間、UIがフリーズすることがあります。</p></body></html>";
-		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		splitPage.DisplayMode = SeparetedValue;
 		StateHasChanged();
 		if (Editor is null) return;
 		var text = await Editor.GetValue();

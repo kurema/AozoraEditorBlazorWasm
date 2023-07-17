@@ -18,6 +18,19 @@
 
 	SplitPage? splitPage { get; set; }
 
+	bool _SplitVertical = true;
+	public bool SplitVertical
+	{
+		get => _SplitVertical;
+		set
+		{
+			if (_SplitVertical == value) return;
+			_SplitVertical = value;
+			if (DisplayMode is SplitPage.DisplayModes.Separated or SplitPage.DisplayModes.SeparetedVertical) DisplayMode = SeparetedValue;
+		}
+	}
+	SplitPage.DisplayModes SeparetedValue => SplitVertical ? SplitPage.DisplayModes.Separated : SplitPage.DisplayModes.SeparetedVertical;
+
 	public SplitPage.DisplayModes? DisplayMode
 	{
 		get => splitPage?.DisplayMode;
@@ -43,7 +56,7 @@
 	public void SubPanelSwitchTo(SubPanel.SubPanelContents content)
 	{
 		if (splitPage is null) return;
-		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		splitPage.DisplayMode = SeparetedValue;
 		Selected = content;
 		StateHasChanged();
 	}
@@ -52,7 +65,7 @@
 	{
 		if (splitPage is null) return;
 		PreviewHtml = "<html><body><p>プレビュー作成中です<br />この間、UIがフリーズすることがあります。</p></body></html>";
-		splitPage.DisplayMode = SplitPage.DisplayModes.Separated;
+		splitPage.DisplayMode = SeparetedValue;
 		Selected = SubPanel.SubPanelContents.Iframe;
 		StateHasChanged();
 		if (editor is null)

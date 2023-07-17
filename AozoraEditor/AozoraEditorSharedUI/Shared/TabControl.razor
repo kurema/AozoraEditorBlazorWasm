@@ -8,7 +8,7 @@
 			<div class="tab_control_top_left">
 				<MenuBar @ref="MenuBar">
 					<MenuItem Title="ファイル">
-						<MenuItem Title="新規作成" IconMaterialSymbols="note_add" >
+						<MenuItem Title="新規作成" IconMaterialSymbols="note_add">
 							<MenuItem Title="青空文庫形式テキスト" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="book" />
 							<MenuItem Title="Markdownドキュメント" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="draft" />
 						</MenuItem>
@@ -68,6 +68,19 @@
 									<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
 										@item.Icon
 									</button>
+									break;
+								case CommandEntryToggle itemT:
+									<button class="ButtonMini" @onclick="()=>itemT.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemT.Description)">
+										@if (itemT.IsChecked)
+										{
+											@itemT.Icon
+										}
+										else
+										{
+											@itemT.IconUnchecked
+										}
+									</button>
+									//itemT.StateHasChangedRequested += (_, _) => StateHasChanged();
 									break;
 								case CommandEntryFile itemF:
 									<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
@@ -140,6 +153,19 @@
 									<button class="ButtonMini" @onclick="()=>itemC.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemC.Description)">
 										@item.Icon
 									</button>
+									break;
+								case CommandEntryToggle itemT:
+									<button class="ButtonMini" @onclick="()=>itemT.OnClick()" disabled="@(item.IsEnabled?null:"disabled")" title="@(itemT.Description)">
+										@if (itemT.IsChecked)
+										{
+											@itemT.Icon
+										}
+										else
+										{
+											@itemT.IconUnchecked
+										}
+									</button>
+									@*itemT.StateHasChangedRequested += (_, _) => StateHasChanged();*@
 									break;
 								case CommandEntryFile itemF:
 									<div class="FileInputButton ButtonMini" title="@(itemF.Description)">
@@ -286,22 +312,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
