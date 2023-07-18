@@ -26,6 +26,11 @@ namespace AozoraEditor.Shared.InterOp
 			await runtime.InvokeVoidAsync("window.UpdateTextAreaSize", key);
 		}
 
+		public static async Task<bool> TestMatchMedia(IJSRuntime runtime, string key)
+		{
+			return await runtime.InvokeAsync<bool>("window.TestMatchMedia", key);
+		}
+
 		public class BoundingClientRect
 		{
 			public double X { get; set; }

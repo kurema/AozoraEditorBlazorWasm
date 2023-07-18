@@ -18,6 +18,7 @@
 						<MenuItem Title="テーマ">
 							@if (Theme is not null)
 							{
+								//この書き方はTheme.ThemeEntriesが増える場合は破綻する点に注意！
 								foreach (var theme in Theme.ThemeEntries)
 								{
 									<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == Theme.SelectedTheme)" Checked="()=>{Theme.SelectedTheme=theme;}" />
@@ -342,11 +343,28 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		try
+		{
+			var size = await InterOp.Functions.GetWindowSize(jsRuntime);
+			this.SplitVerticalDefault = size.Height <= size.Width;
+		}
+		catch { }
+		try
+		{
+			if (Theme is not null)
+			{
+				var darkRequested = await InterOp.Functions.TestMatchMedia(jsRuntime, "(prefers-color-scheme: dark)");
+				var newTheme = Theme.ThemeEntries.FirstOrDefault(a => a.Key == (darkRequested ? "Dark" : "Light"));
+				if (newTheme is not null) Theme.SelectedTheme = newTheme;
+			}
+		}
+		catch { }
+		Pages.Add(new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt"));
 		if (ActivePage is null && Pages.Count > 0) ActivateTab(Pages[0]);
 		await base.OnInitializedAsync();
 	}
 
-	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt") };
+	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { };
 	public ITabPage? ActivePage { get; set; }
 
 	public async void TabClicked(MouseEventArgs e, ITabPage page)

@@ -66,5 +66,8 @@ window.UpdateTextAreaSize = (key) => {
         elem.style.height = "auto";
         elem.style.height = elem.scrollHeight + "px";
     });
-
 }
+
+window.TestMatchMedia = (key) => {
+    return window.matchMedia(key)?.matches ?? false;
+};

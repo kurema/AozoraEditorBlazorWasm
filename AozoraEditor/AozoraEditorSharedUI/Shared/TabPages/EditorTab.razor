@@ -11,7 +11,7 @@
 
 	public RenderFragment Title =>@<span>@Content?.FileName</span>;
 
-	public RenderFragment Body =>@<CascadingValue Value="@Id"><EditorPage @ref="Content" OriginalText="@OriginalText" /></CascadingValue>;
+	public RenderFragment Body =>@<CascadingValue Value="@Id" Name="Id"><EditorPage @ref="Content" OriginalText="@OriginalText" /></CascadingValue>;
 
 	[Parameter]
 	public string OriginalText { get; set; } = string.Empty;

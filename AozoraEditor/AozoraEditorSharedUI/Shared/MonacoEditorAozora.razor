@@ -15,8 +15,11 @@
 
 	string EditorId => Id.ToString();
 
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Id))]
 	public Guid Id { get; set; }
+
+	[CascadingParameter(Name = nameof(Root))]
+	public TabControl? Root { get; set; }
 
 	//protected override async Task OnParametersSetAsync()
 	//{
@@ -47,7 +50,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime);
+		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime, Root?.Theme?.SelectedTheme.MonacoTheme ?? "aozora-theme");
 		await base.OnInitializedAsync();
 	}
 
