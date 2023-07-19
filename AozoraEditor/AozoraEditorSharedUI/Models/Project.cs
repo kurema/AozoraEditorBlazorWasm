@@ -32,6 +32,8 @@ namespace AozoraEditor.Shared.Models.Project {
         
         private ProjectSnippet snippetField;
         
+        private ProjectTab[] tabsField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("entry", IsNullable=false)]
         public ProjectEntry[] Toc {
@@ -60,6 +62,17 @@ namespace AozoraEditor.Shared.Models.Project {
             }
             set {
                 this.snippetField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("tab", IsNullable=false)]
+        public ProjectTab[] tabs {
+            get {
+                return this.tabsField;
+            }
+            set {
+                this.tabsField = value;
             }
         }
     }
@@ -295,6 +308,107 @@ namespace AozoraEditor.Shared.Models.Project {
             }
             set {
                 this.itemField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraE" +
+        "ditorSharedUI/Models/Project.xsd")]
+    public partial class ProjectTab {
+        
+        private string typeField;
+        
+        private string argField;
+        
+        private int columnField;
+        
+        private bool columnFieldSpecified;
+        
+        private int rowField;
+        
+        private bool rowFieldSpecified;
+        
+        private string selectionField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string arg {
+            get {
+                return this.argField;
+            }
+            set {
+                this.argField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public int column {
+            get {
+                return this.columnField;
+            }
+            set {
+                this.columnField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool columnSpecified {
+            get {
+                return this.columnFieldSpecified;
+            }
+            set {
+                this.columnFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public int row {
+            get {
+                return this.rowField;
+            }
+            set {
+                this.rowField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool rowSpecified {
+            get {
+                return this.rowFieldSpecified;
+            }
+            set {
+                this.rowFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string selection {
+            get {
+                return this.selectionField;
+            }
+            set {
+                this.selectionField = value;
             }
         }
     }

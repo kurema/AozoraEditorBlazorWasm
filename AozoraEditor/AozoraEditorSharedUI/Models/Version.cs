@@ -32,6 +32,10 @@ namespace AozoraEditor.Shared.Models.Version {
         
         private System.DateTime dateField;
         
+        private bool showField;
+        
+        private bool showFieldSpecified;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("version")]
         public string version1 {
@@ -60,6 +64,28 @@ namespace AozoraEditor.Shared.Models.Version {
             }
             set {
                 this.dateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public bool show {
+            get {
+                return this.showField;
+            }
+            set {
+                this.showField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool showSpecified {
+            get {
+                return this.showFieldSpecified;
+            }
+            set {
+                this.showFieldSpecified = value;
             }
         }
     }

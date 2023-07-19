@@ -315,22 +315,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
@@ -346,7 +346,7 @@
 		try
 		{
 			var size = await InterOp.Functions.GetWindowSize(jsRuntime);
-			this.SplitVerticalDefault = size.Height <= size.Width;
+			SplitVerticalDefault = size.Height <= size.Width;
 		}
 		catch { }
 		try
@@ -491,9 +491,10 @@
 		catch
 		{
 		}
-		v = v ?? new() { commit = "placeholder", date = DateTime.Now, version1 = "placeholder" };
+		v = v ?? new() { commit = "placeholder", date = DateTime.Now, version1 = "placeholder", show = false };
 
-		await ShowDialog("青空文庫形式エディタ", $"作者：kurema\nバージョン：{v.version1}\nコミット：{v.commit}\n日付：{v.date:F}\n\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+		var detail = $"バージョン：{v.version1}\nコミット：{v.commit}\n日付：{v.date:F}\n";
+		await ShowDialog("青空文庫形式エディタ", $"作者：kurema\n{(v.show?detail:string.Empty)}\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
 	}
 
 	public async Task<Dialogs.DialogOption?> ShowDialog(string title, string text, RenderFragment? icon, params Dialogs.DialogOption[] options)

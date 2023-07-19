@@ -13,6 +13,7 @@
 				<xs:element name="commit" type="xs:string" />
 				<xs:element name="date" type="xs:dateTime" />
 			</xs:sequence>
+			<xs:attribute name="show" type="xs:boolean" />
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

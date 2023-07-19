@@ -37,6 +37,21 @@
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="tabs">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element name="tab">
+								<xs:complexType>
+									<xs:attribute name="type" type="xs:string" />
+									<xs:attribute name="arg" type="xs:string" use="optional" />
+									<xs:attribute name="column" type="xs:int" use="optional" />
+									<xs:attribute name="row" type="xs:int" use="optional" />
+									<xs:attribute name="selection" type="xs:string" use="optional" />
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
