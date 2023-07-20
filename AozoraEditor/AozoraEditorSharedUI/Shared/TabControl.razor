@@ -122,11 +122,14 @@
 				<div class="tab_control_controller">
 					@foreach (var item in Pages)
 					{
-						var cl = item == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
+						var page = item;
+						var cl = page == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
+						var id = page.Id;
 
-						<div class="@cl" @onmousedown="(e)=>TabClicked(e,item)">
-							<p class="tab_control_controller_tab_title">@item.Title</p>
-							<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(item);}">
+						<div class="@cl" @onmousedown="(e)=>TabClicked(e,page)" data-tab-id="@id">
+							<p class="tab_control_controller_tab_title">@(page.Title)</p>
+							@*<p class="tab_control_controller_tab_title">@(page.Id)</p>*@
+							<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(id);}">
 								<span class="material-symbols-outlined">
 									close
 								</span>
@@ -189,9 +192,8 @@
 				<div class="tab_control_body">
 					@foreach (var item in Pages)
 					{
-						bool active = item == ActivePage;
-						string additonalClass = active ? "tab_page_container_active" : "hidden";
-						<div class="tab_page_container @additonalClass">
+						string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
+						<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
 							@item.Body
 						</div>
 					}
@@ -364,8 +366,31 @@
 		await base.OnInitializedAsync();
 	}
 
-	System.Collections.ObjectModel.ObservableCollection<ITabPage> Pages = new() { };
+	List<ITabPage> Pages { get; set; } = new() { };
 	public ITabPage? ActivePage { get; set; }
+
+	//int PagesLastCount { get; set; } = 0;
+
+	//protected override bool ShouldRender()
+	//{
+	//	try
+	//	{
+	//		if (Pages.Count != PagesLastCount) return true;
+	//		return base.ShouldRender();
+	//	}
+	//	finally
+	//	{
+	//		PagesLastCount = Pages.Count;
+	//	}
+	//}
+
+	void RefreshPages()
+	{
+		var p = Pages;
+		Pages = new();
+		StateHasChanged();
+		Pages = p;
+	}
 
 	public async void TabClicked(MouseEventArgs e, ITabPage page)
 	{
@@ -376,6 +401,7 @@
 				ActivateTab(page);
 				break;
 			case 1:
+				ActivateTab(page);
 				await CloseTab(page);
 				break;
 		}
@@ -383,6 +409,8 @@
 
 	public void ActivateTab(ITabPage page)
 	{
+		//ActivePage = null;
+		//StateHasChanged();
 		ActivePage = page;
 		page.Root = this;
 		StateHasChanged();
@@ -394,6 +422,13 @@
 		if (target is null) return null;
 		ActivateTab(target);
 		return target;
+	}
+
+	public async Task CloseTab(Guid id)
+	{
+		var page = Pages.FirstOrDefault(a => a.Id == id);
+		if (page is null) return;
+		await CloseTab(page);
 	}
 
 	public async Task CloseTab(ITabPage page)
@@ -413,13 +448,15 @@
 				break;
 		}
 		if (!Pages.Contains(page)) return;
+
+		int countPage = Pages.IndexOf(page);
 		if (ActivePage == page)
 		{
-			int count = Pages.IndexOf(page);
-			count = count == 0 ? 1 : count - 1;
+			int count = countPage == 0 ? 1 : countPage - 1;
 			if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
 		}
-		Pages.Remove(page);
+		Pages.RemoveAt(countPage);
+		//RefreshPages();
 		StateHasChanged();
 	}
 
@@ -494,7 +531,7 @@
 		v = v ?? new() { commit = "placeholder", date = DateTime.Now, version1 = "placeholder", show = false };
 
 		var detail = $"バージョン：{v.version1}\nコミット：{v.commit}\n日付：{v.date:F}\n";
-		await ShowDialog("青空文庫形式エディタ", $"作者：kurema\n{(v.show?detail:string.Empty)}\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
+		await ShowDialog("青空文庫形式エディタ", $"作者：kurema\n{(v.show ? detail : string.Empty)}\nPowered by C# and Blazor.", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("閉じる", true) { Id = "close" });
 	}
 
 	public async Task<Dialogs.DialogOption?> ShowDialog(string title, string text, RenderFragment? icon, params Dialogs.DialogOption[] options)
