@@ -122,6 +122,7 @@
 				<div class="tab_control_controller">
 					@foreach (var item in Pages)
 					{
+						if (PagesHidden.Contains(item)) continue;
 						var page = item;
 						var cl = page == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
 						var id = page.Id;
@@ -317,22 +318,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
@@ -367,6 +368,11 @@
 	}
 
 	List<ITabPage> Pages { get; set; } = new() { };
+	// Brazorのレンダリングの都合で、途中の要素を削除するとMonacoEditorが盛大に狂います。
+	// 仕方がないので、途中のタブが閉じられた場合は隠すだけにしました。
+	// 末尾のタブの場合は普通に消されます。
+	// 無意味にブラウザのメモリを消費するという欠点があります。
+	List<ITabPage> PagesHidden { get; set; } = new() { };
 	public ITabPage? ActivePage { get; set; }
 
 	//int PagesLastCount { get; set; } = 0;
@@ -449,14 +455,57 @@
 		}
 		if (!Pages.Contains(page)) return;
 
+
 		int countPage = Pages.IndexOf(page);
+
+		IEnumerable<ITabPage> NextPageEnumerator()
+		{
+			for (int i = countPage + 1; i < Pages.Count; i++) yield return Pages[i];
+			for (int i = countPage - 1; i >= 0; i--) yield return Pages[i];
+		}
+
 		if (ActivePage == page)
 		{
-			int count = countPage == 0 ? 1 : countPage - 1;
-			if (Pages.Count > count) ActivateTab(Pages[count]); else ActivePage = null;
+			bool anyHit = false;
+			foreach (var p in NextPageEnumerator())
+			{
+				if (PagesHidden.Contains(p)) continue;
+				ActivateTab(p);
+				anyHit = true;
+				break;
+			}
+			if (!anyHit) ActivePage = null;
 		}
-		Pages.RemoveAt(countPage);
-		//RefreshPages();
+		//勘違いコード。次回コミット後削除。
+		//bool canRemove = true;
+		//for (int i = countPage + 1; i < Pages.Count; i++) if (!PagesHidden.Contains(Pages[i])) { canRemove = false; break; }
+		if (countPage == Pages.Count - 1)
+		{
+			//while (countPage < Pages.Count)
+			//{
+			//	PagesHidden.Remove(Pages[countPage]);
+			//	Pages.RemoveAt(countPage);
+			//}
+			Pages.RemoveAt(countPage);
+			//for (int i = countPage - 1; i >= 0; i--)
+			//{
+			//	var p = Pages[i];
+			//	if (PagesHidden.Contains(p))
+			//	{
+			//		Pages.RemoveAt(i);
+			//		PagesHidden.Remove(p);
+			//	}
+			//	else break;
+			//}
+			while (true)
+			{
+				var p = Pages[^1];
+				if (!PagesHidden.Contains(p)) break;
+				PagesHidden.Remove(p);
+				Pages.Remove(p);
+			}
+		}
+		else PagesHidden.Add(page);
 		StateHasChanged();
 	}
 
