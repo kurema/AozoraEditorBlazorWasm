@@ -14,6 +14,9 @@ public interface ITabPage
 	event EventHandler? TitleChanged;
 
 	RenderFragment Body { get; }
+	Type DynamicType { get; }
+	IDictionary<string, object> DynamicParamaters { get; }
+
 	ObservableCollection<ICommandEntry> PanelSwitchCommands { get; }
 	ObservableCollection<ICommandEntry> MainCommands { get; }
 

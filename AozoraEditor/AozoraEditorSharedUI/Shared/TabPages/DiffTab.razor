@@ -13,6 +13,15 @@
 	public event EventHandler? TitleChanged;
 	RenderFragment? _Body;
 	public RenderFragment Body => _Body ??=@<StandaloneDiffEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="editor" />;
+	public Type DynamicType { get; } = typeof(StandaloneDiffEditor);
+	public IDictionary<string, object> DynamicParamaters => new Dictionary<string, object>()
+	{
+		{"Id",Id.ToString()},
+		{"ConstructionOptions",EditorConstructionOptions}
+		//{"@ref",editor}
+	};
+
+
 	public string TextOriginal { get; init; }
 	public string TextModified { get; init; }
 

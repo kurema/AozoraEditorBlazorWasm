@@ -195,6 +195,7 @@
 					{
 						string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
 						<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
+							@*<DynamicComponent Type="@item.DynamicType" Parameters="@item.DynamicParamaters" />*@
 							@item.Body
 						</div>
 					}
@@ -318,22 +319,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
@@ -476,27 +477,13 @@
 			}
 			if (!anyHit) ActivePage = null;
 		}
-		//勘違いコード。次回コミット後削除。
-		//bool canRemove = true;
-		//for (int i = countPage + 1; i < Pages.Count; i++) if (!PagesHidden.Contains(Pages[i])) { canRemove = false; break; }
-		if (countPage == Pages.Count - 1)
+		bool test = false;
+#if DEBUG
+	test=false;
+#endif
+		if (test || countPage == Pages.Count - 1)
 		{
-			//while (countPage < Pages.Count)
-			//{
-			//	PagesHidden.Remove(Pages[countPage]);
-			//	Pages.RemoveAt(countPage);
-			//}
 			Pages.RemoveAt(countPage);
-			//for (int i = countPage - 1; i >= 0; i--)
-			//{
-			//	var p = Pages[i];
-			//	if (PagesHidden.Contains(p))
-			//	{
-			//		Pages.RemoveAt(i);
-			//		PagesHidden.Remove(p);
-			//	}
-			//	else break;
-			//}
 			while (true)
 			{
 				var p = Pages[^1];

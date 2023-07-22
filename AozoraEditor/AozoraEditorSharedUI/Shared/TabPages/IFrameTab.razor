@@ -5,6 +5,13 @@
 	public string Source { get; init; }
 	public string TitleString { get; init; }
 
+	public Type DynamicType { get; } = typeof(RenderFragment);
+	public IDictionary<string, object> DynamicParamaters { get; } = new Dictionary<string, object>()
+	{
+		{"sandbox","allow-same-origin allow-popups"},
+		{"style","flex: 1 0 0;border: none;"}
+	};
+
 	public IFrameTab(Guid guid, string source, string title)
 	{
 		Id = guid;

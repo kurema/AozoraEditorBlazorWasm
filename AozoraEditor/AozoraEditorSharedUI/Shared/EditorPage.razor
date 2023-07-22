@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime JSRuntime;
 
 <CascadingValue Value="this" Name="Editor">
+	<div class="hidden" data-id="@Id" />
 	<SplitPage @ref="splitPage">
 		<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
 		<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
@@ -8,7 +9,7 @@
 </CascadingValue>
 
 @code {
-	[CascadingParameter]
+	[CascadingParameter(Name = nameof(Id))]
 	public Guid Id { get; set; }
 
 	[Parameter]
