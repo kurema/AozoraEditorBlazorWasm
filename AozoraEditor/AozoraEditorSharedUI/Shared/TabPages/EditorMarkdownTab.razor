@@ -13,13 +13,6 @@
 
 	public RenderFragment Body =>@<MarkdownPage Id="@Id" OriginalText="@OriginalText" @ref="Content" />;
 
-	public Type DynamicType { get; } = typeof(MarkdownPage);
-	public IDictionary<string, object> DynamicParamaters => new Dictionary<string, object>()
-	{
-		{"Id",Id},
-		{"OriginalText",OriginalText}
-	};
-
 
 	[Parameter]
 	public string OriginalText { get; set; } = string.Empty;

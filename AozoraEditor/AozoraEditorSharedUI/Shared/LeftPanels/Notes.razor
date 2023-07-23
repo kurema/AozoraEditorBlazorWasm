@@ -53,7 +53,7 @@
 			case notesTasks itemTask:
 				<div class="aozora_left_panel_notes_body_tasks" @onclick="_=>SelectedTask=null">
 					<div class="aozora_left_panel_notes_body_tasks_header">
-						<textarea @bind="itemTask.header" rows="1" class="aozora_left_panel_notes_body_general_header" placeholder="タイトル" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" />
+						<textarea @bind="itemTask.header" rows="1" class="aozora_left_panel_notes_body_general_header autoresize" placeholder="タイトル" oninput='@textareaAutoResizeJs' style="@textareaAutoResizeDefaultStyle" />
 						@if (EditMode)
 						{
 							<button @onclick="_=>DeleteItem(itemTask)">

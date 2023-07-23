@@ -10,6 +10,7 @@
     color: var(--aozora-theme-text-color);
 }
 
+
 .snippet_header {
     display: grid;
     grid-template-columns: 1fr auto auto auto;
@@ -20,6 +21,7 @@
     .snippet_header .snippet_header_title {
         grid-column: 1/2;
         font-weight: bold;
+        align-self: center;
     }
 
     .snippet_header > .snippet_header_info {
@@ -46,12 +48,12 @@
         }
 
 
-        .snippet_info {
-            margin: 20px;
-            padding: 10px;
-            border: 1px solid var(--aozora-sub-snippets-info-border-color);
-            background: var(--aozora-sub-snippets-info-background);
-        }
+.snippet_info {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid var(--aozora-sub-snippets-info-border-color);
+    background: var(--aozora-sub-snippets-info-background);
+}
 
 .snippet {
     display: grid;

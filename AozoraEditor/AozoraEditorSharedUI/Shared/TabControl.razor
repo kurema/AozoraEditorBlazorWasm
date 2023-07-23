@@ -191,11 +191,26 @@
 				</div>
 
 				<div class="tab_control_body">
+					@*@{
+						RenderFragment GetBody() => builder =>
+						{
+							int seq = -2;
+							foreach (var item in Pages)
+							{
+								seq += 2;
+								if (PagesHidden.Contains(item)) continue;
+								builder.OpenElement(seq, "div");
+								builder.AddAttribute(seq + 1, "class", item == ActivePage ? "tab_page_container_active" : "hidden");
+								item.Body.Invoke(builder);
+								builder.CloseElement();
+							}
+						};
+						@GetBody()
+					}*@
 					@foreach (var item in Pages)
 					{
 						string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
 						<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
-							@*<DynamicComponent Type="@item.DynamicType" Parameters="@item.DynamicParamaters" />*@
 							@item.Body
 						</div>
 					}
@@ -319,22 +334,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
@@ -375,21 +390,6 @@
 	// 無意味にブラウザのメモリを消費するという欠点があります。
 	List<ITabPage> PagesHidden { get; set; } = new() { };
 	public ITabPage? ActivePage { get; set; }
-
-	//int PagesLastCount { get; set; } = 0;
-
-	//protected override bool ShouldRender()
-	//{
-	//	try
-	//	{
-	//		if (Pages.Count != PagesLastCount) return true;
-	//		return base.ShouldRender();
-	//	}
-	//	finally
-	//	{
-	//		PagesLastCount = Pages.Count;
-	//	}
-	//}
 
 	void RefreshPages()
 	{
@@ -493,7 +493,6 @@
 			}
 		}
 		else PagesHidden.Add(page);
-		StateHasChanged();
 	}
 
 	public void AddEditorTab()

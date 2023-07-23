@@ -399,8 +399,8 @@
 
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > :first-child {
                     grid-column: 1/2;
-                    grid-row: 1/4;
-                    align-self: flex-start;
+                    grid-row: 1/2;
+                    align-self: center;
                 }
 
                 .aozora_left_panel_notes_container > .aozora_left_panel_notes_body > .aozora_left_panel_notes_body_tasks .aozora_left_panel_notes_body_task_entry > * {

@@ -13,13 +13,11 @@
 
 	RenderFragment? _Body = null;
 
-	public RenderFragment Body => _Body ??=@<CascadingValue Value="@Id" Name="Id"><EditorPage @ref="Content" OriginalText="@OriginalText" /></CascadingValue>;
-
-	public Type DynamicType { get; } = typeof(EditorPage);
-	public IDictionary<string, object> DynamicParamaters  => new Dictionary<string, object>()
-	{
-		{ "OriginalText",OriginalText }
-	};
+	public RenderFragment Body {get
+		{
+			return _Body ??=@<EditorPage Id="@Id" @ref="Content" OriginalText="@OriginalText" />;
+		}
+	}
 
 	[Parameter]
 	public string OriginalText { get; set; } = string.Empty;

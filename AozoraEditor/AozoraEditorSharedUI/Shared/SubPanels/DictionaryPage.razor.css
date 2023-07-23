@@ -292,3 +292,12 @@
 a:visited, a, a:active {
     color: var(--aozora-theme-text-color);
 }
+
+h1 {
+    font-size: calc(0.9rem + 0.9vw);
+}
+
+h2 {
+    font-size: calc(0.7rem + 0.7vw);
+}
+

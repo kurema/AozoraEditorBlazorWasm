@@ -12,39 +12,22 @@
 	public string FileName { get; init; }
 	public event EventHandler? TitleChanged;
 	RenderFragment? _Body;
-	public RenderFragment Body => _Body ??=@<StandaloneDiffEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="editor" />;
-	public Type DynamicType { get; } = typeof(StandaloneDiffEditor);
-	public IDictionary<string, object> DynamicParamaters => new Dictionary<string, object>()
-	{
-		{"Id",Id.ToString()},
-		{"ConstructionOptions",EditorConstructionOptions}
-		//{"@ref",editor}
-	};
+	public RenderFragment Body => _Body ??=@<StandaloneDiffEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" />;
 
 
 	public string TextOriginal { get; init; }
 	public string TextModified { get; init; }
 
-	bool isInited = false;
-
-	private async void EditorOnDidInit()
+	private async void EditorOnDidInit(StandaloneDiffEditor editor)
 	{
-		//強引な方法で良くないけど、これがないと例外が発生。
-		if (isInited) return;
 		//OnDidInitで呼ぶと"The render handle is not yet assigned"が出る。要するに外でRenderしてるから？
 		if (editor is null) return;
 		var models = await Global.GetModels();
 		try
 		{
-			//if (models.Any(a => a.Uri == $"{Id}_originalModel"))
-			//{
-			//	Root?.AppendAppMessage($"モデルが既に登録されています。\nID:{Id}", "差分ビュワー");
-			//	return;
-			//}
 			var original = await Global.CreateModel(TextOriginal, "aozora", $"{Id}_originalModel");
 			var modified = await Global.CreateModel(TextModified, "aozora", $"{Id}_modifiedModel");
 			await editor.SetModel(new DiffEditorModel() { Original = original, Modified = modified });
-			isInited = true;
 		}
 		catch (Exception e)
 		{
@@ -52,21 +35,9 @@
 		}
 	}
 
-	StandaloneDiffEditor? _editor;
-	StandaloneDiffEditor? editor
-	{
-		get => _editor;
-		set
-		{
-			if (_editor == value) return;
-			_editor = value;
-			//雑なやり方だけど、まぁ良い。
-			EditorOnDidInit();
-		}
-	}
-
 	private StandaloneDiffEditorConstructionOptions EditorConstructionOptions(StandaloneDiffEditor editor)
 	{
+		EditorOnDidInit(editor);
 		//上下分割する設定はなさそう。Bing ChatによるとOrientationという設定があるようだが実際はない。
 		var result = new StandaloneDiffEditorConstructionOptions
 			{
