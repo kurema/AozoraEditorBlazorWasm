@@ -120,7 +120,7 @@
 				<div class="tab_control_background" />
 
 				<div class="tab_control_controller">
-					@foreach (var item in Pages)
+					@foreach (var (item, _) in Pages)
 					{
 						if (PagesHidden.Contains(item)) continue;
 						var page = item;
@@ -191,29 +191,35 @@
 				</div>
 
 				<div class="tab_control_body">
-					@*@{
+					@{
 						RenderFragment GetBody() => builder =>
 						{
-							int seq = -2;
-							foreach (var item in Pages)
+							//シークエンス番号を固定することで差分が明確になる。その結果、タブの挙動がマトモになる！
+							//これに至るまで5日くらい掛かってる。
+							foreach (var (item, s) in Pages)
 							{
-								seq += 2;
+								int seq = s * 2;
 								if (PagesHidden.Contains(item)) continue;
+								//if (item != ActivePage) continue;//これはもちろんダメ。
 								builder.OpenElement(seq, "div");
-								builder.AddAttribute(seq + 1, "class", item == ActivePage ? "tab_page_container_active" : "hidden");
+								//結局style属性でしかスタイル指示できないので"tab_page_container_active"は意味がない。hiddenは<style/>タグ内で指定しているので普通に効く。
+								//やっぱりstyleで。
+								//builder.AddAttribute(seq + 1, "class", item == ActivePage ? "tab_page_container_active" : "hidden");
+								builder.AddAttribute(seq + 1, "style", item == ActivePage ? "display: flex;flex: 1 0 0;" : "display: none;flex: 1 0 0;");
 								item.Body.Invoke(builder);
 								builder.CloseElement();
 							}
 						};
 						@GetBody()
-					}*@
-					@foreach (var item in Pages)
-					{
-						string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
-						<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
-							@item.Body
-						</div>
 					}
+					@*↑と↓はほぼ同値のコード*@
+					@*@foreach (var item in Pages)
+					{
+					string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
+					<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
+					@item.Body
+					</div>
+					}*@
 					@if (ActivePage is null)
 					{
 						<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
@@ -334,22 +340,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+	}
 		};
+			return _CommonCommands ??= new ICommandEntry[]
+	{
+				commandOpenFile,
+	};
 		}
 	}
 
@@ -378,12 +384,14 @@
 			}
 		}
 		catch { }
-		Pages.Add(new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt"));
-		if (ActivePage is null && Pages.Count > 0) ActivateTab(Pages[0]);
+		Pages.Add((new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt"), currentSequence++));
+		if (ActivePage is null && Pages.Count > 0) ActivateTab(Pages[0].body);
 		await base.OnInitializedAsync();
 	}
 
-	List<ITabPage> Pages { get; set; } = new() { };
+	int currentSequence = 0;
+
+	List<(ITabPage body, int sequence)> Pages { get; set; } = new() { };
 	// Brazorのレンダリングの都合で、途中の要素を削除するとMonacoEditorが盛大に狂います。
 	// 仕方がないので、途中のタブが閉じられた場合は隠すだけにしました。
 	// 末尾のタブの場合は普通に消されます。
@@ -425,7 +433,7 @@
 
 	public ITabPage? SelectTabByGuid(Guid key)
 	{
-		var target = Pages.FirstOrDefault(a => a.Id == key);
+		var target = Pages.Select(a => a.body).FirstOrDefault(a => a.Id == key);
 		if (target is null) return null;
 		ActivateTab(target);
 		return target;
@@ -433,7 +441,7 @@
 
 	public async Task CloseTab(Guid id)
 	{
-		var page = Pages.FirstOrDefault(a => a.Id == id);
+		var page = Pages.Select(a => a.body).FirstOrDefault(a => a.Id == id);
 		if (page is null) return;
 		await CloseTab(page);
 	}
@@ -454,12 +462,11 @@
 				}
 				break;
 		}
-		if (!Pages.Contains(page)) return;
+		if (!Pages.Any(a => a.body == page)) return;
 
+		int countPage = Pages.FindIndex(a => a.body == page);
 
-		int countPage = Pages.IndexOf(page);
-
-		IEnumerable<ITabPage> NextPageEnumerator()
+		IEnumerable<(ITabPage body, int sequence)> NextPageEnumerator()
 		{
 			for (int i = countPage + 1; i < Pages.Count; i++) yield return Pages[i];
 			for (int i = countPage - 1; i >= 0; i--) yield return Pages[i];
@@ -470,29 +477,30 @@
 			bool anyHit = false;
 			foreach (var p in NextPageEnumerator())
 			{
-				if (PagesHidden.Contains(p)) continue;
-				ActivateTab(p);
+				if (PagesHidden.Contains(p.body)) continue;
+				ActivateTab(p.body);
 				anyHit = true;
 				break;
 			}
 			if (!anyHit) ActivePage = null;
 		}
-		bool test = false;
-#if DEBUG
-	test=false;
-#endif
-		if (test || countPage == Pages.Count - 1)
+		//usePagesHiddenをtrueにすればPagesHiddenを使う。
+		bool usePagesHidden = false;
+		if (!usePagesHidden || countPage == Pages.Count - 1)
 		{
 			Pages.RemoveAt(countPage);
 			while (true)
 			{
+				if (Pages.Count == 0) break;
 				var p = Pages[^1];
-				if (!PagesHidden.Contains(p)) break;
-				PagesHidden.Remove(p);
+				if (!PagesHidden.Contains(p.body)) break;
+				PagesHidden.Remove(p.body);
 				Pages.Remove(p);
 			}
 		}
 		else PagesHidden.Add(page);
+		//ないと更新されない。
+		StateHasChanged();
 	}
 
 	public void AddEditorTab()
@@ -504,7 +512,7 @@
 	public void AddEditorTab(string text, string fileName)
 	{
 		var page = new TabPages.EditorTab(GetNewGuid(), text, fileName) { };
-		Pages.Add(page);
+		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}
 
@@ -516,7 +524,7 @@
 	public void AddEditorTabMarkdown(string text, string fileName)
 	{
 		var page = new TabPages.EditorMarkdownTab(GetNewGuid(), text, fileName) { };
-		Pages.Add(page);
+		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}
 
@@ -524,7 +532,7 @@
 	private Guid GetNewGuid()
 	{
 		var id = Guid.NewGuid();
-		while (Pages.Any(a => a.Id == id)) { id = Guid.NewGuid(); }
+		while (Pages.Any(a => a.body.Id == id)) { id = Guid.NewGuid(); }
 		return id;
 	}
 
@@ -546,7 +554,7 @@
 	public void OepnInNewInternalTab(string url, string title)
 	{
 		var page = new TabPages.IFrameTab(GetNewGuid(), url, title);
-		Pages.Add(page);
+		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}
 
@@ -640,7 +648,7 @@
 	public void ShowDiffTab(string fileName, string original, string modified)
 	{
 		var page = new TabPages.DiffTab(fileName, original, modified) { Id = GetNewGuid() };
-		Pages.Add(page);
+		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}
 
