@@ -2,6 +2,8 @@
 @using AozoraEditor.Shared.Shared.Menu
 
 <AozoraEditor.Shared.Shared.Themes.ThemeControl @ref="Theme" />
+<Microsoft.AspNetCore.Components.Routing.NavigationLock OnBeforeInternalNavigation="BeforeInternalNavigation" ConfirmExternalNavigation="@ConfirmExternalNavigation" />
+
 <CascadingValue Value="this" Name="Root">
 	<div class="aozora_editor_top @(OutputVisible?"aozoa_editor_top_show_output ":"")" @onclick="()=>{HideMenuBar();}">
 		<div class="tab_control_top_container">
@@ -122,7 +124,6 @@
 				<div class="tab_control_controller">
 					@foreach (var (item, _) in Pages)
 					{
-						if (PagesHidden.Contains(item)) continue;
 						var page = item;
 						var cl = page == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
 						var id = page.Id;
@@ -196,15 +197,13 @@
 						{
 							//シークエンス番号を固定することで差分が明確になる。その結果、タブの挙動がマトモになる！
 							//これに至るまで5日くらい掛かってる。
+							//PagesHiddenやrazor記法の場合など、削除前のコードなどは以下を参照してください。
+							//https://github.com/kurema/AozoraEditorBlazorWasm/blob/2a187f617e43211e2f2a3dc44940e2c4062b1e5b/AozoraEditor/AozoraEditorSharedUI/Shared/TabControl.razor#L215
 							foreach (var (item, s) in Pages)
 							{
 								int seq = s * 2;
-								if (PagesHidden.Contains(item)) continue;
 								//if (item != ActivePage) continue;//これはもちろんダメ。
 								builder.OpenElement(seq, "div");
-								//結局style属性でしかスタイル指示できないので"tab_page_container_active"は意味がない。hiddenは<style/>タグ内で指定しているので普通に効く。
-								//やっぱりstyleで。
-								//builder.AddAttribute(seq + 1, "class", item == ActivePage ? "tab_page_container_active" : "hidden");
 								builder.AddAttribute(seq + 1, "style", item == ActivePage ? "display: flex;flex: 1 0 0;" : "display: none;flex: 1 0 0;");
 								item.Body.Invoke(builder);
 								builder.CloseElement();
@@ -212,14 +211,6 @@
 						};
 						@GetBody()
 					}
-					@*↑と↓はほぼ同値のコード*@
-					@*@foreach (var item in Pages)
-					{
-					string additonalClass = item == ActivePage ? "tab_page_container_active" : "hidden";
-					<div class="tab_page_container @additonalClass" data-body-id="@(item.Id)">
-					@item.Body
-					</div>
-					}*@
 					@if (ActivePage is null)
 					{
 						<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
@@ -240,68 +231,9 @@
 			<LeftPanel @ref="leftPanel" />
 		</div>
 		<AozoraEditor.Shared.Shared.Dialogs.Dialog @ref="Dialog" />
+
 	</div>
 </CascadingValue>
-
-<style>
-	/* Global styles. */
-
-	button {
-		all: unset;
-	}
-
-	.FileInputButton {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		position: relative;
-	}
-
-		.FileInputButton input[type=file] {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			/* このやり方はちょっと良くない(コメントアウトすれば分かるが隙間は押せない)。けどほぼ問題なし。 */
-			opacity: 0;
-			cursor: pointer;
-		}
-
-
-	.ButtonMini {
-		background-color: transparent;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		border: 0;
-		border-radius: 0;
-		padding: 2px;
-		color: var(--aozora-theme-text-color);
-	}
-
-		.ButtonMini:hover {
-			background-color: var(--aozora-button-color-hover);
-		}
-
-	.vr {
-		height: 100%;
-		vertical-align: middle;
-		width: 2px;
-		border-left: solid 1px var(--aozora-vr-color);
-	}
-
-	.spacer {
-		height: 100%;
-		vertical-align: middle;
-		width: 0px;
-		margin: 0 4px;
-	}
-
-	.hidden {
-		display: none !important;
-	}
-
-</style>
 
 @code {
 	[CascadingParameter]
@@ -315,6 +247,16 @@
 	public Themes.ThemeControl? Theme { get; private set; }
 
 	public bool WarnUTF8 { get; set; } = true;
+
+	public bool ConfirmExternalNavigation { get; set; } = true;
+
+	private async Task BeforeInternalNavigation(Microsoft.AspNetCore.Components.Routing.LocationChangingContext context)
+	{
+		var result = await ShowDialog("ページ遷移", "ページを遷移しようとしています。\n続行しますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+		if (result is null) return;
+		if (result.Value.Id is string and "yes") return;
+		context.PreventNavigation();
+	}
 
 	public IEnumerable<string> PreviewCssFiles
 	{
@@ -392,11 +334,6 @@
 	int currentSequence = 0;
 
 	List<(ITabPage body, int sequence)> Pages { get; set; } = new() { };
-	// Brazorのレンダリングの都合で、途中の要素を削除するとMonacoEditorが盛大に狂います。
-	// 仕方がないので、途中のタブが閉じられた場合は隠すだけにしました。
-	// 末尾のタブの場合は普通に消されます。
-	// 無意味にブラウザのメモリを消費するという欠点があります。
-	List<ITabPage> PagesHidden { get; set; } = new() { };
 	public ITabPage? ActivePage { get; set; }
 
 	void RefreshPages()
@@ -477,28 +414,15 @@
 			bool anyHit = false;
 			foreach (var p in NextPageEnumerator())
 			{
-				if (PagesHidden.Contains(p.body)) continue;
 				ActivateTab(p.body);
 				anyHit = true;
 				break;
 			}
 			if (!anyHit) ActivePage = null;
 		}
-		//usePagesHiddenをtrueにすればPagesHiddenを使う。
-		bool usePagesHidden = false;
-		if (!usePagesHidden || countPage == Pages.Count - 1)
-		{
-			Pages.RemoveAt(countPage);
-			while (true)
-			{
-				if (Pages.Count == 0) break;
-				var p = Pages[^1];
-				if (!PagesHidden.Contains(p.body)) break;
-				PagesHidden.Remove(p.body);
-				Pages.Remove(p);
-			}
-		}
-		else PagesHidden.Add(page);
+		//PagesHidden以前のコードは以下を参照してください。
+		//https://github.com/kurema/AozoraEditorBlazorWasm/blob/2a187f617e43211e2f2a3dc44940e2c4062b1e5b/AozoraEditor/AozoraEditorSharedUI/Shared/TabControl.razor#L487
+		Pages.RemoveAt(countPage);
 		//ないと更新されない。
 		StateHasChanged();
 	}
@@ -659,9 +583,7 @@
 				new Models.Notes.notesTasks(){header="タスク",Items=new Models.Notes.task[]{ new() { header=string.Empty } } },
 	}
 		};
-}
 
-@code {
 	public Dialogs.Dialog? Dialog { get; private set; }
 
 	bool _OutputVisible = false;
