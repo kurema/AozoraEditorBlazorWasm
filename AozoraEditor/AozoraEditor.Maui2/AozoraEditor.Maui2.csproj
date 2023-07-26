@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-		<TargetFrameworks>net7.0-android;</TargetFrameworks>
-		<!--<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>-->
+        <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
@@ -14,11 +13,11 @@
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
 
         <!-- Display name -->
-        <ApplicationTitle>AozoraEditor.Maui</ApplicationTitle>
+        <ApplicationTitle>AozoraEditor</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.aozoraeditor.maui</ApplicationId>
-        <ApplicationIdGuid>4836D8BD-8811-45AF-A966-9D8CEAACA6F0</ApplicationIdGuid>
+        <ApplicationId>com.github.kurema.AozoraEditorBlazorWasm.maui</ApplicationId>
+        <ApplicationIdGuid>EBF061EF-8083-4DB8-B907-8972DE4C5582</ApplicationIdGuid>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -51,16 +50,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="..\.editorconfig" Link=".editorconfig" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="BlazorMonaco" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AozoraEditorSharedUI\AozoraEditorSharedUI.csproj" />
+      <Folder Include="Data\" />
     </ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\AozoraEditorSharedUI\AozoraEditorSharedUI.csproj" />
+	</ItemGroup>
+	
 </Project>
