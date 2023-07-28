@@ -138,7 +138,7 @@
 					</div>
 				</xsl:for-each>
 				<p>このページではアプリのテーマ設定が反映されません。また絵文字を用いているので正しく表示されない場合があります。</p>
-				<p>このファイルはXSLTで変換されたXMLファイルです。XML Schemaで定義されています。</p>
+				<p>このファイルはXSLTで変換されたXMLファイルです。<a target="_blank" href="https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/License/License.xsd">XML Schema</a>で定義されています。</p>
 			</body>
 		</html>
 	</xsl:template>

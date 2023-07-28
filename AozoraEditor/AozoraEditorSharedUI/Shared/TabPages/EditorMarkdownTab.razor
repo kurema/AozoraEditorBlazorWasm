@@ -58,7 +58,7 @@
 				PanelSwitchCommands.Add(new CommandEntrySeparator());
 
 				{
-					var com = CommandEntry.FromMaterialSymbolOutlined("difference", "差分を表示");
+					var com = CommandEntry.FromMaterialSymbolOutlined("difference", "差分を表示 (新規タブ)");
 					com.Clicked += async (_, _) =>
 					{
 						if (Root is null) return;

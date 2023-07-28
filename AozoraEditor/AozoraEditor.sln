@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraEditor.Wasm", "AozoraEditor.Wasm2\AozoraEditor.Wasm.csproj", "{6BC0A299-2227-497D-BAA6-28CCFC9E04BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AozoraEditor.Maui2", "AozoraEditor.Maui2\AozoraEditor.Maui2.csproj", "{420DF491-15F0-4E0A-89C9-DA4948CEF9DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AozoraEditor.Maui", "AozoraEditor.Maui2\AozoraEditor.Maui.csproj", "{420DF491-15F0-4E0A-89C9-DA4948CEF9DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
