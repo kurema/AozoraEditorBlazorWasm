@@ -5,14 +5,14 @@
 <div class="aozora_left_panel_notes_container">
 	<div class="aozora_left_panel_notes_header">
 		<p class="aozora_left_panel_notes_header_title">ノート</p>
-		<div class="aozora_left_panel_notes_header_icon_edit @(EditMode?"aozora_left_panel_notes_header_icon_edit_on":string.Empty)" @onclick="_=>EditMode=!EditMode">@(TabControl.GetMaterialSymbolOutlined("edit"))</div>
+		<div class="aozora_left_panel_notes_header_icon_edit @(EditMode?"aozora_left_panel_notes_header_icon_edit_on":string.Empty)" @onclick="_=>EditMode=!EditMode">@(FullEditor.GetMaterialSymbolOutlined("edit"))</div>
 	</div>
 
 	<div class="aozora_left_panel_notes_index_container_background"></div>
 
 	<div class="aozora_left_panel_notes_index_container">
 		<button class="aozora_left_panel_notes_index_item @(null == Selected? "aozora_left_panel_notes_index_item_selected":string.Empty)" @onclick="_=>Selected=null">
-			@(TabControl.GetMaterialSymbolOutlined("list"))
+			@(FullEditor.GetMaterialSymbolOutlined("list"))
 		</button>
 
 		@if (Root?.Notes?.Items is not null)
@@ -24,20 +24,20 @@
 					<p class="aozora_left_panel_notes_index_item_title">@GetHeaderOfItem(item)</p>
 					@if (EditMode)
 					{
-						<div class="aozora_left_panel_notes_index_item_close" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>DeleteItem(item)">@(TabControl.GetMaterialSymbolOutlined("close"))</div>
+						<div class="aozora_left_panel_notes_index_item_close" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>DeleteItem(item)">@(FullEditor.GetMaterialSymbolOutlined("close"))</div>
 					}
 				</button>
 			}
 		}
 
 		<button class="aozora_left_panel_notes_index_item" @onclick="_=>AddNote()">
-			<div class="aozora_left_panel_notes_index_item_icon_default">@(TabControl.GetMaterialSymbolOutlined("add"))</div>
-			<div class="aozora_left_panel_notes_index_item_icon_hover">@(TabControl.GetMaterialSymbolOutlined("note"))</div>
+			<div class="aozora_left_panel_notes_index_item_icon_default">@(FullEditor.GetMaterialSymbolOutlined("add"))</div>
+			<div class="aozora_left_panel_notes_index_item_icon_hover">@(FullEditor.GetMaterialSymbolOutlined("note"))</div>
 		</button>
 
 		<button class="aozora_left_panel_notes_index_item" @onclick="_=>AddTask()">
-			<div class="aozora_left_panel_notes_index_item_icon_default">@(TabControl.GetMaterialSymbolOutlined("add"))</div>
-			<div class="aozora_left_panel_notes_index_item_icon_hover">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
+			<div class="aozora_left_panel_notes_index_item_icon_default">@(FullEditor.GetMaterialSymbolOutlined("add"))</div>
+			<div class="aozora_left_panel_notes_index_item_icon_hover">@(FullEditor.GetMaterialSymbolOutlined("task"))</div>
 		</button>
 
 		<ContextMenu @ref="menuItemcontext">
@@ -57,13 +57,13 @@
 						@if (EditMode)
 						{
 							<button @onclick="_=>DeleteItem(itemTask)">
-								@(TabControl.GetMaterialSymbolOutlined("delete"))
+								@(FullEditor.GetMaterialSymbolOutlined("delete"))
 							</button>
 						}
 					</div>
 					<div class="aozora_left_panel_notes_body_tasks_add_header">
 						<button class="aozora_left_panel_notes_body_tasks_add" @onclick="_=>{AddTaskItem(itemTask);SelectedTask=null;}">
-							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(TabControl.GetMaterialSymbolOutlined("task"))</div>
+							<div class="aozora_left_panel_notes_body_tasks_add_icon">@(FullEditor.GetMaterialSymbolOutlined("task"))</div>
 							<div class="aozora_left_panel_notes_body_tasks_add_title">タスクを追加</div>
 						</button>
 						<div class="aozora_left_panel_notes_body_tasks_add_more">
@@ -105,7 +105,7 @@
 					@if (EditMode)
 					{
 						<button @onclick="_=>DeleteItem(itemText)">
-							@(TabControl.GetMaterialSymbolOutlined("delete"))
+							@(FullEditor.GetMaterialSymbolOutlined("delete"))
 						</button>
 					}
 				</div>
@@ -114,13 +114,13 @@
 				<div class="aozora_left_panel_notes_body_toc">
 					<div class="aozora_left_panel_notes_body_toc_add">
 						<div class="aozora_left_panel_notes_body_toc_add_icon_plus">
-							@(TabControl.GetMaterialSymbolOutlined("add"))
+							@(FullEditor.GetMaterialSymbolOutlined("add"))
 						</div>
 						<button class="aozora_left_panel_notes_body_toc_add_icon" @onclick="_=>AddNote()">
-							@(TabControl.GetMaterialSymbolOutlined("note"))
+							@(FullEditor.GetMaterialSymbolOutlined("note"))
 						</button>
 						<button class="aozora_left_panel_notes_body_toc_add_icon" @onclick="_=>AddTask()">
-							@(TabControl.GetMaterialSymbolOutlined("task"))
+							@(FullEditor.GetMaterialSymbolOutlined("task"))
 						</button>
 					</div>
 
@@ -134,10 +134,10 @@
 									@switch (item)
 									{
 										case notesTasks itemTask:
-											@(TabControl.GetMaterialSymbolOutlined("task"))
+											@(FullEditor.GetMaterialSymbolOutlined("task"))
 											break;
 										case notesText itemText:
-											@(TabControl.GetMaterialSymbolOutlined("note"))
+											@(FullEditor.GetMaterialSymbolOutlined("note"))
 											break;
 									}
 								</div>
@@ -145,13 +145,13 @@
 								@if (EditMode)
 								{
 									<button @onclick="_=>MoveItem(item,-1)" class="aozora_left_panel_notes_body_toc_item_up" @onclick:preventDefault @onclick:stopPropagation="true" disabled="@(Root.Notes.Items.FirstOrDefault()==item?"disabled":null)">
-										@(TabControl.GetMaterialSymbolOutlined("arrow_upward"))
+										@(FullEditor.GetMaterialSymbolOutlined("arrow_upward"))
 									</button>
 									<button @onclick="_=>MoveItem(item,+1)" class="aozora_left_panel_notes_body_toc_item_down" @onclick:preventDefault @onclick:stopPropagation="true" disabled="@(Root.Notes.Items.LastOrDefault()==item?"disabled":null)">
-										@(TabControl.GetMaterialSymbolOutlined("arrow_downward"))
+										@(FullEditor.GetMaterialSymbolOutlined("arrow_downward"))
 									</button>
 									<button class="aozora_left_panel_notes_body_toc_item_delete" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="_=>DeleteItem(item)">
-										@(TabControl.GetMaterialSymbolOutlined("delete"))
+										@(FullEditor.GetMaterialSymbolOutlined("delete"))
 									</button>
 								}
 							</div>
@@ -285,14 +285,14 @@
 				{
 					var tasks = GetTasks(parent);
 					<button @onclick="_=>MoveTask(parent,t,-1)" style="grid-column:3/4;" disabled="@(tasks?.FirstOrDefault() == t?"disabled":null)">
-						@(TabControl.GetMaterialSymbolOutlined("arrow_upward"))
+						@(FullEditor.GetMaterialSymbolOutlined("arrow_upward"))
 					</button>
 					<button @onclick="_=>MoveTask(parent,t,+1)" style="grid-column:4/5;" disabled="@(tasks?.LastOrDefault() == t?"disabled":null)">
-						@(TabControl.GetMaterialSymbolOutlined("arrow_downward"))
+						@(FullEditor.GetMaterialSymbolOutlined("arrow_downward"))
 					</button>
 
 					<button @onclick="_=>DeleteTask(parent,t)" style="grid-column:5/6;">
-						@(TabControl.GetMaterialSymbolOutlined("delete"))
+						@(FullEditor.GetMaterialSymbolOutlined("delete"))
 					</button>
 				}
 				<div class="aozora_left_panel_notes_body_task_entry_menu">
@@ -317,7 +317,7 @@
 				</div>
 				<button class="aozora_left_panel_notes_body_task_entry_star @(t.stared ? "aozora_left_panel_notes_body_task_entry_star_on":"aozora_left_panel_notes_body_task_entry_star_off")"
 				@onclick="_=>t.stared=!t.stared">
-					@(TabControl.GetMaterialSymbolOutlined("star", $"font-variation-settings: 'FILL' {(t.stared ? 1 : 0)};"))
+					@(FullEditor.GetMaterialSymbolOutlined("star", $"font-variation-settings: 'FILL' {(t.stared ? 1 : 0)};"))
 				</button>
 				@if (SelectedTask == t || !string.IsNullOrEmpty(t.detail))
 				{
@@ -330,10 +330,10 @@
 						<div class="aozora_left_panel_notes_body_task_entry_deadline">
 							<button @onclick="_=>{t.deadline=default;t.deadlineSpecified=false;t.interval=string.Empty;}" title="期限をクリア">
 								<div class="aozora_left_panel_notes_container_not_hover_icon">
-									@(TabControl.GetMaterialSymbolOutlined("calendar_month"))
+									@(FullEditor.GetMaterialSymbolOutlined("calendar_month"))
 								</div>
 								<div class="aozora_left_panel_notes_container_hover_icon">
-									@(TabControl.GetMaterialSymbolOutlined("cancel"))
+									@(FullEditor.GetMaterialSymbolOutlined("cancel"))
 								</div>
 							</button>
 							<input type="date" @bind="t.deadline" />
@@ -342,7 +342,7 @@
 						{
 							<div class="aozora_left_panel_notes_body_task_entry_repeat">
 								<button title="繰り返しを追加" @onclick="@(_=>t.interval="P1D")">
-									@(TabControl.GetMaterialSymbolOutlined("event_repeat"))
+									@(FullEditor.GetMaterialSymbolOutlined("event_repeat"))
 								</button>
 							</div>
 						}
@@ -351,10 +351,10 @@
 							<div class="aozora_left_panel_notes_body_task_entry_repeat">
 								<button title="繰り返しを削除" @onclick="@(_=>t.interval=string.Empty)">
 									<div class="aozora_left_panel_notes_container_not_hover_icon">
-										@(TabControl.GetMaterialSymbolOutlined("event_repeat"))
+										@(FullEditor.GetMaterialSymbolOutlined("event_repeat"))
 									</div>
 									<div class="aozora_left_panel_notes_container_hover_icon">
-										@(TabControl.GetMaterialSymbolOutlined("cancel"))
+										@(FullEditor.GetMaterialSymbolOutlined("cancel"))
 									</div>
 								</button>
 								@{
@@ -389,7 +389,7 @@
 					{
 						<div class="aozora_left_panel_notes_body_task_entry_deadline">
 							<button @onclick="_=>{t.deadline=DateTime.Today;t.deadlineSpecified=true;}" title="期限を追加">
-								@(TabControl.GetMaterialSymbolOutlined("calendar_month"))
+								@(FullEditor.GetMaterialSymbolOutlined("calendar_month"))
 							</button>
 						</div>
 					}
@@ -405,12 +405,12 @@
 								0 =>"aozora_left_panel_notes_body_task_entry_deadline_date_today",
 								_ =>"aozora_left_panel_notes_body_task_entry_deadline_date_future",
 							})">
-								@(TabControl.GetMaterialSymbolOutlined("calendar_month", iconStyle))
+								@(FullEditor.GetMaterialSymbolOutlined("calendar_month", iconStyle))
 								@(GetDateRelative(t.deadline))
 							</span>
 							@if (!string.IsNullOrEmpty(t.interval))
 							{
-								@(TabControl.GetMaterialSymbolOutlined("repeat", iconStyle))
+								@(FullEditor.GetMaterialSymbolOutlined("repeat", iconStyle))
 							}
 						</div>
 					}
@@ -566,7 +566,7 @@
 	}
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; private set; }
+	public FullEditor? Root { get; private set; }
 
 	object? selectedItemInContextMenu { get; set; }
 

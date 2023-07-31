@@ -487,7 +487,7 @@
 		AozoraEditor.Shared.Models.Version.version? v = null;
 		try
 		{
-			using var stream = typeof(TabControl).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Models.Version.xml") ?? throw new Exception("Loading resouce failed!");
+			using var stream = typeof(FullEditor).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Models.Version.xml") ?? throw new Exception("Loading resouce failed!");
 			using var sr = new StreamReader(stream);
 			var xs = new System.Xml.Serialization.XmlSerializer(typeof(AozoraEditor.Shared.Models.Version.version));
 			v = (AozoraEditor.Shared.Models.Version.version?)xs.Deserialize(sr);

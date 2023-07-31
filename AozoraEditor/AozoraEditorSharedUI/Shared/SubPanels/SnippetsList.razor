@@ -1,7 +1,7 @@
 ﻿<div class="snippet_header">
 	<p class="snippet_header_title">スニペット一覧</p>
-	<div class="snippet_header_info snippet_button @(ShowInfo?"snippet_header_info_on":"snippet_header_info_off")" @onclick="_=>{ShowInfo=!ShowInfo;StateHasChanged();}" title="@InfoText">@(TabControl.GetMaterialSymbolOutlined("info"))</div>
-	<div class="snippet_header_run_all snippet_button" @onclick="_=>{RunPreviewAll();StateHasChanged();}" title="全てのプレビューを表示">@(TabControl.GetMaterialSymbolOutlined("play_arrow"))</div>
+	<div class="snippet_header_info snippet_button @(ShowInfo?"snippet_header_info_on":"snippet_header_info_off")" @onclick="_=>{ShowInfo=!ShowInfo;StateHasChanged();}" title="@InfoText">@(FullEditor.GetMaterialSymbolOutlined("info"))</div>
+	<div class="snippet_header_run_all snippet_button" @onclick="_=>{RunPreviewAll();StateHasChanged();}" title="全てのプレビューを表示">@(FullEditor.GetMaterialSymbolOutlined("play_arrow"))</div>
 	<input @bind="SearchWord" placeholder="検索" />
 </div>
 
@@ -30,13 +30,13 @@
 			<p class="snippet_text">@((MarkupString)ItemToHtmlText(item))</p>
 			@if (item.DocumentLink is not null)
 			{
-				<a class="snippet_document_link snippet_button" title="公式ドキュメント" target="_blank" href="@(item.DocumentLink)">@(TabControl.GetMaterialSymbolOutlined("link"))</a>
+				<a class="snippet_document_link snippet_button" title="公式ドキュメント" target="_blank" href="@(item.DocumentLink)">@(FullEditor.GetMaterialSymbolOutlined("link"))</a>
 			}
 			@if (item.Obsolete == true)
 			{
-				<p class="snippet_obsolete snippet_button" title="この要素は現在使われていません。">@(TabControl.GetMaterialSymbolOutlined("warning"))</p>
+				<p class="snippet_obsolete snippet_button" title="この要素は現在使われていません。">@(FullEditor.GetMaterialSymbolOutlined("warning"))</p>
 			}
-			<p class="snippet_run_button snippet_button" @onclick="_=>RunPreview(item)">@(TabControl.GetMaterialSymbolOutlined("play_arrow"))</p>
+			<p class="snippet_run_button snippet_button" @onclick="_=>RunPreview(item)">@(FullEditor.GetMaterialSymbolOutlined("play_arrow"))</p>
 			<div class="snippet_labels">
 				<table>
 					@ListToTableHtml(item.Labels.JpFullyRoman,new List<string>(), "全文")
@@ -66,7 +66,7 @@
 	bool ShowInfo { get; set; } = false;
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; set; }
+	public FullEditor? Root { get; set; }
 
 
 	const string InfoText = """"

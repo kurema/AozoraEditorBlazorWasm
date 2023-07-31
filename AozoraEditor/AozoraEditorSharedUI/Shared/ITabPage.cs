@@ -19,7 +19,7 @@ public interface ITabPage
 	ObservableCollection<ICommandEntry> MainCommands { get; }
 
 	Guid Id { get; set; }
-	TabControl? Root { get; set; }
+	FullEditor? Root { get; set; }
 
 }
 
@@ -40,7 +40,7 @@ public class CommandEntry : ICommandEntry
 
 	public static CommandEntry FromMaterialSymbolOutlined(string name, string? description = null)
 	{
-		return new CommandEntry(TabControl.GetMaterialSymbolOutlined(name), description);
+		return new CommandEntry(FullEditor.GetMaterialSymbolOutlined(name), description);
 	}
 
 	public RenderFragment Icon { get; set; }
@@ -108,7 +108,7 @@ public class CommandEntryFile : ICommandEntry
 
 	public static CommandEntryFile FromMaterialSymbolOutlined(string name, string? description = null)
 	{
-		return new CommandEntryFile(TabControl.GetMaterialSymbolOutlined(name), description);
+		return new CommandEntryFile(FullEditor.GetMaterialSymbolOutlined(name), description);
 	}
 
 	public event EventHandler<Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs>? FileChanged;
@@ -146,7 +146,7 @@ public class CommandEntrySpacer : ICommandEntry
 
 //		public RenderFragment Body => (builder) =>
 //		{
-//			builder.OpenComponent(0, typeof(TabControl));
+//			builder.OpenComponent(0, typeof(FullEditor));
 //		};
 
 //		public ObservableCollection<CommandEntry> Commands => new() { };

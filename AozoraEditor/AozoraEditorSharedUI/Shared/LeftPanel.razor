@@ -40,7 +40,7 @@
 	public bool IsOpen { get => _IsOpen; set { _IsOpen = value; StateHasChanged(); Root?.NotifyStateChanged(); } }
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; private set; }
+	public FullEditor? Root { get; private set; }
 
 
 	void SelectTab(TabEntry tab)
@@ -60,9 +60,9 @@
 	{
 		tabEntries = new()
 		{
-			new TabEntry("ファイル","Files",TabControl.GetMaterialSymbolOutlined("folder")),
-			new TabEntry("検索","Search",TabControl.GetMaterialSymbolOutlined("search")),
-			new TabEntry("メモ","Notes",TabControl.GetMaterialSymbolOutlined("note")),
+			new TabEntry("ファイル","Files",FullEditor.GetMaterialSymbolOutlined("folder")),
+			new TabEntry("検索","Search",FullEditor.GetMaterialSymbolOutlined("search")),
+			new TabEntry("メモ","Notes",FullEditor.GetMaterialSymbolOutlined("note")),
 		};
 		_selectedTab = tabEntries[0];
 	}

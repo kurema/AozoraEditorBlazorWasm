@@ -156,7 +156,7 @@
 				sw.Close();
 				if (Root?.Dialog is not null && Root.WarnUTF8)
 				{
-					var result = await Root.Dialog.ShowDialog("保存", "Shift_JIS非対応の文字が含まれています。\nUTF-8で保存しました。", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "no_warn", Text = "今後通知しない" }, new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+					var result = await Root.Dialog.ShowDialog("保存", "Shift_JIS非対応の文字が含まれています。\nUTF-8で保存しました。", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "no_warn", Text = "今後通知しない" }, new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
 					if (result.Id is "no_warn") Root.WarnUTF8 = false;
 				}
 			}
@@ -169,7 +169,7 @@
 
 		return;
 	fail:
-		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", TabControl.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
 		return;
 	}
 
@@ -224,5 +224,5 @@
 	}
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; set; }
+	public FullEditor? Root { get; set; }
 }

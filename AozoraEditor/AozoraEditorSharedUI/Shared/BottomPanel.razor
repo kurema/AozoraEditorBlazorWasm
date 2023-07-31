@@ -149,7 +149,7 @@
 	record TabEntry(string Title, string Key) { }
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; private set; }
+	public FullEditor? Root { get; private set; }
 
 	public void SelectTabAndGoto(Guid guid, Position position)
 	{

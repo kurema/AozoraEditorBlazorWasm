@@ -8,14 +8,14 @@
 	<div class="aozora_dictionary_search_border">
 		<div class="aozora_dictionary_search_button">
 			@*当初はボタンの予定だったがボタンである必要はない。*@
-			@(TabControl.GetMaterialSymbolOutlined("search"))
+			@(FullEditor.GetMaterialSymbolOutlined("search"))
 		</div>
 		<button class="aozora_dictionary_option_button" @onclick="_=>{SearchOptionVisible=!SearchOptionVisible;}">
 			@GetSearchOptionTargetsTitle(SearchOptionTarget)
 		</button>
 		<input @bind="SearchText" placeholder="漢字・文字コード・部首の読み" />
 		<button class="aozora_dictionary_search_info_button" @onclick="_=>{SearchInfoVisible=!SearchInfoVisible;}">
-			@(TabControl.GetMaterialSymbolOutlined("info"))
+			@(FullEditor.GetMaterialSymbolOutlined("info"))
 		</button>
 		@if (SearchOptionVisible)
 		{
@@ -59,7 +59,7 @@
 <div class="aozora_dictionary_radicals_container">
 	<details>
 		<summary>
-			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>総画数</h1>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(FullEditor.GetMaterialSymbolOutlined("expand_more"))</span>総画数</h1>
 		</summary>
 
 		<div class="aozora_dictionary_radicals">
@@ -78,7 +78,7 @@
 
 	<details>
 		<summary>
-			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">読み</span></h1>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(FullEditor.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">読み</span></h1>
 		</summary>
 
 		<div class="aozora_dictionary_radicals">
@@ -109,7 +109,7 @@
 
 	<details>
 		<summary>
-			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">画数</span></h1>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(FullEditor.GetMaterialSymbolOutlined("expand_more"))</span><span class="aozora_dictionary_radicals_header_main">部首</span><span class="aozora_dictionary_radicals_header_sub">画数</span></h1>
 		</summary>
 
 		<div class="aozora_dictionary_radicals">
@@ -141,7 +141,7 @@
 	<details>
 		<!-- その他はradical(部首)ではないが、まぁええやろ。 -->
 		<summary>
-			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(TabControl.GetMaterialSymbolOutlined("expand_more"))</span>その他</h1>
+			<h1 class="aozora_dictionary_radicals_header"><span class="aozora_dictionary_radicals_header_icon">@(FullEditor.GetMaterialSymbolOutlined("expand_more"))</span>その他</h1>
 		</summary>
 		<div class="aozora_dictionary_others">
 			@if (Aozora.GaijiChuki.Manager.Instance?.other?.PageOther is not null)
@@ -521,10 +521,10 @@
 							</text>
 						}
 						<button class="aozora_dictionary_result_detail_button" onclick="navigator.clipboard.writeText(this.getAttribute('aozora-note'))" aozora-note="@content">
-							@(TabControl.GetMaterialSymbolOutlined("content_copy"))
+							@(FullEditor.GetMaterialSymbolOutlined("content_copy"))
 						</button>
 						<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{if(Editor is not null) await Editor.InsertText(content,"aozora-dictionary");}'>
-							@(TabControl.GetMaterialSymbolOutlined("content_paste"))
+							@(FullEditor.GetMaterialSymbolOutlined("content_paste"))
 						</button>
 						@{
 							int page = -1;
@@ -537,7 +537,7 @@
 							{
 								<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{await OpenPdfPage(page);}'>
 									@(
-								TabControl.GetMaterialSymbolOutlined("open_in_new_down")
+								FullEditor.GetMaterialSymbolOutlined("open_in_new_down")
 											)
 								</button>
 							}

@@ -35,8 +35,8 @@
 
 	public static CommandEntryToggle GetSplitToggleCommand(bool defaultSplit) =>
 	new CommandEntryToggle(
-		TabControl.GetMaterialSymbolOutlined("splitscreen_left", "font-variation-settings:'FILL' 1;"),
-		TabControl.GetMaterialSymbolOutlined("splitscreen", "font-variation-settings:'FILL' 1;"), "水平分割", "垂直分割", defaultSplit);
+		FullEditor.GetMaterialSymbolOutlined("splitscreen_left", "font-variation-settings:'FILL' 1;"),
+		FullEditor.GetMaterialSymbolOutlined("splitscreen", "font-variation-settings:'FILL' 1;"), "水平分割", "垂直分割", defaultSplit);
 
 
 	EditorPage? _Content;
@@ -160,5 +160,5 @@
 
 	public event EventHandler? TitleChanged;
 
-	public TabControl? Root { get; set; }
+	public FullEditor? Root { get; set; }
 }

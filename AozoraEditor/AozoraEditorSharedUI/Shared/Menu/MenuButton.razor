@@ -2,7 +2,7 @@
 @inject IJSRuntime JSRuntime;
 
 <button class="menubutton" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="_=>ItemClickedAsync()">
-	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? TabControl.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
+	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? FullEditor.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
 </button>
 
 <CascadingValue Value="this">
@@ -29,7 +29,7 @@
 	//public EventCallback<EventArgs> OnOpened { get; set; }
 
 	[CascadingParameter(Name = nameof(Root))]
-	public TabControl? Root { get; set; }
+	public FullEditor? Root { get; set; }
 
 	public void AddItem(IMenuItem menuItem)
 	{

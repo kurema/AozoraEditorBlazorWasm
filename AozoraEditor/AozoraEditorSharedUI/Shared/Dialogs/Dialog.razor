@@ -48,8 +48,8 @@
 	string Message { get; set; } = string.Empty;
 	string Title { get; set; } = string.Empty;
 
-	public static RenderFragment IconMessage => TabControl.GetMaterialSymbolOutlined("info", "color:#2088ff;font-size:48px;");
-	public static RenderFragment IconError => TabControl.GetMaterialSymbolOutlined("error", "color:#e50000;font-size:48px;");
+	public static RenderFragment IconMessage => FullEditor.GetMaterialSymbolOutlined("info", "color:#2088ff;font-size:48px;");
+	public static RenderFragment IconError => FullEditor.GetMaterialSymbolOutlined("error", "color:#e50000;font-size:48px;");
 	//@<span class="material-symbols-outlined" style="color:#2088ff;font-size:48px;">info</span>;
 
 	void Clicked(DialogOption option)
