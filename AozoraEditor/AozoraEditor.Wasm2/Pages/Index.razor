@@ -1,3 +1,16 @@
-﻿@page "/"
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@page "/"
 
-<FullEditor />
+<CascadingValue Name="AppModel" Value="@Model">
+	<FullEditor />
+</CascadingValue>
+
+@code {
+	Models.ApplicationModel? Model { get; set; }
+
+	protected override void OnInitialized()
+	{
+		Model = new Models.ApplicationModel(localStorage);
+		base.OnInitialized();
+	}
+}

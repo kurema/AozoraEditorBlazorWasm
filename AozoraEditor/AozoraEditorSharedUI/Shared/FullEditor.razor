@@ -216,7 +216,7 @@
 						<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
 							<div>
 								<p style="font-size:32px;">青空文庫形式エディタ by kurema</p>
-								<p>このアプリを気に入られましたら、是非ご支援をご検討いただけますようお願いします。</p>
+								<p>このアプリを気に入られましたら、是非ご支援をご検討ください。</p>
 							</div>
 						</div>
 					}
@@ -236,12 +236,12 @@
 </CascadingValue>
 
 @code {
-	[CascadingParameter]
-	public Models.IApplicationModel? AppModel { get; set; }
+	[CascadingParameter(Name = nameof(AppModel))]
+	public Models.EnvironmentAbstractionLayer.IApplicationModel? AppModel { get; set; }
 
 	public bool SplitVerticalDefault { get; set; } = true;
 
-	MenuBar? MenuBar { get; set; }
+	Menu.MenuBar? MenuBar { get; set; }
 	BottomPanel? bottomPanel { get; set; }
 	LeftPanel? leftPanel { get; set; }
 	public Themes.ThemeControl? Theme { get; private set; }
@@ -282,22 +282,22 @@
 		{
 			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 			commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-	}
-		};
-			return _CommonCommands ??= new ICommandEntry[]
-	{
-				commandOpenFile,
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+		}
 	};
+			return _CommonCommands ??= new ICommandEntry[]
+		{
+				commandOpenFile,
+		};
 		}
 	}
 
