@@ -10,7 +10,7 @@ public class ApplicationModel : IApplicationModel, ILocalStorageString
 		LocalStorageService = localStorageService ?? throw new ArgumentNullException(nameof(localStorageService));
 	}
 
-	public Blazored.LocalStorage.ILocalStorageService LocalStorageService { get; init; }
+	public ILocalStorageService LocalStorageService { get; init; }
 
 	public async Task<string> LoadLocal(string tag)
 	{

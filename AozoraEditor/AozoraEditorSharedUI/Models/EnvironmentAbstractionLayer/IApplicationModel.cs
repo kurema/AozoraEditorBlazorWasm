@@ -17,6 +17,11 @@ public interface ILocalStorageString
     Task<string> LoadLocal(string tag);
 }
 
+public interface ILocalFilePickable
+{
+    Task<Stream?> OpenLocalFile(string extension);
+}
+
 
 public interface IApplicationModel
 {

@@ -1,0 +1,9 @@
+﻿<span class="material-symbols-outlined" style="@(Style ?? string.Empty)">@(Name ?? "error")</span>
+
+@code {
+	[Parameter]
+	public string? Style { get; set; } = null;
+
+	[Parameter]
+	public string? Name { get; set; } = null;
+}

@@ -14,7 +14,10 @@
 							<MenuItem Title="青空文庫形式テキスト" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="book" />
 							<MenuItem Title="Markdownドキュメント" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="draft" />
 						</MenuItem>
-						<MenuItem Title="開く" />
+						@if (this.AppModel is Models.EnvironmentAbstractionLayer.ILocalFilePickable)
+						{
+							<MenuItem Title="開く" />
+						}
 					</MenuItem>
 					<MenuItem Title="設定">
 						<MenuItem Title="テーマ">
@@ -280,24 +283,33 @@
 	{
 		get
 		{
-			var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
-			commandOpenFile.FileChanged += async (_, e) =>
-	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
-		}
-	};
-			return _CommonCommands ??= new ICommandEntry[]
-		{
-				commandOpenFile,
-		};
+			IEnumerable<ICommandEntry> CommonCommandsProvider()
+			{
+				if (this.AppModel is not Models.EnvironmentAbstractionLayer.ILocalFilePickable)
+				{
+					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
+					commandOpenFile.FileChanged += async (_, e) =>
+				{
+					if (e.FileCount != 1 || e.File?.Name == null) return;
+					try
+					{
+						var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+						await LoadFile(stream, e.File.Name);
+					}
+					catch
+					{
+						await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+					}
+				};
+					yield return commandOpenFile;
+				}
+				else
+				{
+					//ToDo: Mauiのような環境では標準ファイルピッカーを利用する。
+				}
+			};
+
+			return _CommonCommands ??= CommonCommandsProvider().ToArray();
 		}
 	}
 
@@ -462,7 +474,8 @@
 
 	public static RenderFragment GetMaterialSymbolOutlined(string name, string? style = null)
 	{
-		return @<span class="material-symbols-outlined" style="@(style ?? string.Empty)">@name</span>;
+		return @<AozoraEditor.Shared.Shared.Miscellaneous.MaterialSymbolOutlined Name="@name" Style="@style" />;
+		//return @<span class="material-symbols-outlined" style="@(style ?? string.Empty)">@name</span>;
 	}
 
 	public void NotifyStateChanged()
