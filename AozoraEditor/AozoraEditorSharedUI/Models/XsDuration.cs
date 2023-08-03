@@ -153,7 +153,9 @@ namespace AozoraEditor.Shared.Models
 
 		public DateTime GetAppended(DateTime t)
 		{
-			return t.AddYears(Years).AddMonths(Months).AddDays(Days).AddHours(Hours).AddMinutes(Minutes).AddSeconds(Seconds);
+			//月末は月末にする。
+			var m = t.AddDays(1).Day == 1 ? t.AddDays(1).AddYears(Years).AddMonths(Months).AddDays(-1) : t.AddYears(Years).AddMonths(Months);
+			return m.AddDays(Days).AddHours(Hours).AddMinutes(Minutes).AddSeconds(Seconds);
 		}
 
 		//負数の取り扱いなど若干の不安があります。

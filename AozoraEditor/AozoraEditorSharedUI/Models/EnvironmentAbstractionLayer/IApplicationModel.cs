@@ -10,16 +10,16 @@ namespace AozoraEditor.Shared.Models.EnvironmentAbstractionLayer;
 
 public interface ILocalStorageString
 {
-    //MAUIやWasmのような実行環境毎に異なる挙動を吸収するインターフェース。
-    //Cascadeすれば良いだけなのでDIとか使う必要はない。
+	//MAUIやWasmのような実行環境毎に異なる挙動を吸収するインターフェース。
+	//Cascadeすれば良いだけなのでDIとか使う必要はない。
 
-    Task SaveLocal(string tag, string text);
-    Task<string> LoadLocal(string tag);
+	Task SaveLocal(string tag, string text);
+	Task<string> LoadLocal(string tag);
 }
 
 public interface ILocalFilePickable
 {
-    Task<Stream?> OpenLocalFile(string extension);
+	Task<(Stream? Stream, string FileName)> OpenLocalFile(string[] extensions);
 }
 
 

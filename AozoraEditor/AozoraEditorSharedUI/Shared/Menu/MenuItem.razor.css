@@ -10,6 +10,7 @@
     padding: 4px 0;
     box-shadow: var(--aozora-menubar-button-box-shadow);
     color: var(--aozora-theme-text-color);
+    backdrop-filter: var(--aozora-menubar-box-backdrop-filter);
 }
 
     .menubox > .mebubox_entry {

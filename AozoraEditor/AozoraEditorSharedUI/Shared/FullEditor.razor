@@ -283,11 +283,14 @@
 	{
 		get
 		{
+			async Task ShowFileOpenError() => await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+
 			IEnumerable<ICommandEntry> CommonCommandsProvider()
 			{
-				if (this.AppModel is not Models.EnvironmentAbstractionLayer.ILocalFilePickable)
+				if (this.AppModel is not Models.EnvironmentAbstractionLayer.ILocalFilePickable ilf)
 				{
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
+					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
 				{
 					if (e.FileCount != 1 || e.File?.Name == null) return;
@@ -298,14 +301,28 @@
 					}
 					catch
 					{
-						await ShowDialog("読み込み", "ファイルの読み込みに失敗しました。", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("了解", true) { Id = "yes" });
+						await ShowFileOpenError();
 					}
 				};
 					yield return commandOpenFile;
 				}
 				else
 				{
-					//ToDo: Mauiのような環境では標準ファイルピッカーを利用する。
+					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
+					commandOpenFile.Clicked += async (_, _) =>
+				{
+					try
+					{
+						var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+						if (stream is null) return;
+						await LoadFile(stream, fn);
+					}
+					catch
+					{
+						await ShowFileOpenError();
+					}
+				};
+					yield return commandOpenFile;
 				}
 			};
 
@@ -588,6 +605,9 @@
 		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}
+
+	[Parameter]
+	public Models.Projects.AozoraProject Project { get; set; } = new();
 
 	public Models.Notes.notes Notes { get; set; } = new()
 		{
