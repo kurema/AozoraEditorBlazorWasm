@@ -252,7 +252,7 @@
 	{
 		if (Root is null) return;
 		var content = Root.Notes;
-		if (content?.Items is null) Root.Notes = content = new() { Items = new[] { item } };
+		if (content?.Items is null) Root.Project.Notes = content = new() { Items = new[] { item } };
 		else
 		{
 			var items = content.Items;

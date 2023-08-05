@@ -292,36 +292,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
-				{
-					if (e.FileCount != 1 || e.File?.Name == null) return;
-					try
-					{
-						var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-						await LoadFile(stream, e.File.Name);
-					}
-					catch
-					{
-						await ShowFileOpenError();
-					}
-				};
+		{
+			if (e.FileCount != 1 || e.File?.Name == null) return;
+			try
+			{
+				var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+				await LoadFile(stream, e.File.Name);
+			}
+			catch
+			{
+				await ShowFileOpenError();
+			}
+		};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
-				{
-					try
-					{
-						var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-						if (stream is null) return;
-						await LoadFile(stream, fn);
-					}
-					catch
-					{
-						await ShowFileOpenError();
-					}
-				};
+		{
+			try
+			{
+				var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+				if (stream is null) return;
+				await LoadFile(stream, fn);
+			}
+			catch
+			{
+				await ShowFileOpenError();
+			}
+		};
 					yield return commandOpenFile;
 				}
 			};
@@ -607,15 +607,9 @@
 	}
 
 	[Parameter]
-	public Models.Projects.AozoraProject Project { get; set; } = new();
+	public Models.Projects.AozoraProject Project { get; set; } = Models.Projects.AozoraProject.GetBasicProject();
 
-	public Models.Notes.notes Notes { get; set; } = new()
-		{
-			Items = new object[]{
-				new Models.Notes.notesText(){header="ようこそ",Value="メモをしましょう。\nアイデア・頻出語句・登場人物、なんでもメモしておくと便利です。\nタスクも記録しておけます。"},
-				new Models.Notes.notesTasks(){header="タスク",Items=new Models.Notes.task[]{ new() { header=string.Empty } } },
-	}
-		};
+	public Models.Notes.notes Notes => Project?.Notes ?? new Models.Notes.notes();
 
 	public Dialogs.Dialog? Dialog { get; private set; }
 
