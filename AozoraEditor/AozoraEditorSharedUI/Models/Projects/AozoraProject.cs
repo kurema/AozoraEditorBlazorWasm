@@ -10,9 +10,19 @@ namespace AozoraEditor.Shared.Models.Projects
 	public class AozoraProject
 	{
 		public List<IFileEntry> Files { get; } = new List<IFileEntry>();
-		public Project.Project Project { get; set; } = new();
+		//public Project.Project Project { get; set; } = new();
 
 		public Notes.notes Notes { get; set; } = new();
+
+		public Project.Project AsSingleProject()
+		{
+			var result = new Project.Project();
+			result.Notes = new Project.ProjectNotes() { Item = new() { Item = new Project.ContentText() { path = "notes.xml", Value = "" } } };
+			result.Snippet = new Project.ProjectSnippet() { Item = new() { Item = new object() } };
+			return result;
+
+			throw new NotImplementedException();
+		}
 
 		public static AozoraProject GetBasicProject() => new AozoraProject()
 		{

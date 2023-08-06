@@ -12,7 +12,7 @@
 				<xs:element name="Toc">
 					<xs:complexType>
 						<xs:choice minOccurs="0" maxOccurs="unbounded">
-							<xs:element name="entry">
+							<xs:element name="Entry">
 								<xs:complexType>
 									<xs:choice>
 										<xs:element ref="File" />
@@ -23,21 +23,21 @@
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="notes">
+				<xs:element name="Notes">
 					<xs:complexType>
 						<xs:choice>
 							<xs:element ref="Content"/>
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="snippet">
+				<xs:element name="Snippet">
 					<xs:complexType>
 						<xs:choice>
 							<xs:element ref="Content"/>
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="tabs">
+				<xs:element name="Tabs">
 					<xs:complexType>
 						<xs:choice minOccurs="0" maxOccurs="unbounded">
 							<xs:element name="tab">

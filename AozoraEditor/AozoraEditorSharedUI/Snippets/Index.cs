@@ -74,7 +74,7 @@ public partial class Index
 	}
 	public static string ArgTypeToSampleText(ArgType at, int? n)
 	{
-		string ns = (n is null ? string.Empty : n.Value.ToString());
+		string ns = (n is null ? string.Empty : n.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
 		return at switch
 		{
 			ArgType.Alphabet => $"Abc{ns}",
@@ -360,7 +360,7 @@ public partial class Index
 				maxNum = Math.Max(maxNum, num + 1);
 				if (result is null)
 				{
-					sb.Append($"{{{numShifted}}}");
+					sb.Append(System.Globalization.CultureInfo.InvariantCulture, $"{{{numShifted}}}");
 					argTypes[numShifted] = (callDepth, num);
 				}
 				else

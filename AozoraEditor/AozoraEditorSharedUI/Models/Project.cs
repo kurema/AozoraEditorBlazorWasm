@@ -35,7 +35,7 @@ namespace AozoraEditor.Shared.Models.Project {
         private ProjectTab[] tabsField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("entry", IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("Entry", IsNullable=false)]
         public ProjectEntry[] Toc {
             get {
                 return this.tocField;
@@ -46,7 +46,7 @@ namespace AozoraEditor.Shared.Models.Project {
         }
         
         /// <remarks/>
-        public ProjectNotes notes {
+        public ProjectNotes Notes {
             get {
                 return this.notesField;
             }
@@ -56,7 +56,7 @@ namespace AozoraEditor.Shared.Models.Project {
         }
         
         /// <remarks/>
-        public ProjectSnippet snippet {
+        public ProjectSnippet Snippet {
             get {
                 return this.snippetField;
             }
@@ -67,7 +67,7 @@ namespace AozoraEditor.Shared.Models.Project {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("tab", IsNullable=false)]
-        public ProjectTab[] tabs {
+        public ProjectTab[] Tabs {
             get {
                 return this.tabsField;
             }
