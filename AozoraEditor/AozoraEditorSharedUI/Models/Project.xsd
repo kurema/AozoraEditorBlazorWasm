@@ -23,6 +23,13 @@
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="Trash">
+					<xs:complexType>
+						<xs:choice minOccurs="0" maxOccurs="unbounded">
+							<xs:element ref="File" />
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="Notes">
 					<xs:complexType>
 						<xs:choice>

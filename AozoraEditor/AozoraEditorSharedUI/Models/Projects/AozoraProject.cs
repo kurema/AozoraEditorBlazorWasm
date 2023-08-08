@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AozoraEditor.Shared.Snippets;
 
 namespace AozoraEditor.Shared.Models.Projects
 {
@@ -34,6 +35,20 @@ namespace AozoraEditor.Shared.Models.Projects
 						new Notes.notesTasks(){header="タスク",Items=new Notes.task[]{ new() { header=string.Empty } } }, }
 			}
 		};
+
+		private Snippets.Schema.Snippets? _SnippetsOverride;
+
+		public Snippets.Schema.Snippets? SnippetsOverride
+		{
+			get => _SnippetsOverride;
+			set
+			{
+				_SnippetsOverride = value;
+				SnippetsOverrideIndex = _SnippetsOverride is null ? null : new Snippets.Index(value);
+			}
+		}
+
+		public Snippets.Index? SnippetsOverrideIndex { get; private set; }
 	}
 
 	public interface IFileEntry

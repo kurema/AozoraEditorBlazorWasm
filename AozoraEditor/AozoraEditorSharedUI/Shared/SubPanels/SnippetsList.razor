@@ -17,9 +17,9 @@
 }
 
 
-@if (Snippets.Loader.ContentIndex?.ContentsFlat is not null)
+@if (Root?.SnippetsIndex?.ContentsFlat is not null)
 {
-	foreach (var item in Snippets.Loader.ContentIndex.ContentsFlat.ToArray())
+	foreach (var item in Root.SnippetsIndex.ContentsFlat.ToArray())
 	{
 		if (!string.IsNullOrWhiteSpace(SearchWord) && !item.Text.Any(a => a.Contains(SearchWord, StringComparison.InvariantCultureIgnoreCase)) &&
 		!item.Labels.AllValues.Any(a => a.Text.Contains(SearchWord, StringComparison.InvariantCultureIgnoreCase))
@@ -115,8 +115,8 @@
 
 	void RunPreviewAll()
 	{
-		if (Snippets.Loader.ContentIndex?.ContentsFlat is null) return;
-		foreach (var item in Snippets.Loader.ContentIndex.ContentsFlat.ToArray())
+		if (Root?.SnippetsIndex?.ContentsFlat is null) return;
+		foreach (var item in Root.SnippetsIndex.ContentsFlat.ToArray())
 		{
 			if (Previews.ContainsKey(item)) continue;
 			Previews.Add(item, new PreviewEntry(item));

@@ -28,6 +28,8 @@ namespace AozoraEditor.Shared.Models.Project {
         
         private ProjectEntry[] tocField;
         
+        private File[] trashField;
+        
         private ProjectNotes notesField;
         
         private ProjectSnippet snippetField;
@@ -42,6 +44,17 @@ namespace AozoraEditor.Shared.Models.Project {
             }
             set {
                 this.tocField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("File", IsNullable=false)]
+        public File[] Trash {
+            get {
+                return this.trashField;
+            }
+            set {
+                this.trashField = value;
             }
         }
         
