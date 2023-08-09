@@ -44,7 +44,7 @@ namespace AozoraEditor.Shared.Models.Projects
 			set
 			{
 				_SnippetsOverride = value;
-				SnippetsOverrideIndex = _SnippetsOverride is null ? null : new Snippets.Index(value);
+				SnippetsOverrideIndex = value is null ? null : new Snippets.Index(value);
 			}
 		}
 

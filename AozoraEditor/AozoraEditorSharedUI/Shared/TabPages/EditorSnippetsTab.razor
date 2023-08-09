@@ -1,0 +1,47 @@
+﻿@implements ITabPage
+
+@code {
+	public string FileName => "Snippets.xml";
+
+	public RenderFragment Title =>@<span>@FileName</span>;
+
+	public RenderFragment Body =>@<StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" />;
+
+	public StandaloneCodeEditor? Editor;
+
+
+	[Parameter]
+	public string OriginalText { get; set; } = string.Empty;
+
+	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+	{
+		MainCommands.Clear();
+
+		return new StandaloneEditorConstructionOptions
+			{
+				AutomaticLayout = true,
+				Language = "json",
+				Value = OriginalText,
+				Folding = true,
+				WordWrap = "on",
+				Suggest = new SuggestOptions()
+				{
+					SnippetsPreventQuickSuggestions = false,
+				},
+				UnicodeHighlight = new UnicodeHighlightOptions()
+				{
+					AmbiguousCharacters = false,
+					InvisibleCharacters = false,
+				}
+			};
+	}
+
+	public event EventHandler? TitleChanged;
+
+	public FullEditor? Root { get; set; }
+
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
+
+	public Guid Id { get; set; }
+}
