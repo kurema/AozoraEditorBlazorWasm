@@ -1,14 +1,14 @@
 ﻿@implements IMenuParent
-@implements IMenuItemBasic
+@implements IMenuItemSingleBasic
 @inject IJSRuntime JSRuntime;
 
 <div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
-	@foreach (var item in ChildMenus)
+	@foreach (var item in MenuItemProvider.GetMenuItems(ChildMenus))
 	{
 		if (item.IsVisible?.Invoke() == false) continue;
 		switch (item)
 		{
-			case IMenuItemBasic basic:
+			case IMenuItemSingleBasic basic:
 				@GetMenuItem(basic)
 				;
 				break;
@@ -91,7 +91,7 @@
 			return;
 		}
 		IMenuParent parent = this;
-		while ((parent as IMenuItem)?.Parent is { } p) parent = p;
+		while ((parent as IMenuItemSingle)?.Parent is { } p) parent = p;
 		parent.Hide();
 		StateHasChanged();
 
@@ -141,7 +141,7 @@
 		IsChildrenVisible = false;
 		foreach (var item in ChildMenus)
 		{
-			item.Hide();
+			(item as IMenuItemSingle)?.Hide();
 		}
 	}
 
@@ -149,15 +149,15 @@
 
 	public MenuPosition ChildPosition => MenuPosition.Right;
 
-	public async Task MouseOverItem(IMenuItem item)
+	public async Task MouseOverItem(IMenuItemSingle item)
 	{
 		if (item.IsChildrenVisible) return;
 		if (!item.HasChild) return;
 		foreach (var item2 in ChildMenus)
 		{
-			item2.Hide();
+			(item2 as IMenuItemSingle)?.Hide();
 		}
-		if (item is IMenuItemBasic basic) await basic.ShowAsync();
+		if (item is IMenuItemSingleBasic basic) await basic.ShowAsync();
 		StateHasChanged();
 	}
 
@@ -169,7 +169,7 @@
 
 	public void NotifyStateHasChanged() => StateHasChanged();
 
-	async Task KeyDown(KeyboardEventArgs keyboard, IMenuItemBasic basic)
+	async Task KeyDown(KeyboardEventArgs keyboard, IMenuItemSingleBasic basic)
 	{
 		switch (keyboard.Key)
 		{
@@ -188,7 +188,7 @@
 	[Parameter]
 	public double ClickedPositionY { get; set; }
 
-	public RenderFragment GetMenuItem(IMenuItemBasic item)
+	public RenderFragment GetMenuItem(IMenuItemSingleBasic item)
 	{
 		return
 	@<div class="mebubox_entry" @ref="@item.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(item);}" @onclick="async ()=>{await item.InvokeAsync();}" tabindex="0" @onkeydown="async e =>await KeyDown(e,item)">

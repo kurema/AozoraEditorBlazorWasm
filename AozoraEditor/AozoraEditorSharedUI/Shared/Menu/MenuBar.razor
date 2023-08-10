@@ -5,12 +5,12 @@
 	@{
 		int i = 0;
 	}
-	@foreach (var item in ChildMenus)
+	@foreach (var item in MenuItemProvider.GetMenuItems(ChildMenus))
 	{
 		i++;
 		switch (item)
 		{
-			case IMenuItemBasic basic:
+			case IMenuItemSingleBasic basic:
 				<div tabindex="0" class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
 				break;
 		}
@@ -44,14 +44,14 @@
 	{
 		foreach (var item in ChildMenus)
 		{
-			item.Hide();
+			(item as IMenuItemSingle)?.Hide();
 		}
 		StateHasChanged();
 	}
 
 	public MenuPosition ChildPosition => MenuPosition.Bottom;
 
-	public async Task ItemClicked(IMenuItemBasic item)
+	public async Task ItemClicked(IMenuItemSingleBasic item)
 	{
 		if (item.HasChild && item.IsChildrenVisible)
 		{
@@ -67,9 +67,9 @@
 		return;
 	}
 
-	public async Task MouseOverItem(IMenuItemBasic item)
+	public async Task MouseOverItem(IMenuItemSingleBasic item)
 	{
-		if (!ChildMenus.Any(a => a.IsChildrenVisible)) return;
+		if (!ChildMenus.Any(a => (a as IMenuItemSingle)?.IsChildrenVisible == true)) return;
 		if (item.IsChildrenVisible) return;
 		if (!item.HasChild) return;
 		Hide();
@@ -77,7 +77,7 @@
 		StateHasChanged();
 	}
 
-	async Task KeyDown(KeyboardEventArgs keyboard, IMenuItemBasic basic)
+	async Task KeyDown(KeyboardEventArgs keyboard, IMenuItemSingleBasic basic)
 	{
 		//Console.WriteLine(keyboard.Key);
 		if (keyboard.Key == "Enter")

@@ -1,0 +1,17 @@
+﻿@* @implements IMenuItemProvider *@
+@inject IJSRuntime JSRuntime;
+
+@code {
+	public static IEnumerable<IMenuItemSingle> GetMenuItems(IEnumerable<IMenuItem> items)
+	{
+		foreach (var item in items)
+		{
+			switch (item)
+			{
+				case IMenuItemSingle single: yield return single; break;
+				case IMenuItemProvider p: foreach (var item2 in p.Items) yield return item2; break;
+			}
+		}
+	}
+
+}

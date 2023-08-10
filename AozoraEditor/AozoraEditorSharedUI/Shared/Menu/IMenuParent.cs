@@ -26,15 +26,24 @@ public enum MenuPosition
 
 public interface IMenuItem
 {
-	void Hide();
-	bool IsChildrenVisible { get; }
-	bool HasChild { get; }
 	IMenuParent? Parent { get; }
-	Func<bool>? IsVisible { get; }
-
 }
 
-public interface IMenuItemBasic : IMenuItem
+public interface IMenuItemProvider
+{
+	//Hide()を実装していないので、現状子持ちのIMenuItemSingleは正しい挙動にならない点に注意。
+	IEnumerable<IMenuItemSingle> Items { get; }
+}
+
+public interface IMenuItemSingle : IMenuItem
+{
+	bool IsChildrenVisible { get; }
+	bool HasChild { get; }
+	Func<bool>? IsVisible { get; }
+	void Hide();
+}
+
+public interface IMenuItemSingleBasic : IMenuItemSingle
 {
 	Task InvokeAsync();
 	string Title { get; }

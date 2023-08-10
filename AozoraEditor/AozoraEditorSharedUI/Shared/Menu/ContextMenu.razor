@@ -23,7 +23,7 @@
 	{
 		foreach (var item in ChildMenus)
 		{
-			item.Hide();
+			(item as IMenuItemSingle)?.Hide();
 		}
 		StateHasChanged();
 	}
@@ -31,7 +31,7 @@
 	public async Task ShowAsync(double x,double y)
 	{
 		var item = ChildMenus?.FirstOrDefault();
-		if (item is not IMenuItemBasic itemB) return;
+		if (item is not IMenuItemSingleBasic itemB) return;
 		if (itemB.IsChildrenVisible)
 		{
 			if (Root is not null) Root.CurrentMenu = null;

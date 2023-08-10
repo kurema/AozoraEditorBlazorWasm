@@ -1,4 +1,4 @@
-﻿@implements IMenuItemBasic
+﻿@implements IMenuItemSingleBasic
 @inject IJSRuntime JSRuntime;
 
 @code {
@@ -16,7 +16,7 @@
 	{
 
 		IMenuParent? parent = Parent;
-		while ((parent as IMenuItem)?.Parent is { } p) parent = p;
+		while ((parent as IMenuItemSingle)?.Parent is { } p) parent = p;
 		parent?.Hide();
 		await OnHeaderSelected.InvokeAsync(null);
 
