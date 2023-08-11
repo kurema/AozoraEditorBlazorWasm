@@ -4,15 +4,16 @@
 <div class="menubar" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="()=>{}" @ref="ElementBox">
 	@{
 		int i = 0;
-	}
-	@foreach (var item in MenuItemProvider.GetMenuItems(ChildMenus))
-	{
-		i++;
-		switch (item)
+		FlatMenuItems = MenuItemProvider.GetFlatMenuItems(ChildMenus).ToArray();
+		foreach (var item in FlatMenuItems)
 		{
-			case IMenuItemSingleBasic basic:
-				<div tabindex="0" class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
-				break;
+			i++;
+			switch (item)
+			{
+				case IMenuItemSingleBasic basic:
+					<div tabindex="0" class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
+					break;
+			}
 		}
 	}
 </div>
@@ -22,6 +23,8 @@
 </CascadingValue>
 
 @code {
+	IMenuItemSingle[]? FlatMenuItems;
+
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
@@ -42,9 +45,10 @@
 
 	public void Hide()
 	{
-		foreach (var item in ChildMenus)
+		if (FlatMenuItems is null) return;
+		foreach (var item in FlatMenuItems)
 		{
-			(item as IMenuItemSingle)?.Hide();
+			item.Hide();
 		}
 		StateHasChanged();
 	}

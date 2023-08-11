@@ -39,8 +39,10 @@
 
 	public void Hide()
 	{
+		CurrentMenu?.Hide();
 		foreach (var item in ChildMenus)
 		{
+			if (CurrentMenu == item) continue;
 			(item as IMenuItemSingle)?.Hide();
 		}
 		if (Root is not null) Root.CurrentMenu = null;
@@ -49,10 +51,13 @@
 	[Parameter]
 	public MenuPosition ChildPosition { get; set; } = MenuPosition.Bottom;
 
+	IMenuItemSingleBasic? CurrentMenu;
+
 	async Task ItemClickedAsync()
 	{
-		var item = ChildMenus?.FirstOrDefault();
+		var item = MenuItemProvider.GetFlatMenuItems(ChildMenus)?.FirstOrDefault();
 		if (item is not IMenuItemSingleBasic itemB) return;
+		CurrentMenu = itemB;
 		if (itemB.IsChildrenVisible)
 		{
 			if (Root is not null) Root.CurrentMenu = null;

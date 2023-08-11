@@ -1,17 +1,38 @@
-﻿@* @implements IMenuItemProvider *@
+﻿@implements IMenuItemProvider
 @inject IJSRuntime JSRuntime;
 
 @code {
-	public static IEnumerable<IMenuItemSingle> GetMenuItems(IEnumerable<IMenuItem> items)
+	[CascadingParameter]
+	public IMenuParent? Parent { get; private set; }
+
+	protected override void OnInitialized()
 	{
+		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		Parent.AddItem(this);
+		base.OnInitialized();
+	}
+
+	public static IEnumerable<IMenuItemSingle> GetFlatMenuItems(IEnumerable<IMenuItem>? items)
+	{
+		return GetFlatMenuItemsTuple(items).Select(a => a.Body);
+	}
+
+	public static IEnumerable<(IMenuItemProvider? Provider, IMenuItemSingle Body)> GetFlatMenuItemsTuple(IEnumerable<IMenuItem>? items)
+	{
+		if (items is null) yield break;
 		foreach (var item in items)
 		{
 			switch (item)
 			{
-				case IMenuItemSingle single: yield return single; break;
-				case IMenuItemProvider p: foreach (var item2 in p.Items) yield return item2; break;
+				case IMenuItemSingle single: yield return (null, single); break;
+				case IMenuItemProvider p: foreach (var item2 in p.Items) yield return (p, item2); break;
 			}
 		}
 	}
 
+
+	[Parameter]
+	public Func<IEnumerable<IMenuItemSingle>>? Provider { get; set; }
+
+	public IEnumerable<IMenuItemSingle> Items => Provider?.Invoke() ?? new IMenuItemSingle[0];
 }

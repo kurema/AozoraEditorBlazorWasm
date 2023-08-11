@@ -39,6 +39,7 @@
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
+						<MenuItemProvider Provider="()=>{return new[]{ new MenuItem() { Title=Guid.NewGuid().ToString()}};}" />
 						<MenuItem Title="青空文庫">
 							<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
 							<MenuSeparater />
@@ -292,36 +293,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+		{
+	try
 	{
-		try
-		{
-			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-			if (stream is null) return;
-			await LoadFile(stream, fn);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+		if (stream is null) return;
+		await LoadFile(stream, fn);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 			};
@@ -627,4 +628,9 @@
 
 	public Snippets.Schema.Snippets Snippets => Project.SnippetsOverride ?? AozoraEditor.Shared.Snippets.Loader.Content;
 	public Snippets.Index? SnippetsIndex => Project.SnippetsOverrideIndex ?? AozoraEditor.Shared.Snippets.Loader.ContentIndex;
+
+	IEnumerable<IMenuItemSingle> GetRandomMenu()
+	{
+		yield return new MenuItem() { Title = Guid.NewGuid().ToString() };
+	}
 }

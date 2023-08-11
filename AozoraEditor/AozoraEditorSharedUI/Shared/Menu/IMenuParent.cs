@@ -29,7 +29,7 @@ public interface IMenuItem
 	IMenuParent? Parent { get; }
 }
 
-public interface IMenuItemProvider
+public interface IMenuItemProvider : IMenuItem
 {
 	//Hide()を実装していないので、現状子持ちのIMenuItemSingleは正しい挙動にならない点に注意。
 	IEnumerable<IMenuItemSingle> Items { get; }

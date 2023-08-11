@@ -2,22 +2,41 @@
 @implements IMenuItemSingleBasic
 @inject IJSRuntime JSRuntime;
 
-<div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
-	@foreach (var item in MenuItemProvider.GetMenuItems(ChildMenus))
-	{
-		if (item.IsVisible?.Invoke() == false) continue;
-		switch (item)
+@{
+	var flatItems = MenuItemProvider.GetFlatMenuItemsTuple(ChildMenus).ToArray();
+	FlatMenuItems = flatItems.Select(a => a.Body).ToArray();
+	<div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
+		@foreach (var item in FlatMenuItems)
 		{
-			case IMenuItemSingleBasic basic:
-				@GetMenuItem(basic)
-				;
-				break;
-			case MenuSeparater:
-				<hr />
-				break;
+			// if (item is MenuItem itemM) itemM.Parent = this;
+			if (item.IsVisible?.Invoke() == false) continue;
+			switch (item)
+			{
+				case IMenuItemSingleBasic basic:
+					@GetMenuItem(basic)
+					break;
+				case MenuSeparater:
+					<hr />
+					break;
+			}
 		}
-	}
-</div>
+	</div>
+
+	// RenderFragment Rf = builder =>
+	// {
+	// 	int seq = 0;
+	// 	foreach (var item in flatItems.Where(a => a.Provider is not null).Select(a => a.Body)){
+	// 		builder.OpenComponent(++seq, item.GetType());
+	// 	}
+	// };
+
+	// foreach (var item in flatItems.Where(a => a.Provider is not null).Select(a => a.Body))
+	// {
+	// 	<CascadingValue Value="this">
+
+	// 	</CascadingValue>
+	// }
+}
 
 <CascadingValue Value="this">
 	@ChildContent
@@ -34,6 +53,8 @@
 
 	[Parameter]
 	public string Title { get; set; } = string.Empty;
+
+	IMenuItemSingle[]? FlatMenuItems;
 
 	public int ZIndex => (Parent?.ZIndex ?? 256) + 1;
 
@@ -95,7 +116,7 @@
 		parent.Hide();
 		StateHasChanged();
 
-		await OnHeaderSelected.InvokeAsync(null);
+		if (OnHeaderSelected.HasDelegate) await OnHeaderSelected.InvokeAsync(null);
 		StateHasChanged();
 	}
 
@@ -139,9 +160,10 @@
 	public void Hide()
 	{
 		IsChildrenVisible = false;
-		foreach (var item in ChildMenus)
+		if (FlatMenuItems is null) return;
+		foreach (var item in FlatMenuItems)
 		{
-			(item as IMenuItemSingle)?.Hide();
+			item.Hide();
 		}
 	}
 
