@@ -39,7 +39,16 @@
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
-						<MenuItemProvider Provider="()=>{return new[]{ new MenuItem() { Title=Guid.NewGuid().ToString()}};}" />
+						@* @{
+							Func<IEnumerable<RenderFragment>> r = () =>
+						{
+								RenderFragment r2 =@<MenuItem Title="@(Guid.NewGuid().ToString())" OnHeaderSelected="()=>{this.HideMenuBar();}" />;
+							return new RenderFragment[]{
+								r2
+								};
+						};
+							<MenuItemProvider Provider="r" />
+						} *@
 						<MenuItem Title="青空文庫">
 							<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
 							<MenuSeparater />
@@ -628,9 +637,4 @@
 
 	public Snippets.Schema.Snippets Snippets => Project.SnippetsOverride ?? AozoraEditor.Shared.Snippets.Loader.Content;
 	public Snippets.Index? SnippetsIndex => Project.SnippetsOverrideIndex ?? AozoraEditor.Shared.Snippets.Loader.ContentIndex;
-
-	IEnumerable<IMenuItemSingle> GetRandomMenu()
-	{
-		yield return new MenuItem() { Title = Guid.NewGuid().ToString() };
-	}
 }

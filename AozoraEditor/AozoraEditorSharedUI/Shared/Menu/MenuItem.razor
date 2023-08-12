@@ -8,7 +8,6 @@
 	<div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
 		@foreach (var item in FlatMenuItems)
 		{
-			// if (item is MenuItem itemM) itemM.Parent = this;
 			if (item.IsVisible?.Invoke() == false) continue;
 			switch (item)
 			{
@@ -21,32 +20,17 @@
 			}
 		}
 	</div>
-
-	// RenderFragment Rf = builder =>
-	// {
-	// 	int seq = 0;
-	// 	foreach (var item in flatItems.Where(a => a.Provider is not null).Select(a => a.Body)){
-	// 		builder.OpenComponent(++seq, item.GetType());
-	// 	}
-	// };
-
-	// foreach (var item in flatItems.Where(a => a.Provider is not null).Select(a => a.Body))
-	// {
-	// 	<CascadingValue Value="this">
-
-	// 	</CascadingValue>
-	// }
 }
 
-<CascadingValue Value="this">
+<CascadingValue Name="Parent" Value="this">
 	@ChildContent
 </CascadingValue>
 
 @code {
 	public ElementReference? ElementBox { get; private set; }
 
-	[CascadingParameter]
-	public IMenuParent? Parent { get; private set; }
+	[CascadingParameter(Name=nameof(Parent))]
+	public IMenuParent? Parent { get; set; }
 
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
@@ -61,8 +45,6 @@
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
 	public bool IsChildrenVisible { get; set; }
-
-	//string GridRowCss => string.Join(' ', ChildMenus.Select(_ => "auto"));
 
 	string BoxStyle { get; set; } = string.Empty;
 
@@ -122,6 +104,8 @@
 
 	public async Task ShowAsync(double posX = -1, double posY = -1)
 	{
+		// foreach (var item in ChildMenus) (item as MenuItemProvider)?.UpdateMenus();
+
 		if (HasChild) IsChildrenVisible = true;
 		StateHasChanged();
 		var s1 = await InterOp.Functions.GetWindowSize(JSRuntime);

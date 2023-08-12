@@ -1,9 +1,29 @@
 ﻿@implements IMenuItemProvider
+@implements IMenuParent
 @inject IJSRuntime JSRuntime;
 
+<CascadingValue Name="Parent" Value="this">
+	
+	@{
+		RenderFragment r = b =>
+		{
+			ChildMenus.Clear();
+			foreach (var item in Provider?.Invoke()?.ToArray() ?? new RenderFragment[0])
+			{
+				b.OpenElement(++Sequence, "span");
+				item.Invoke(b);
+				b.CloseElement();
+			}
+		};
+		@r
+	}
+</CascadingValue>
+
 @code {
-	[CascadingParameter]
-	public IMenuParent? Parent { get; private set; }
+	[CascadingParameter(Name = nameof(Parent))]
+	public IMenuParent? Parent { get; set; }
+
+	int Sequence = 0;
 
 	protected override void OnInitialized()
 	{
@@ -30,9 +50,37 @@
 		}
 	}
 
+	RenderFragment[] CurrentItems = Array.Empty<RenderFragment>();
 
 	[Parameter]
-	public Func<IEnumerable<IMenuItemSingle>>? Provider { get; set; }
+	public Func<IEnumerable<RenderFragment>>? Provider { get; set; }
 
-	public IEnumerable<IMenuItemSingle> Items => Provider?.Invoke() ?? new IMenuItemSingle[0];
+	public IEnumerable<IMenuItemSingle> Items
+	{
+		get
+		{
+			// ChildMenus.Clear();
+			// CurrentItems = new RenderFragment[0];
+			// StateHasChanged();
+
+			// CurrentItems = Provider?.Invoke()?.ToArray() ?? new RenderFragment[0];
+			// Console.WriteLine(1);
+			// StateHasChanged();
+			// //StateHasChanged();から暫くしてからOnInitialized();が呼ばれるから…うーん。
+			// Console.WriteLine(2);
+
+			// foreach (var item in ChildMenus) { item.Parent = this.Parent; }
+			return ChildMenus.Where(a => a is IMenuItemSingle).Select(a => (IMenuItemSingle)a);
+		}
+	}
+
+	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
+
+	public void AddItem(IMenuItem menuItem) { ChildMenus.Add(menuItem); menuItem.Parent = Parent; }
+	public int ZIndex => 0;
+	public void Hide() { }
+	public ElementReference? ElementBox => null;
+	public MenuPosition ChildPosition => MenuPosition.Right;
+	public void NotifyStateHasChanged() { }
+
 }

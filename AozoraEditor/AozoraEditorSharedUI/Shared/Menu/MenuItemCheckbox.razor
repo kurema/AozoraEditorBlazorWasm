@@ -2,8 +2,8 @@
 @inject IJSRuntime JSRuntime;
 
 @code {
-	[CascadingParameter]
-	public IMenuParent? Parent { get; private set; }
+	[CascadingParameter(Name = nameof(Parent))]
+	public IMenuParent? Parent { get; set; }
 
 	public void Hide() { }
 
