@@ -21,6 +21,7 @@ public interface ITabPage
 	Guid Id { get; set; }
 	FullEditor? Root { get; set; }
 
+	IEnumerable<RenderFragment> GetMenus(string key);
 }
 
 public interface ICommandEntry

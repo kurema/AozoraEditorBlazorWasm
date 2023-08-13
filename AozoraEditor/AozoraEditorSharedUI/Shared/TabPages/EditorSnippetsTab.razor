@@ -44,4 +44,6 @@
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
 	public Guid Id { get; set; }
+
+	public IEnumerable<RenderFragment> GetMenus(string key) => Array.Empty<RenderFragment>();
 }
