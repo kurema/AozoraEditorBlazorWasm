@@ -29,8 +29,8 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorMonaco" Version="3.0.0" />
-    <PackageReference Include="Markdig" Version="0.31.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.9" />
+    <PackageReference Include="Markdig" Version="0.32.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.10" />
   </ItemGroup>
 
   <ItemGroup>

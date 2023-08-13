@@ -5,7 +5,7 @@
 	@(string.IsNullOrEmpty(Header) && !string.IsNullOrEmpty(HeaderMaterial) ? FullEditor.GetMaterialSymbolOutlined(HeaderMaterial) : @<text>@Header</text>)
 </button>
 
-<CascadingValue Value="this">
+<CascadingValue Name="Parent" Value="this">
 	@ChildContent
 </CascadingValue>
 

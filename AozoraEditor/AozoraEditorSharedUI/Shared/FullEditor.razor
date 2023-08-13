@@ -42,7 +42,11 @@
 						@* @{
 							Func<IEnumerable<RenderFragment>> r = () =>
 						{
-								RenderFragment r2 =@<MenuItem Title="@(Guid.NewGuid().ToString())" OnHeaderSelected="()=>{this.HideMenuBar();}" />;
+								RenderFragment r2 =@<MenuItem Title="@(Guid.NewGuid().ToString())" OnHeaderSelected="()=>{this.HideMenuBar();}" >
+								<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
+								<MenuSeparater />
+								<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
+							</MenuItem>;
 							return new RenderFragment[]{
 								r2
 								};

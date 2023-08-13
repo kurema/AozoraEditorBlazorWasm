@@ -2,20 +2,24 @@
 @implements IMenuParent
 @inject IJSRuntime JSRuntime;
 
-<CascadingValue Name="Parent" Value="this">
-	
+<CascadingValue Name="ParentProvider" Value="this">
 	@{
-		RenderFragment r = b =>
+		// RenderFragment r = b =>
+		// {
+		// 	ChildMenus.Clear();
+		// 	CurrentItems ??= Provider?.Invoke()?.ToArray() ?? new RenderFragment[0];
+		// 	foreach (var item in CurrentItems)
+		// 	{
+		// 		b.OpenElement(++Sequence, "span");
+		// 		item.Invoke(b);
+		// 		b.CloseElement();
+		// 	}
+		// };
+		// @r
+		foreach (var item in CurrentItems)
 		{
-			ChildMenus.Clear();
-			foreach (var item in Provider?.Invoke()?.ToArray() ?? new RenderFragment[0])
-			{
-				b.OpenElement(++Sequence, "span");
-				item.Invoke(b);
-				b.CloseElement();
-			}
-		};
-		@r
+			@item
+		}
 	}
 </CascadingValue>
 
@@ -29,6 +33,7 @@
 	{
 		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
 		Parent.AddItem(this);
+		CurrentItems = Provider?.Invoke()?.ToArray() ?? new RenderFragment[0];
 		base.OnInitialized();
 	}
 
@@ -50,6 +55,8 @@
 		}
 	}
 
+
+
 	RenderFragment[] CurrentItems = Array.Empty<RenderFragment>();
 
 	[Parameter]
@@ -59,16 +66,7 @@
 	{
 		get
 		{
-			// ChildMenus.Clear();
-			// CurrentItems = new RenderFragment[0];
-			// StateHasChanged();
-
-			// CurrentItems = Provider?.Invoke()?.ToArray() ?? new RenderFragment[0];
-			// Console.WriteLine(1);
-			// StateHasChanged();
-			// //StateHasChanged();から暫くしてからOnInitialized();が呼ばれるから…うーん。
-			// Console.WriteLine(2);
-
+			CurrentItems = Provider?.Invoke()?.ToArray() ?? new RenderFragment[0];
 			// foreach (var item in ChildMenus) { item.Parent = this.Parent; }
 			return ChildMenus.Where(a => a is IMenuItemSingle).Select(a => (IMenuItemSingle)a);
 		}
@@ -76,9 +74,9 @@
 
 	System.Collections.ObjectModel.ObservableCollection<IMenuItem> ChildMenus { get; } = new();
 
-	public void AddItem(IMenuItem menuItem) { ChildMenus.Add(menuItem); menuItem.Parent = Parent; }
+	public void AddItem(IMenuItem menuItem) { ChildMenus.Add(menuItem); /* menuItem.Parent = Parent; */ }
 	public int ZIndex => 0;
-	public void Hide() { }
+	public void Hide() { foreach (var item in this.ChildMenus) (item as IMenuParent)?.Hide(); }
 	public ElementReference? ElementBox => null;
 	public MenuPosition ChildPosition => MenuPosition.Right;
 	public void NotifyStateHasChanged() { }

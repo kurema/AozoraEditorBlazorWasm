@@ -14,6 +14,9 @@
 	[CascadingParameter(Name = nameof(Parent))]
 	public IMenuParent? Parent { get; set; }
 
+	[CascadingParameter(Name = nameof(ParentProvider))]
+	public IMenuParent? ParentProvider { get; set; }
+
 	public RenderFragment? Icon => null;
 
 	public void Hide()
@@ -22,8 +25,9 @@
 
 	protected override void OnInitialized()
 	{
-		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
-		Parent.AddItem(this);
+		if (ParentProvider is not null) ParentProvider.AddItem(this);
+		else if (Parent is not null) Parent.AddItem(this);
+		else throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
 		base.OnInitialized();
 	}
 

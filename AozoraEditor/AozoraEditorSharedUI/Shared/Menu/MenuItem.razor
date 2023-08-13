@@ -3,10 +3,8 @@
 @inject IJSRuntime JSRuntime;
 
 @{
-	var flatItems = MenuItemProvider.GetFlatMenuItemsTuple(ChildMenus).ToArray();
-	FlatMenuItems = flatItems.Select(a => a.Body).ToArray();
 	<div class="menubox @(IsChildrenVisible ? string.Empty : "hidden")" style="@BoxStyle" @onclick:preventDefault @onclick:stopPropagation="true" @ref="ElementBox" @onclick="()=>{}">
-		@foreach (var item in FlatMenuItems)
+		@foreach (var item in FlatMenuItems ?? new IMenuItemSingle[0])
 		{
 			if (item.IsVisible?.Invoke() == false) continue;
 			switch (item)
@@ -22,15 +20,20 @@
 	</div>
 }
 
-<CascadingValue Name="Parent" Value="this">
-	@ChildContent
+<CascadingValue Name="ParentProvider" Value="(IMenuParent?)null">
+	<CascadingValue Name="Parent" Value="this">
+		@ChildContent
+	</CascadingValue>
 </CascadingValue>
 
 @code {
 	public ElementReference? ElementBox { get; private set; }
 
-	[CascadingParameter(Name=nameof(Parent))]
+	[CascadingParameter(Name = nameof(Parent))]
 	public IMenuParent? Parent { get; set; }
+
+	[CascadingParameter(Name = nameof(ParentProvider))]
+	public IMenuParent? ParentProvider { get; set; }
 
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
@@ -58,9 +61,18 @@
 
 	protected override void OnInitialized()
 	{
-		if (Parent is null) throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
-		Parent.AddItem(this);
+		if (ParentProvider is not null) ParentProvider.AddItem(this);
+		else if (Parent is not null) Parent.AddItem(this);
+		else throw new ArgumentNullException(nameof(Parent), "MenuItem requires the parent.");
+		UpdateFlatMenu();
 		base.OnInitialized();
+	}
+
+	public void UpdateFlatMenu()
+	{
+		var flatItems = MenuItemProvider.GetFlatMenuItemsTuple(ChildMenus).ToArray();
+		// foreach (var item in flatItems.Where(a => a.Provider is not null)) item.Body.Parent = this;
+		FlatMenuItems = flatItems.Select(a => a.Body).ToArray();
 	}
 
 	RenderFragment? _Icon;
@@ -105,7 +117,8 @@
 	public async Task ShowAsync(double posX = -1, double posY = -1)
 	{
 		// foreach (var item in ChildMenus) (item as MenuItemProvider)?.UpdateMenus();
-
+		// Console.WriteLine($"{this.Title} {this.Parent?.ToString()}");
+		UpdateFlatMenu();
 		if (HasChild) IsChildrenVisible = true;
 		StateHasChanged();
 		var s1 = await InterOp.Functions.GetWindowSize(JSRuntime);
@@ -138,6 +151,7 @@
 	left: {x}px;
 	z-index: {this.ZIndex};
 	"""";
+		// Console.WriteLine(BoxStyle);
 		StateHasChanged();
 	}
 
@@ -145,10 +159,14 @@
 	{
 		IsChildrenVisible = false;
 		if (FlatMenuItems is null) return;
-		foreach (var item in FlatMenuItems)
+		foreach(var item in ChildMenus)
 		{
-			item.Hide();
+			(item as IMenuParent)?.Hide();
 		}
+		// foreach (var item in FlatMenuItems)
+		// {
+		// 	item.Hide();
+		// }
 	}
 
 	public ElementReference? ElementHeader { get; set; }
@@ -161,7 +179,7 @@
 		if (!item.HasChild) return;
 		foreach (var item2 in ChildMenus)
 		{
-			(item2 as IMenuItemSingle)?.Hide();
+			(item2 as IMenuParent)?.Hide();
 		}
 		if (item is IMenuItemSingleBasic basic) await basic.ShowAsync();
 		StateHasChanged();
