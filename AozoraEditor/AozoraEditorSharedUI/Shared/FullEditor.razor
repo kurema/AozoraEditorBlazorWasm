@@ -18,7 +18,11 @@
 						{
 							<MenuItem Title="開く" />
 						}
-						<MenuItemProvider Provider="@(()=>GetActiveProvider("Save"))" />
+						@* <MenuItemProvider Provider="@(()=>GetActiveProvider("Save"))" /> *@
+						<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Save"))" />
+					</MenuItem>
+					<MenuItem Title="ビルド" IsVisible="@(()=>ActivePage?.GetMenus("Build")?.Any()==true)">
+						<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Build"))" />
 					</MenuItem>
 					<MenuItem Title="設定">
 						<MenuItem Title="テーマ">
@@ -40,20 +44,6 @@
 						</MenuItem>
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
-						@* @{
-						Func<IEnumerable<RenderFragment>> r = () =>
-						{
-						RenderFragment r2 =@<MenuItem Title="@(Guid.NewGuid().ToString())" OnHeaderSelected="()=>{this.HideMenuBar();}" >
-						<MenuItemCheckbox Title="縦書き" IsChecked="PreviewVertical" Checked="()=>{PreviewVertical=true;}" UnChecked="()=>{PreviewVertical=false;}" />
-						<MenuSeparater />
-						<MenuItemCheckbox Title="余白なし" IsChecked="PreviewNoMargin" Checked="()=>{PreviewNoMargin=true;}" UnChecked="()=>{PreviewNoMargin=false;}" />
-						</MenuItem>;
-						return new RenderFragment[]{
-						r2
-						};
-						};
-						<MenuItemProvider Provider="r" />
-						} *@
 						<MenuItem Title="青空文庫">
 							<MenuItem IconMaterialSymbols="open_in_new_down" Title="青空文庫" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://www.aozora.gr.jp/");})" />
 							<MenuSeparater />
@@ -307,36 +297,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+		{
+	try
 	{
-		try
-		{
-			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-			if (stream is null) return;
-			await LoadFile(stream, fn);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+		if (stream is null) return;
+		await LoadFile(stream, fn);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 			};
@@ -643,8 +633,8 @@
 	public Snippets.Schema.Snippets Snippets => Project.SnippetsOverride ?? AozoraEditor.Shared.Snippets.Loader.Content;
 	public Snippets.Index? SnippetsIndex => Project.SnippetsOverrideIndex ?? AozoraEditor.Shared.Snippets.Loader.ContentIndex;
 
-	public IEnumerable<RenderFragment> GetActiveProvider(string key)
+	public IEnumerable<IMenuItemSingle> GetActiveProvider(string key)
 	{
-		return ActivePage?.GetMenus(key) ?? Array.Empty<RenderFragment>();
+		return ActivePage?.GetMenus(key) ?? Array.Empty<IMenuItemSingle>();
 	}
 }

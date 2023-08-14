@@ -151,16 +151,26 @@
 					MainCommands.Add(com);
 				}
 
+				if (Root is null) return;
 				_Menus = new()
 				{
 					{
 						"Save",
-						new RenderFragment[]
+						new Menu.IMenuItemSingle[]
 						{
-							GetMenu($"{currentContent.FileName}の保存",async ()=>{await currentContent.DownloadText();}),
-							// @<AozoraEditor.Shared.Shared.Menu.MenuItem />,
-							// @<AozoraEditor.Shared.Shared.Menu.MenuItem Title="@($"{currentContent.FileName}の保存")" OnHeaderSelected="async (_,_)=>{await currentContent.DownloadText();}" />	,
+							new Menu.MenuItem(){Title=$"{currentContent.FileName}の保存",
+							OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.DownloadText(); Root.HideMenuBar(); })
+							},
 						}
+					},
+					{
+						"Build",
+						new Menu.IMenuItemSingle[]
+					{
+							new Menu.MenuItem(){Title="プレビューを作成",
+							OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.ShowPreview();; Root.HideMenuBar(); })
+							},
+					}
 					}
 				};
 			}
@@ -170,32 +180,17 @@
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
-	public static RenderFragment GetMenu(string title, Action onSelected)
-	{
-
-		return b =>
-		{
-			int seq = 0;
-			b.OpenComponent(++seq, typeof(AozoraEditor.Shared.Shared.Menu.MenuItem));
-			b.AddAttribute(++seq, nameof(AozoraEditor.Shared.Shared.Menu.MenuItem.Title), title);
-			// b.AddAttribute(++seq, nameof(AozoraEditor.Shared.Shared.Menu.MenuItem.OnHeaderSelected), EventCallback.Factory.Create(null, onSelected));
-			b.CloseComponent();
-		};
-
-	}
-
-
 	public Guid Id { get; set; }
 
 	public event EventHandler? TitleChanged;
 
 	public FullEditor? Root { get; set; }
 
-	Dictionary<string, RenderFragment[]>? _Menus;
+	Dictionary<string, Menu.IMenuItemSingle[]>? _Menus;
 
-	public IEnumerable<RenderFragment> GetMenus(string key)
+	public IEnumerable<Menu.IMenuItemSingle> GetMenus(string key)
 	{
-		if (_Menus is null || _Menus.TryGetValue(key, out var result) != true) return Array.Empty<RenderFragment>();
+		if (_Menus is null || _Menus.TryGetValue(key, out var result) != true) return Array.Empty<Menu.IMenuItemSingle>();
 		return result;
 	}
 }

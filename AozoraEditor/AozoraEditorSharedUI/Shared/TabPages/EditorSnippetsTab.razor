@@ -45,5 +45,5 @@
 
 	public Guid Id { get; set; }
 
-	public IEnumerable<RenderFragment> GetMenus(string key) => Array.Empty<RenderFragment>();
+	public IEnumerable<Menu.IMenuItemSingle> GetMenus(string key) => Array.Empty<Menu.IMenuItemSingle>();
 }

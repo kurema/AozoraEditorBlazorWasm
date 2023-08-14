@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using AozoraEditor.Shared.Shared.Menu;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +22,7 @@ public interface ITabPage
 	Guid Id { get; set; }
 	FullEditor? Root { get; set; }
 
-	IEnumerable<RenderFragment> GetMenus(string key);
+	IEnumerable<IMenuItemSingle> GetMenus(string key);
 }
 
 public interface ICommandEntry

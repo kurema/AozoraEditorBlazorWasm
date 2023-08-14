@@ -5,7 +5,7 @@
 <CascadingValue Value="this" Name="Editor">
 	<SplitPage @ref="splitPage">
 		<Left><StandaloneCodeEditor Id="@EditorId" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
-		<Right><iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;" sandbox="allow-popups-to-escape-sandbox allow-same-origin allow-popups" srcdoc="@PreviewHtml"></iframe></Right>
+		<Right><iframe style="width:100%;height:100%;border:none;min-height:0;min-width:0;background:var(--aozora-theme-background);" sandbox="allow-popups-to-escape-sandbox allow-same-origin allow-popups" srcdoc="@PreviewHtml"></iframe></Right>
 	</SplitPage>
 </CascadingValue>
 

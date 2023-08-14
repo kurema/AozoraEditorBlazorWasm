@@ -108,16 +108,15 @@
 		IMenuParent parent = this;
 		while ((parent as IMenuItemSingle)?.Parent is { } p) parent = p;
 		parent.Hide();
-		StateHasChanged();
+		if(ParentProvider is null) StateHasChanged();
 
 		if (OnHeaderSelected.HasDelegate) await OnHeaderSelected.InvokeAsync(null);
-		StateHasChanged();
+		if (ParentProvider is null) StateHasChanged();
 	}
 
 	public async Task ShowAsync(double posX = -1, double posY = -1)
 	{
 		// foreach (var item in ChildMenus) (item as MenuItemProvider)?.UpdateMenus();
-		// Console.WriteLine($"{this.Title} {this.Parent?.ToString()}");
 		UpdateFlatMenu();
 		if (HasChild) IsChildrenVisible = true;
 		StateHasChanged();
@@ -151,7 +150,6 @@
 	left: {x}px;
 	z-index: {this.ZIndex};
 	"""";
-		// Console.WriteLine(BoxStyle);
 		StateHasChanged();
 	}
 

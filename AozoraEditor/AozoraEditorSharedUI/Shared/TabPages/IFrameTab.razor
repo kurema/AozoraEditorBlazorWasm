@@ -23,5 +23,5 @@
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
-	public IEnumerable<RenderFragment> GetMenus(string key) => Array.Empty<RenderFragment>();
+	public IEnumerable<Menu.IMenuItemSingle> GetMenus(string key) => Array.Empty<Menu.IMenuItemSingle>();
 }

@@ -11,7 +11,7 @@
 			switch (item)
 			{
 				case IMenuItemSingleBasic basic:
-					<div tabindex="0" class="menubar_menu_button" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
+					<div tabindex="0" class="menubar_menu_button @(item.IsVisible?.Invoke() == false ? "hidden":"")" @onclick="async ()=>{await ItemClicked(basic);}" @ref="@basic.ElementHeader" @onmouseover="async ()=>{await MouseOverItem(basic);}" @onkeydown="async e =>await KeyDown(e,basic)">@basic.Title</div>
 					break;
 			}
 		}

@@ -40,6 +40,7 @@ public interface IMenuItemSingle : IMenuItem
 	bool HasChild { get; }
 	Func<bool>? IsVisible { get; }
 	void Hide();
+	IMenuParent? ParentProvider { get; set; }
 }
 
 public interface IMenuItemSingleBasic : IMenuItemSingle
