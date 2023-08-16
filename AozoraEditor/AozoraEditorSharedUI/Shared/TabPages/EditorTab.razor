@@ -117,23 +117,6 @@
 				}
 
 				MainCommands.Clear();
-				//{
-				//	var com = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
-				//	com.FileChanged += async (_, e) =>
-				//	{
-				//		if (e.FileCount != 1 || e.File?.Name == null) return;
-				//		try
-				//		{
-				//			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-				//			await currentContent.LoadFile(stream, e.File.Name);
-				//		}
-				//		catch
-				//		{
-				//			Console.WriteLine("ファイルの読み込みに失敗しました。");
-				//		}
-				//	};
-				//	MainCommands.Add(com);
-				//}
 				{
 					var com = CommandEntry.FromMaterialSymbolOutlined("save", "ファイルを保存");
 					com.Clicked += async (_, _) =>
@@ -151,28 +134,30 @@
 					MainCommands.Add(com);
 				}
 
-				if (Root is null) return;
-				_Menus = new()
+				if (Root is not null)
 				{
+					_Menus = new()
 					{
-						"Save",
-						new Menu.IMenuItemSingle[]
 						{
-							new Menu.MenuItem(){Title=$"{currentContent.FileName}の保存",
-							OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.DownloadText(); Root.HideMenuBar(); })
-							},
+							"Save",
+							new Menu.IMenuItemSingle[]
+							{
+								new Menu.MenuItem(){Title=$"{currentContent.FileName}の保存",
+								OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.DownloadText(); Root.HideMenuBar(); })
+								},
+							}
+						},
+						{
+							"Build",
+							new Menu.IMenuItemSingle[]
+							{
+								new Menu.MenuItem(){Title="プレビューを作成",
+								OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.ShowPreview();; Root.HideMenuBar(); })
+								},
+							}
 						}
-					},
-					{
-						"Build",
-						new Menu.IMenuItemSingle[]
-					{
-							new Menu.MenuItem(){Title="プレビューを作成",
-							OnHeaderSelected=EventCallback.Factory.Create(Root,async ()=>{await currentContent.ShowPreview();; Root.HideMenuBar(); })
-							},
-					}
-					}
-				};
+					};
+				}
 			}
 		}
 	}

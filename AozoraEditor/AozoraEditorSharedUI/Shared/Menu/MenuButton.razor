@@ -55,7 +55,7 @@
 
 	async Task ItemClickedAsync()
 	{
-		var item = MenuItemProvider.GetFlatMenuItems(ChildMenus)?.FirstOrDefault();
+		var item = MenuItemProviderBasic.GetFlatMenuItems(ChildMenus)?.FirstOrDefault();
 		if (item is not IMenuItemSingleBasic itemB) return;
 		CurrentMenu = itemB;
 		if (itemB.IsChildrenVisible)

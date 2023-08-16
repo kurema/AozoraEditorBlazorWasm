@@ -4,7 +4,7 @@
 <div class="menubar" @onclick:preventDefault @onclick:stopPropagation="true" @onclick="()=>{}" @ref="ElementBox">
 	@{
 		int i = 0;
-		FlatMenuItems = MenuItemProvider.GetFlatMenuItems(ChildMenus).ToArray();
+		FlatMenuItems = MenuItemProviderBasic.GetFlatMenuItems(ChildMenus).ToArray();
 		foreach (var item in FlatMenuItems)
 		{
 			i++;

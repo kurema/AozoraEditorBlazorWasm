@@ -297,36 +297,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+	{
+		try
 		{
-	try
-	{
-		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-		if (stream is null) return;
-		await LoadFile(stream, fn);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+			if (stream is null) return;
+			await LoadFile(stream, fn);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 			};
@@ -419,18 +419,24 @@
 
 	public async Task CloseTab(ITabPage page)
 	{
+		async Task<bool> ConfirmExit(string? fileName)
+		{
+			var result = await ShowDialog(fileName ?? "確認", "ファイルが変更されています。\n閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
+			if (result is null) return false;
+			if (result.Value.Id is string and "no") return false;
+			return true;
+		}
+
+
 		switch (page)
 		{
 			case TabPages.EditorTab et:
-				{
-					if (et?.Content is null) return;
-					if (!(et.OriginalText == await et.Content.GetText()))
-					{
-						var result = await ShowDialog(et.Content.FileName ?? "確認", "ファイルが変更されています。\n閉じますか？", Dialogs.Dialog.IconMessage, new Dialogs.DialogOption("はい", true) { Id = "yes" }, new Dialogs.DialogOption("キャンセル") { Id = "no" });
-						if (result is null) return;
-						if (result.Value.Id is string and "no") return;
-					}
-				}
+				if (et?.Content is null) return;
+				if (!(et.OriginalText == await et.Content.GetText())) { if (!await ConfirmExit(et.Content.FileName)) return; }
+				break;
+			case TabPages.EditorMarkdownTab emt:
+				if (emt?.Content is null) return;
+				if (!(emt.OriginalText == await emt.Content.GetText())) { if (!await ConfirmExit(emt.Content.FileName)) return; }
 				break;
 		}
 		if (!Pages.Any(a => a.body == page)) return;

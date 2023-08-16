@@ -1,4 +1,6 @@
-﻿@using Markdig;
+﻿@inject IJSRuntime JSRuntime;
+
+@using Markdig;
 @using Markdig.Syntax;
 @using Markdig.Renderers.Html;
 
@@ -131,6 +133,43 @@
 			return null;
 		}
 	}
+
+
+	public async Task DownloadText()
+	{
+		//Markdownは最初からUTF-8で保存する。
+
+		using var ms = new MemoryStream();
+		if (Editor is null) goto fail;
+		var text = await Editor.GetValue();
+
+		async Task saveMs(Stream ms)
+		{
+			ms.Seek(0, SeekOrigin.Begin);
+			using var streamRef = new DotNetStreamReference(ms);
+			await JSRuntime.InvokeVoidAsync("window.DownloadFileFromStream", FileName, streamRef);
+		}
+
+		try
+		{
+			var sw = new StreamWriter(ms, System.Text.Encoding.UTF8);
+			await sw.WriteAsync(text);
+			await sw.FlushAsync();
+			await saveMs(ms);
+			sw.Close();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			goto fail;
+		}
+
+		return;
+	fail:
+		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+		return;
+	}
+
 
 	[CascadingParameter(Name = nameof(Root))]
 	public FullEditor? Root { get; set; }
