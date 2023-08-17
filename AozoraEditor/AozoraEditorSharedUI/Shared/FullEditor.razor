@@ -14,12 +14,12 @@
 							<MenuItem Title="青空文庫形式テキスト" OnHeaderSelected="()=>{AddEditorTab();}" IconMaterialSymbols="book" />
 							<MenuItem Title="Markdownドキュメント" OnHeaderSelected="()=>{AddEditorTabMarkdown();}" IconMaterialSymbols="draft" />
 						</MenuItem>
-						@if (this.AppModel is Models.EnvironmentAbstractionLayer.ILocalFilePickable)
-						{
-							<MenuItem Title="開く" />
-						}
+						<MenuItem Title="開く" IsVisible="()=>this.AppModel is Models.EnvironmentAbstractionLayer.ILocalFilePickable" />
 						@* <MenuItemProvider Provider="@(()=>GetActiveProvider("Save"))" /> *@
 						<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Save"))" />
+						<MenuItem Title="出力" IsVisible="@(()=>ActivePage?.GetMenus("Export")?.Any()==true)">
+							<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Export"))" />
+						</MenuItem>
 					</MenuItem>
 					<MenuItem Title="ビルド" IsVisible="@(()=>ActivePage?.GetMenus("Build")?.Any()==true)">
 						<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Build"))" />
@@ -297,36 +297,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+		{
+	if (e.FileCount != 1 || e.File?.Name == null) return;
+	try
 	{
-		if (e.FileCount != 1 || e.File?.Name == null) return;
-		try
-		{
-			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-			await LoadFile(stream, e.File.Name);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+		await LoadFile(stream, e.File.Name);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+		{
+	try
 	{
-		try
-		{
-			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-			if (stream is null) return;
-			await LoadFile(stream, fn);
-		}
-		catch
-		{
-			await ShowFileOpenError();
-		}
-	};
+		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+		if (stream is null) return;
+		await LoadFile(stream, fn);
+	}
+	catch
+	{
+		await ShowFileOpenError();
+	}
+		};
 					yield return commandOpenFile;
 				}
 			};
