@@ -26,13 +26,21 @@
 					</MenuItem>
 					<MenuItem Title="設定">
 						<MenuItem Title="テーマ">
-							@if (Theme is not null)
-							{
-								//この書き方はTheme.ThemeEntriesが増える場合は破綻する点に注意！
-								foreach (var theme in Theme.ThemeEntries)
+							@{
+								IEnumerable<IMenuItemSingle> GetThemeEntries()
 								{
-									<MenuItemCheckbox Title="@(theme.Title)" IsChecked="@(theme == Theme.SelectedTheme)" Checked="()=>{Theme.SelectedTheme=theme;}" />
+									if (Theme is null) yield break;
+									foreach (var theme in Theme.ThemeEntries)
+									{
+										yield return new MenuItemCheckbox()
+									{
+										Title = theme.Title,
+										IsChecked = theme == Theme.SelectedTheme,
+										Checked = EventCallback.Factory.Create(this, () => { Theme.SelectedTheme = theme; })
+									};
+									}
 								}
+								<MenuItemProviderBasic Provider="GetThemeEntries" />
 							}
 						</MenuItem>
 						<MenuItem Title="プレビュー">

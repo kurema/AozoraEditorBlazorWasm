@@ -72,12 +72,7 @@
 		splitPage.DisplayMode = SeparetedValue;
 		Selected = SubPanel.SubPanelContents.Iframe;
 		StateHasChanged();
-		if (editor is null)
-		{
-			Console.WriteLine("Null!");
-			return;
-		}
-		if (editor?.Content is null) return;
+		if (editor is null || editor?.Content is null) throw new NullReferenceException();
 		var text = await editor.Content.GetValue();
 		var js = new Aozora.JstreamString(text);
 		var output = new Aozora.Helpers.OutputString();
@@ -108,6 +103,43 @@
 		}
 		StateHasChanged();
 	}
+
+	public async Task<(bool Success,string Message)> ExportToHtmlStream(AozoraOptions option,Stream outStream)
+	{
+		if (editor is null || editor?.Content is null)
+		{
+			Console.WriteLine("Null!");
+			return (false,string.Empty);
+		}
+		try
+		{
+			var text = await editor.Content.GetValue();
+			if (text is null) return (false, string.Empty);
+			var sjis = Aozora.Aozora2Html.ShiftJisExceptionFallback;
+			if (sjis is null) throw new Exception();
+			var sw = new StreamWriter(outStream, sjis);
+			var js = new Aozora.JstreamString(text);
+			var output = new Aozora.Helpers.OutputStreamWriter(sw);
+			var message = new Aozora.Helpers.OutputString();
+
+			var aozora = new Aozora.Aozora2Html(js, output, warnChannel: message, css_files: option.CssFiles)
+				{
+					UseJisx0213Accent = option.UseJisx0213Accent,
+					UseJisx0214EmbedGaiji = option.UseJisx0214EmbedGaiji,
+					UseUnicodeEmbedGaiji = option.UseUnicodeEmbedGaiji,
+				};
+			if (option.Template is not null) aozora.Template = option.Template;
+			if (option.ExrendedOption is not null) aozora.ExtendedOption = option.ExrendedOption.Value;
+			aozora.Process();
+			return (true, message.ToString());
+		}
+		catch
+		{
+			return (false, string.Empty);
+		}
+	}
+
+	public record AozoraOptions(Aozora.Aozora2Html.ExtendedOptions? ExrendedOption = null, bool UseJisx0213Accent = true, bool UseJisx0214EmbedGaiji = true, bool UseUnicodeEmbedGaiji = true, Aozora.Helpers.ITemplate? Template = null, string[]? CssFiles = null);
 
 	public async Task<string?> GetText()
 	{
