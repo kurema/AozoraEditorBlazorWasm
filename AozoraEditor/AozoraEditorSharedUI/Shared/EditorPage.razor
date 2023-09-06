@@ -5,7 +5,11 @@
 		@*<div class="hidden" data-id="@Id" />*@
 		<SplitPage @ref="splitPage">
 			<Left><MonacoEditorAozora @ref="editor" OriginalText="@OriginalText" /></Left>
-			<Right><SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" /></Right>
+			<Right>
+				<CascadingValue Name="SnippetsIndex" Value="Root?.SnippetsIndex">
+					<SubPanel PreviewDocument="@PreviewHtml" Selected="@Selected" />
+				</CascadingValue>
+			</Right>
 		</SplitPage>
 	</CascadingValue>
 </CascadingValue>
@@ -104,12 +108,12 @@
 		StateHasChanged();
 	}
 
-	public async Task<(bool Success,string Message)> ExportToHtmlStream(AozoraOptions option,Stream outStream)
+	public async Task<(bool Success, string Message)> ExportToHtmlStream(AozoraOptions option, Stream outStream)
 	{
 		if (editor is null || editor?.Content is null)
 		{
 			Console.WriteLine("Null!");
-			return (false,string.Empty);
+			return (false, string.Empty);
 		}
 		try
 		{

@@ -5,10 +5,18 @@
 
 	public RenderFragment Title =>@<span>@FileName</span>;
 
-	public RenderFragment Body =>@<StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" />;
+	public RenderFragment Body =>
+	@<SplitPage @ref="splitPage">
+		<Left><StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
+		<Right><CascadingValue Name="SnippetsIndex" Value="SnippetsIndex"><EditorSnippetsTab /></CascadingValue></Right>
+	</SplitPage>
+	;
 
 	public StandaloneCodeEditor? Editor;
 
+	SplitPage? splitPage { get; set; }
+
+	public Snippets.Index? SnippetsIndex { get; set; }
 
 	[Parameter]
 	public string OriginalText { get; set; } = string.Empty;
@@ -46,4 +54,9 @@
 	public Guid Id { get; set; }
 
 	public IEnumerable<Menu.IMenuItemSingle> GetMenus(string key) => Array.Empty<Menu.IMenuItemSingle>();
+
+	public EditorSnippetsTab()
+	{
+
+	}
 }

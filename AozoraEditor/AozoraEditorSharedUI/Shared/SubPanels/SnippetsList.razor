@@ -17,9 +17,9 @@
 }
 
 
-@if (Root?.SnippetsIndex?.ContentsFlat is not null)
+@if (SnippetsIndex?.ContentsFlat is not null)
 {
-	foreach (var item in Root.SnippetsIndex.ContentsFlat.ToArray())
+	foreach (var item in SnippetsIndex.ContentsFlat.ToArray())
 	{
 		if (!string.IsNullOrWhiteSpace(SearchWord) && !item.Text.Any(a => a.Contains(SearchWord, StringComparison.InvariantCultureIgnoreCase)) &&
 		!item.Labels.AllValues.Any(a => a.Text.Contains(SearchWord, StringComparison.InvariantCultureIgnoreCase))
@@ -68,6 +68,8 @@
 	[CascadingParameter(Name = nameof(Root))]
 	public FullEditor? Root { get; set; }
 
+	[CascadingParameter(Name = nameof(SnippetsIndex))]
+	public Snippets.Index? SnippetsIndex{ get; set; }
 
 	const string InfoText = """"
 一部のコマンドはプレビューやエクスポートに非対応です。
@@ -115,8 +117,8 @@
 
 	void RunPreviewAll()
 	{
-		if (Root?.SnippetsIndex?.ContentsFlat is null) return;
-		foreach (var item in Root.SnippetsIndex.ContentsFlat.ToArray())
+		if (SnippetsIndex?.ContentsFlat is null) return;
+		foreach (var item in SnippetsIndex.ContentsFlat.ToArray())
 		{
 			if (Previews.ContainsKey(item)) continue;
 			Previews.Add(item, new PreviewEntry(item));
