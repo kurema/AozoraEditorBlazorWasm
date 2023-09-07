@@ -49,6 +49,8 @@ namespace AozoraEditor.Shared.Models.Projects
 		}
 
 		public Snippets.Index? SnippetsOverrideIndex { get; private set; }
+
+		public string? SnippetsOverrideJson { get; set; } = null;
 	}
 
 	public interface IFileEntry

@@ -45,6 +45,13 @@ public class CommandEntry : ICommandEntry
 		return new CommandEntry(FullEditor.GetMaterialSymbolOutlined(name), description);
 	}
 
+	public static CommandEntry FromMaterialSymbolOutlined(string name, string? description = null, Action<object?, System.EventArgs>? action = null)
+	{
+		var result = new CommandEntry(FullEditor.GetMaterialSymbolOutlined(name), description);
+		if (action is not null) result.Clicked += (s, e) => action(s, e);
+		return result;
+	}
+
 	public RenderFragment Icon { get; set; }
 	public string Description { get; set; }
 	public event EventHandler? Clicked;

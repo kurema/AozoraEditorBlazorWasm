@@ -48,7 +48,7 @@
 
 	public FullEditor? Root { get; set; }
 
-	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; }
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
 
 	public Guid Id { get; set; }
@@ -57,6 +57,18 @@
 
 	public EditorSnippetsTab()
 	{
-
+		PanelSwitchCommands = new()
+		{
+			CommandEntry.FromMaterialSymbolOutlined("snippet_folder", "プレビュー", (_, _) =>
+			{
+				if(splitPage is null) return;
+				splitPage.DisplayMode= Root?.SplitVerticalDefault ?? true ? SplitPage.DisplayModes.Separated:SplitPage.DisplayModes.SeparetedVertical;
+			}),
+			CommandEntry.FromMaterialSymbolOutlined("close", "閉じる", (_, _) =>
+			{
+				if(splitPage is null) return;
+				splitPage.DisplayMode= SplitPage.DisplayModes.MainFull;
+			})
+		};
 	}
 }
