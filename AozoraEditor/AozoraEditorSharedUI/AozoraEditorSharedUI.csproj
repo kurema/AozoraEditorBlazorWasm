@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Snippets\snippets-schema2.json" />
     <Content Remove="Snippets\snippets2.json" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Models\Version.xml" />
+    <EmbeddedResource Include="Snippets\snippets-schema2.json" />
     <EmbeddedResource Include="Snippets\snippets2.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

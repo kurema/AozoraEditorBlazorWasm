@@ -20,10 +20,26 @@ public static class Loader
 
 	public static (Schema.Snippets Snippet, Index Index) LoadFromResouce()
 	{
-		using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets2.json") ?? throw new Exception("Loading resouce failed!");
+		using var stream = LoadFromResouceAsStream();
 		var result = LoadFromStream(stream);
 		ContentIndex = new Index(result);
 		return (result, ContentIndex);
+	}
+
+	public static Stream LoadFromResouceAsStream() => typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets2.json") ?? throw new Exception("Loading resouce failed!");
+
+	public static async Task<string> LoadSchemaFromResouceAsText()
+	{
+		using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets-schema2.json") ?? throw new Exception("Loading resouce failed!");
+		using var sr = new StreamReader(stream);
+		return await sr.ReadToEndAsync();
+	}
+
+	public static async Task<string> LoadFromResouceAsText()
+	{
+		using var stream = LoadFromResouceAsStream();
+		using var sr = new StreamReader(stream);
+		return await sr.ReadToEndAsync();
 	}
 
 	public static Schema.Snippets LoadFromStream(Stream stream)

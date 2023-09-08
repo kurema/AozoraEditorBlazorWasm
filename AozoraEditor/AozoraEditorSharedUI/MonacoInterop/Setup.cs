@@ -74,4 +74,14 @@ internal static partial class Setup
 
 		await Global.SetTheme(preferedTheme);
 	}
+
+	public async static Task EnableJsonSchema(IJSRuntime runtime)
+	{
+		try
+		{
+			var schema = await Snippets.Loader.LoadSchemaFromResouceAsText();
+			await runtime.InvokeVoidAsync("window.blazorMonaco.kurema.enableJsonSchema", schema);
+		}
+		catch { }
+	}
 }

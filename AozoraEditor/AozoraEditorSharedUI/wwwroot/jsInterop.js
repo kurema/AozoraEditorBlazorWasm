@@ -41,6 +41,19 @@
                 return { suggestions: suggestions };
             }
         });
+    },
+
+    enableJsonSchema: function (schema) {
+        console.log(schema);
+        console.log(JSON.parse(schema));
+        monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+            validate: true, allowComments: false, schemas:
+                [{
+                    uri: "https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Snippets/snippets-schema2.json",
+                    fileMatch: ["https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Snippets/snippets-schema2.json"],
+                    schema: JSON.parse(schema),
+                }], enableSchemaRequest: true
+        });
     }
 }
 

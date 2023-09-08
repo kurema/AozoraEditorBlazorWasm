@@ -1,5 +1,5 @@
 {
-  "$schema": "./snippets-schema2.json",
+  "$schema": "https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Snippets/snippets-schema2.json",
   "templates": [
     {
       "id": "default",
@@ -633,7 +633,7 @@
     },
     {
       "labels": {
-        "jp_fully_roman": [""],
+        "jp_fully_roman": [ "" ],
         "jp": [ "rubi" ],
         "en": [ "ruby" ],
         "short_jp": [ "rb" ]

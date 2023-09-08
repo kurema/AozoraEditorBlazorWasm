@@ -50,6 +50,7 @@
 						<MenuItem Title="通知">
 							<MenuItemCheckbox Title="UTF-8で保存した場合の通知" IsChecked="WarnUTF8" Checked="()=>{WarnUTF8=true;}" UnChecked="()=>{WarnUTF8=false;}" />
 						</MenuItem>
+						<MenuItem Title="スニペットの編集" OnHeaderSelected="()=>{AddSnippetTab();}" />
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
 						<MenuItem Title="青空文庫">
@@ -370,6 +371,12 @@
 		catch { }
 		Pages.Add((new TabPages.EditorTab(Guid.NewGuid(), MonacoEditorAozora.SampleText, "new.txt"), currentSequence++));
 		if (ActivePage is null && Pages.Count > 0) ActivateTab(Pages[0].body);
+
+		try
+		{
+			await MonacoInterop.Setup.EnableJsonSchema(jsRuntime);
+		}
+		catch { }
 		await base.OnInitializedAsync();
 	}
 
@@ -480,10 +487,22 @@
 		AddEditorTab(MonacoEditorAozora.SampleText, "new.txt");
 	}
 
-
 	public void AddEditorTab(string text, string fileName)
 	{
 		var page = new TabPages.EditorTab(GetNewGuid(), text, fileName) { };
+		Pages.Add((page, currentSequence++));
+		ActivateTab(page);
+	}
+
+	public async void AddSnippetTab()
+	{
+		{
+			var stab = Pages.FirstOrDefault(a => a.body is TabPages.EditorSnippetsTab).body;
+			if (stab is not null) { ActivateTab(stab); return; }
+		}
+
+		var text = string.IsNullOrEmpty(this.Project.SnippetsOverrideJson) ? await AozoraEditor.Shared.Snippets.Loader.LoadFromResouceAsText() : this.Project.SnippetsOverrideJson;
+		var page = new TabPages.EditorSnippetsTab() { OriginalText = text, Id = GetNewGuid() };
 		Pages.Add((page, currentSequence++));
 		ActivateTab(page);
 	}

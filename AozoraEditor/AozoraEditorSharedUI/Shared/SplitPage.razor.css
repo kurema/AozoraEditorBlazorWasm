@@ -11,6 +11,7 @@
 .PanelHalfTop, .PanelHalfBottom, .PanelHalfLeft, .PanelHalfRight, .PanelFull, .PanelNone {
     min-width: 0;
     min-height: 0;
+    background: var(--aozora-theme-background);
 }
 
 .PanelHalfTop {

@@ -8,8 +8,8 @@
 	public RenderFragment Body =>
 	@<SplitPage @ref="splitPage">
 		<Left><StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
-		<Right><CascadingValue Name="SnippetsIndex" Value="SnippetsIndex"><EditorSnippetsTab /></CascadingValue></Right>
-	</SplitPage>
+		<Right><CascadingValue Name="SnippetsIndex" Value="SnippetsIndex"><AozoraEditor.Shared.Shared.SubPanels.SnippetsList /></CascadingValue></Right>
+		</SplitPage>
 	;
 
 	public StandaloneCodeEditor? Editor;
@@ -23,8 +23,6 @@
 
 	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
 	{
-		MainCommands.Clear();
-
 		return new StandaloneEditorConstructionOptions
 			{
 				AutomaticLayout = true,
