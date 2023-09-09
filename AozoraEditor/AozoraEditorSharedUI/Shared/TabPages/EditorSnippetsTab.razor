@@ -1,7 +1,7 @@
 ﻿@implements ITabPage
 
 @code {
-	public string FileName => "Snippets.xml";
+	public string FileName => "Snippets.json";
 
 	public RenderFragment Title =>@<span>@FileName</span>;
 
@@ -9,7 +9,7 @@
 	@<SplitPage @ref="splitPage">
 		<Left><StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
 		<Right><CascadingValue Name="SnippetsIndex" Value="SnippetsIndex"><AozoraEditor.Shared.Shared.SubPanels.SnippetsList /></CascadingValue></Right>
-		</SplitPage>
+	</SplitPage>
 	;
 
 	public StandaloneCodeEditor? Editor;
@@ -47,7 +47,7 @@
 	public FullEditor? Root { get; set; }
 
 	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> PanelSwitchCommands { get; }
-	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; } = new();
+	public System.Collections.ObjectModel.ObservableCollection<ICommandEntry> MainCommands { get; }
 
 	public Guid Id { get; set; }
 
@@ -68,5 +68,56 @@
 				splitPage.DisplayMode= SplitPage.DisplayModes.MainFull;
 			})
 		};
+
+		MainCommands = new()
+		{
+			CommandEntry.FromMaterialSymbolOutlined("save", "ローカルに保存", async (_, _) =>
+			{
+				await DownloadText();
+			}),
+		};
+	}
+
+	public static async Task<Json.Schema.EvaluationResults?> Validiate(string text)
+	{
+		try
+		{
+			var schema = await Snippets.Loader.LoadSchemaFromResouceAsJsonSchema(true);
+			var node = System.Text.Json.Nodes.JsonNode.Parse(text);
+			return schema.Evaluate(node);
+			// return schema.Evaluate(node, new() { ValidateAgainstMetaSchema = true, EvaluateAs = Json.Schema.SpecVersion.Draft201909 });
+		}
+		catch (Exception e)
+		{
+			// Console.WriteLine(e.Message);
+			// Console.WriteLine(e.StackTrace);
+			// Console.WriteLine(e.InnerException);
+			Console.WriteLine(e);
+			return null;
+		}
+	}
+
+	public async Task DownloadText()
+	{
+		using var ms = new MemoryStream();
+		if (Editor is null) goto fail;
+		if (Root is null) return;
+		var text = await Editor.GetValue();
+		//TabはJSRuntimeをinjectできないので、雑かつ強引にRootから参照。
+		{
+			var result = await Validiate(text);
+			if (result is null || !result.IsValid)
+			{
+				// Console.WriteLine($"{nameof(result.HasErrors)}:{result.HasErrors}\n{nameof(result.HasDetails)}:{result.HasDetails}\n{nameof(result.HasAnnotations)}:{result.HasAnnotations}\n");
+				// Console.WriteLine(result);
+				if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", $"JSONが不正です。", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+				// if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", $"JSONの検証に失敗しました。\n{string.Join('\n', result.Errors?.Select(a => $"{a.Key} {a.Value}") ?? Array.Empty<string>())}", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+				return;
+			}
+		}
+		if (await FullEditor.DownloadText(Root.JSRuntime, FileName, text)) return;
+		fail:
+		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
+		return;
 	}
 }

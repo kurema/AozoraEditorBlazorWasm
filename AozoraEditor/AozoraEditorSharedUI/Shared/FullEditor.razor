@@ -670,4 +670,34 @@
 	{
 		return ActivePage?.GetMenus(key) ?? Array.Empty<IMenuItemSingle>();
 	}
+
+	public IJSRuntime JSRuntime => jsRuntime;
+
+	public static async Task<bool> DownloadText(IJSRuntime runtime, string fileName, string text)
+	{
+		using var ms = new MemoryStream();
+
+		async Task saveMs(Stream ms)
+		{
+			ms.Seek(0, SeekOrigin.Begin);
+			using var streamRef = new DotNetStreamReference(ms);
+			await runtime.InvokeVoidAsync("window.DownloadFileFromStream", fileName, streamRef);
+		}
+
+		try
+		{
+			var sw = new StreamWriter(ms, System.Text.Encoding.UTF8);
+			await sw.WriteAsync(text);
+			await sw.FlushAsync();
+			await saveMs(ms);
+			sw.Close();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			return false;
+		}
+
+		return true;
+	}
 }

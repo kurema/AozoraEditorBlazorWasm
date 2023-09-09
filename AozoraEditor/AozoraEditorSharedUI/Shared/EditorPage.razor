@@ -112,7 +112,7 @@
 	{
 		if (editor is null || editor?.Content is null)
 		{
-			Console.WriteLine("Null!");
+			// Console.WriteLine("Null!");
 			return (false, string.Empty);
 		}
 		try
@@ -182,7 +182,7 @@
 		}
 		catch (Exception e2)
 		{
-			Console.WriteLine(e2);
+			// Console.WriteLine(e2);
 			try
 			{
 				var sw = new StreamWriter(ms, System.Text.Encoding.UTF8);
@@ -198,7 +198,7 @@
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
+				// Console.WriteLine(e);
 				goto fail;
 			}
 		}

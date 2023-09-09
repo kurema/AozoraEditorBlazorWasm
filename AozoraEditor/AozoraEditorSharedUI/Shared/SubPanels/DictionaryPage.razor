@@ -532,7 +532,7 @@
 							{
 								if (!(item is Models.DictionaryResultEntries.DictionaryResultEntryGaijiChukiOther gco && int.TryParse(gco.Content?.docPage, out page))) page = -1;
 							}
-							Console.WriteLine((item as Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki)?.Content?.docPage);
+							// Console.WriteLine((item as Models.DictionaryResultEntries.DictionaryResultEntryGaijiChuki)?.Content?.docPage);
 							if (page >= 0)
 							{
 								<button class="aozora_dictionary_result_detail_button" @onclick='async _=>{await OpenPdfPage(page);}'>

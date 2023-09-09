@@ -28,11 +28,30 @@ public static class Loader
 
 	public static Stream LoadFromResouceAsStream() => typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets2.json") ?? throw new Exception("Loading resouce failed!");
 
-	public static async Task<string> LoadSchemaFromResouceAsText()
+	public static async Task<string> LoadSchemaFromResouceAsText(bool useCache = true)
 	{
+		if (useCache && _JsonSchemaString is not null) return _JsonSchemaString;
 		using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets-schema2.json") ?? throw new Exception("Loading resouce failed!");
 		using var sr = new StreamReader(stream);
-		return await sr.ReadToEndAsync();
+		return _JsonSchemaString = await sr.ReadToEndAsync();
+	}
+
+	static Json.Schema.JsonSchema? _JsonSchema = null;
+	static string? _JsonSchemaString = null;
+
+	public static async Task<Json.Schema.JsonSchema> LoadSchemaFromResouceAsJsonSchema(bool useCache = true)
+	{
+		if (useCache && _JsonSchema is not null) return _JsonSchema;
+		if (!useCache || _JsonSchemaString is null)
+		{
+			using var stream = typeof(Loader).Assembly.GetManifestResourceStream("AozoraEditor.Shared.Snippets.snippets-schema2.json") ?? throw new Exception("Loading resouce failed!");
+			stream.Seek(0, SeekOrigin.Begin);
+			return _JsonSchema = await Json.Schema.JsonSchema.FromStream(stream);
+		}
+		else
+		{
+			return _JsonSchema = Json.Schema.JsonSchema.FromText(_JsonSchemaString);
+		}
 	}
 
 	public static async Task<string> LoadFromResouceAsText()

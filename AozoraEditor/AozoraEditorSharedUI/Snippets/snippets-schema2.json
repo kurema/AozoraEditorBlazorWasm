@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
+  "$schema": "https://json-schema.org/draft/next/schema",
   "title": "JSON Schema for snippets2.json",
 
   "type": "object",

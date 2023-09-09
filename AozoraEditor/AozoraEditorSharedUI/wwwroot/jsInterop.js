@@ -44,8 +44,6 @@
     },
 
     enableJsonSchema: function (schema) {
-        console.log(schema);
-        console.log(JSON.parse(schema));
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true, allowComments: false, schemas:
                 [{

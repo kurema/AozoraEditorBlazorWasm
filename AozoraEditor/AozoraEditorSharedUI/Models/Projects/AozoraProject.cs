@@ -25,7 +25,7 @@ namespace AozoraEditor.Shared.Models.Projects
 			throw new NotImplementedException();
 		}
 
-		public static AozoraProject GetBasicProject() => new AozoraProject()
+		public static AozoraProject GetBasicProject() => new()
 		{
 			Files = { new FileEntry(MonacoEditorAozora.SampleText, "aozora.txt") },
 			Notes = new()
