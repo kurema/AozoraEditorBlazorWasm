@@ -28,6 +28,19 @@
         }
       }
     },
+    "config": {
+      "type": "object",
+      "additionalItems": false,
+      "properties": {
+        "disable": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [ "en", "jp", "short_en", "short_jp", "jp_fully_roman" ]
+          }
+        }
+      }
+    },
     "templates": {
       "type": "array",
       "items": {

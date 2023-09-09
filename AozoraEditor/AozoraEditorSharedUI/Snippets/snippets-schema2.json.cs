@@ -1,7 +1,7 @@
 ﻿// Generated on https://app.quicktype.io/?l=csharp
 // Language: C#
 // Serialization framework: System Text Json
-// Generated namespace: AozoraEditor
+// Generated namespace: AozoraEditor.Shared.Snippets.Schema
 // Use T[] or List<T>: List
 // Output features: Complete
 // Generate virtual properties: off
@@ -36,6 +36,10 @@ namespace AozoraEditor.Shared.Snippets.Schema
 	public partial class Snippets
 	{
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		[JsonPropertyName("config")]
+		public Config Config { get; set; }
+
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		[JsonPropertyName("contents")]
 		public List<Content> Contents { get; set; }
 
@@ -46,6 +50,13 @@ namespace AozoraEditor.Shared.Snippets.Schema
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		[JsonPropertyName("templates")]
 		public List<Template> Templates { get; set; }
+	}
+
+	public partial class Config
+	{
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		[JsonPropertyName("disable")]
+		public List<Disable> Disable { get; set; }
 	}
 
 	public partial class Content
@@ -200,6 +211,8 @@ namespace AozoraEditor.Shared.Snippets.Schema
 		public string ShortJp { get; set; }
 	}
 
+	public enum Disable { En, Jp, JpFullyRoman, ShortEn, ShortJp };
+
 	public enum ArgType { Alphabet, Any, NumberFull, NumberHalf, Ref };
 
 	public partial struct Comment
@@ -227,6 +240,7 @@ namespace AozoraEditor.Shared.Snippets.Schema
 		{
 			Converters =
 			{
+				DisableConverter.Singleton,
 				ArgTypeConverter.Singleton,
 				CommentConverter.Singleton,
 				new DateOnlyConverter(),
@@ -234,6 +248,55 @@ namespace AozoraEditor.Shared.Snippets.Schema
 				IsoDateTimeOffsetConverter.Singleton
 			},
 		};
+	}
+
+	internal class DisableConverter : JsonConverter<Disable>
+	{
+		public override bool CanConvert(Type t) => t == typeof(Disable);
+
+		public override Disable Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			var value = reader.GetString();
+			switch (value)
+			{
+				case "en":
+					return Disable.En;
+				case "jp":
+					return Disable.Jp;
+				case "jp_fully_roman":
+					return Disable.JpFullyRoman;
+				case "short_en":
+					return Disable.ShortEn;
+				case "short_jp":
+					return Disable.ShortJp;
+			}
+			throw new Exception("Cannot unmarshal type Disable");
+		}
+
+		public override void Write(Utf8JsonWriter writer, Disable value, JsonSerializerOptions options)
+		{
+			switch (value)
+			{
+				case Disable.En:
+					JsonSerializer.Serialize(writer, "en", options);
+					return;
+				case Disable.Jp:
+					JsonSerializer.Serialize(writer, "jp", options);
+					return;
+				case Disable.JpFullyRoman:
+					JsonSerializer.Serialize(writer, "jp_fully_roman", options);
+					return;
+				case Disable.ShortEn:
+					JsonSerializer.Serialize(writer, "short_en", options);
+					return;
+				case Disable.ShortJp:
+					JsonSerializer.Serialize(writer, "short_jp", options);
+					return;
+			}
+			throw new Exception("Cannot marshal type Disable");
+		}
+
+		public static readonly DisableConverter Singleton = new DisableConverter();
 	}
 
 	internal class ArgTypeConverter : JsonConverter<ArgType>

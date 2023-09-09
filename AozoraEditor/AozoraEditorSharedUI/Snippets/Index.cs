@@ -95,6 +95,14 @@ public partial class Index
 		var wordsPlaceholder = (IEnumerable<Word>)new Word[1] { new Word() };
 		var wordLabelPlaceholder = (IEnumerable<string>)new[] { string.Empty };
 
+		bool[] enabled = new bool[] {
+			!snippets.Config?.Disable?.Contains(Disable.Jp) ?? true,
+			!snippets.Config?.Disable?.Contains(Disable.En) ?? true,
+			!snippets.Config?.Disable?.Contains(Disable.ShortJp) ?? true,
+			!snippets.Config?.Disable?.Contains(Disable.ShortEn) ?? true,
+			!snippets.Config?.Disable?.Contains(Disable.JpFullyRoman) ?? true,
+		};
+
 		foreach (var content in snippets.Contents)
 		{
 			if (content is null) continue;
@@ -123,12 +131,12 @@ public partial class Index
 						DocumentLink = content.DocumentLink,
 						Labels = new ContentLabels(),
 					};
-					toAdd.Labels.Jp = GetLabelsGeneral(content, content.Labels.Jp, word.Labels?.Jp ?? wordLabelPlaceholder, template.Labels.Jp, keyWords).ToList();
-					toAdd.Labels.En = GetLabelsGeneral(content, content.Labels.En, word.Labels?.En ?? wordLabelPlaceholder, template.Labels.En, keyWords).ToList();
-					toAdd.Labels.ShortJp = GetLabelsGeneral(content, content.Labels.ShortJp, word.Labels?.ShortJp ?? wordLabelPlaceholder, template.Labels.ShortJp, keyWords).ToList();
-					toAdd.Labels.ShortEn = GetLabelsGeneral(content, content.Labels.ShortEn, word.Labels?.ShortEn ?? wordLabelPlaceholder, template.Labels.ShortEn, keyWords).ToList();
+					toAdd.Labels.Jp = enabled[0] ? GetLabelsGeneral(content, content.Labels.Jp, word.Labels?.Jp ?? wordLabelPlaceholder, template.Labels.Jp, keyWords).ToList() : new();
+					toAdd.Labels.En = enabled[1] ? GetLabelsGeneral(content, content.Labels.En, word.Labels?.En ?? wordLabelPlaceholder, template.Labels.En, keyWords).ToList() : new();
+					toAdd.Labels.ShortJp = enabled[2] ? GetLabelsGeneral(content, content.Labels.ShortJp, word.Labels?.ShortJp ?? wordLabelPlaceholder, template.Labels.ShortJp, keyWords).ToList() : new();
+					toAdd.Labels.ShortEn = enabled[3] ? GetLabelsGeneral(content, content.Labels.ShortEn, word.Labels?.ShortEn ?? wordLabelPlaceholder, template.Labels.ShortEn, keyWords).ToList() : new();
 
-					toAdd.Labels.JpFullyRoman = new List<string>(){
+					toAdd.Labels.JpFullyRoman = enabled[4] ? new List<string>(){
 						Interpolate(template.Labels.JpFullyRoman, (_, _) => null, new Dictionary<string, Func<int, string>>()
 						{
 							{"content",i=>content.Labels.JpFullyRoman[i] },
@@ -138,7 +146,7 @@ public partial class Index
 							"word" => word.Labels?.JpFullyRoman[0] ?? string.Empty,
 							_ when keyWords.TryGetValue(key, out var kw) => kw,
 							_ => string.Empty,
-						}, out _,true, content.WordsLabelAutoCase ?? true) };
+						}, out _,true, content.WordsLabelAutoCase ?? true) } : new();
 
 					(int, int)[]? argInfo = null;
 					toAdd.Text = template.Text.Select(text =>

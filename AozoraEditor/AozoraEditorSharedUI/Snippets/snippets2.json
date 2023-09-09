@@ -1,5 +1,8 @@
 {
   "$schema": "https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/AozoraEditor/AozoraEditorSharedUI/Snippets/snippets-schema2.json",
+  "config": {
+    "disable": []
+  },
   "templates": [
     {
       "id": "default",

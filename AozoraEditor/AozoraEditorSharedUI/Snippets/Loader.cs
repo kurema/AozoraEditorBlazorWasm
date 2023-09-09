@@ -41,6 +41,8 @@ public static class Loader
 
 	public static async Task<Json.Schema.JsonSchema> LoadSchemaFromResouceAsJsonSchema(bool useCache = true)
 	{
+		//https://developers-trash.com/archives/997
+		//なおJsonSchema.Net 5.0.3のみではTypeLoadExceptionが発生する。Json.More.Net 1.9.0が必要。将来修正されるだろう。
 		if (useCache && _JsonSchema is not null) return _JsonSchema;
 		if (!useCache || _JsonSchemaString is null)
 		{

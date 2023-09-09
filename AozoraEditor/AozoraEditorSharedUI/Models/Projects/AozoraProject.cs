@@ -17,9 +17,11 @@ namespace AozoraEditor.Shared.Models.Projects
 
 		public Project.Project AsSingleProject()
 		{
-			var result = new Project.Project();
-			result.Notes = new Project.ProjectNotes() { Item = new() { Item = new Project.ContentText() { path = "notes.xml", Value = "" } } };
-			result.Snippet = new Project.ProjectSnippet() { Item = new() { Item = new object() } };
+			var result = new Project.Project
+			{
+				Notes = new Project.ProjectNotes() { Item = new() { Item = new Project.ContentText() { path = "notes.xml", Value = "" } } },
+				Snippet = new Project.ProjectSnippet() { Item = new() { Item = new object() } }
+			};
 			return result;
 
 			throw new NotImplementedException();
