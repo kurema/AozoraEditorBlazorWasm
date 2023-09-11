@@ -39,6 +39,8 @@
 		}
 	}
 
+	public void OnStateHasChanged() => StateHasChanged();
+
 	public void ToggleDisplayMode() => DisplayMode = DisplayMode switch
 	{
 		DisplayModes.MainFull => DisplayModes.Separated,

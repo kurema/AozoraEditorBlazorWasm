@@ -9,7 +9,7 @@
 	@<SplitPage @ref="splitPage">
 		<Left><StandaloneCodeEditor Id="@(Id.ToString())" ConstructionOptions="EditorConstructionOptions" @ref="Editor" /></Left>
 		<Right><article style="overflow:auto;width: 100%;height: 100%;"><CascadingValue Name="SnippetsIndex" Value="SnippetsIndex"><AozoraEditor.Shared.Shared.SubPanels.SnippetsList /></CascadingValue></article></Right>
-		</SplitPage>
+	</SplitPage>
 	;
 
 	public StandaloneCodeEditor? Editor;
@@ -61,6 +61,7 @@
 			{
 				if(splitPage is null) return;
 				splitPage.DisplayMode= Root?.SplitVerticalDefault ?? true ? SplitPage.DisplayModes.Separated:SplitPage.DisplayModes.SeparetedVertical;
+
 			}),
 			CommandEntry.FromMaterialSymbolOutlined("close", "閉じる", (_, _) =>
 			{
@@ -71,7 +72,11 @@
 
 		MainCommands = new()
 		{
-			CommandEntry.FromMaterialSymbolOutlined("save", "ローカルに保存", async (_, _) =>
+			CommandEntry.FromMaterialSymbolOutlined("save", "プロジェクトに保存", async (_, _) =>
+			{
+				await SaveToProject();
+			}),
+			CommandEntry.FromMaterialSymbolOutlined("download", "ローカルに保存", async (_, _) =>
 			{
 				await DownloadText();
 			}),
@@ -80,22 +85,66 @@
 				await ShowPreview();
 				if(splitPage is null) return;
 				splitPage.DisplayMode= Root?.SplitVerticalDefault ?? true ? SplitPage.DisplayModes.Separated:SplitPage.DisplayModes.SeparetedVertical;
+				splitPage.OnStateHasChanged();
 			}),
 		};
 	}
 
-	public static async Task<Json.Schema.EvaluationResults?> Validiate(string text)
+	public static async Task<(Exception? e, Json.Schema.EvaluationResults? r)> Validiate(string text)
 	{
 		try
 		{
 			var schema = await Snippets.Loader.LoadSchemaFromResouceAsJsonSchema(true);
 			var node = System.Text.Json.Nodes.JsonNode.Parse(text);
-			return schema.Evaluate(node);
+			return (null, schema.Evaluate(node, new() { OutputFormat = Json.Schema.OutputFormat.List }));
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine(e);
-			return null;
+			return (e, null);
+		}
+	}
+
+	public async Task SaveToProject()
+	{
+		if (Editor is null) return;
+		if (Root is null)
+		{
+			Console.WriteLine($"{nameof(Root)} is null.");
+			return;
+		}
+		var text = await Editor.GetValue();
+		var error = new System.Text.StringBuilder();
+		{
+			var result = await Validiate(text);
+			if (result.e is not null)
+			{
+				error.AppendLine($"JSONが不正。\n{result.e.Message}\n");
+			}
+			else if (result.r is not null && !result.r.IsValid)
+			{
+				error.AppendLine($"JSONの検証結果が不正。\n");
+			}
+		}
+		try
+		{
+			var snippets = Snippets.Schema.Snippets.FromJson(text);
+			var index = SnippetsIndex = new Snippets.Index(snippets);
+
+			Root.Project.SnippetsOverrideJson = text;
+			//Index作成で例外を吐かないか確認する為に同時設定を利用。
+			Root.Project.SetSnippetsValue(snippets, index);
+			//強引にRootのランタイムを借用。
+			await AozoraEditor.Shared.MonacoInterop.Setup.OverwriteAozoraCompletion(Root.JSRuntime, Root.SnippetsIndex);
+		}
+		catch (Exception e)
+		{
+			error.AppendLine($"Indexの作成に失敗。\n{e.Message}");
+			SnippetsIndex = null;
+		}
+		if (Root is not null)
+		{
+			if (error.Length > 0) Root.SetOutputMessage($"以下の理由でスニペットの更新ができませんでした。\n{error.ToString()}", this.FileName, this.Id);
+			else Root.SetOutputMessage($"スニペットを更新しました。", this.FileName, this.Id);
 		}
 	}
 
@@ -103,14 +152,54 @@
 	{
 		if (Editor is null) return;
 		var text = await Editor.GetValue();
+		var error = new System.Text.StringBuilder();
+
+		{
+			var result = await Validiate(text);
+			if (result.e is not null)
+			{
+				error.AppendLine($"JSONが不正です。\n{result.e.Message}\n");
+			}
+			else if (result.r is not null && !result.r.IsValid)
+			{
+				// var sb = new System.Text.StringBuilder();
+				// if (result.r.HasDetails)
+				// {
+				// 	foreach (var detail in result.r.Details)
+				// 	{
+				// 		sb.AppendLine($"Location:{detail.InstanceLocation}");
+				// 		foreach (var erro in detail?.Errors)
+				// 		{
+
+				// 		}
+				// 	}
+				// }
+
+				var error2 = string.Empty;
+				if (result.r.HasDetails && result.r.Details is not null)
+				{
+					//そのままではanyOfなどで不必要な(JSON Schemaの上位ノードではValidな)エラーメッセージが表示されます。
+					//いずれかでIsValidなInstanceLocationを除外することで対処しています。notとか使っていると正しく動かないはずですが使ってないので問題ないです。
+					//https://github.com/gregsdennis/json-everything/issues/500
+
+					var valids = result.r.Details.Where(a => a.IsValid).Select(a => a.InstanceLocation).Distinct().ToHashSet();
+					error2 = System.Text.Json.JsonSerializer.Serialize(result.r.Details.Where(a => !a.IsValid && !valids.Contains(a.InstanceLocation)), new System.Text.Json.JsonSerializerOptions() { WriteIndented = true });
+				}
+
+				error.AppendLine($"JSONの検証結果が不正です。\n{error2}\n");
+			}
+		}
 		try
 		{
-			var snippets= Snippets.Schema.Snippets.FromJson(text);
+			var snippets = Snippets.Schema.Snippets.FromJson(text);
 			SnippetsIndex = new Snippets.Index(snippets);
 		}
-		catch
+		catch (Exception e)
 		{
+			error.AppendLine($"Indexの作成に失敗しました。\n{e.Message}");
+			SnippetsIndex = null;
 		}
+		if (Root is not null) Root.SetOutputMessage(error.ToString(), this.FileName, this.Id);
 	}
 
 	public async Task DownloadText()
@@ -119,15 +208,6 @@
 		if (Editor is null) goto fail;
 		if (Root is null) return;
 		var text = await Editor.GetValue();
-		// {
-		// 	var result = await Validiate(text);
-		// 	if (result is null || !result.IsValid)
-		// 	{
-		// 		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", $"JSONが不正です。", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });
-		// 		return;
-		// 	}
-		// }
-		//TabはJSRuntimeをinjectできないので、雑かつ強引にRootから参照。
 		if (await FullEditor.DownloadText(Root.JSRuntime, FileName, text)) return;
 		fail:
 		if (Root?.Dialog is not null) await Root.Dialog.ShowDialog("保存", "ファイルのダウンロードに失敗しました", FullEditor.GetMaterialSymbolOutlined("error"), new Dialogs.DialogOption() { Id = "ok", Text = "了解", IsHighlighted = true });

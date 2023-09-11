@@ -3,7 +3,7 @@
         return monaco.languages.getLanguages();
     },
 
-    registerAozora: function (suggestionsCS) {
+    registerAozora: function () {
         monaco.languages.register({ id: 'aozora' });
         const keywords = [];//キーワードは基本［＃.+?］の中なので、別にハイライトをする必要はないと判断
         monaco.languages.setMonarchTokensProvider('aozora', {
@@ -17,8 +17,11 @@
                 ],
             }
         });
+    },
 
-        monaco.languages.registerCompletionItemProvider('aozora', {
+    registerAozoraCompletion: function (suggestionsCS) {
+        window.blazorMonaco.kurema.currentCompletion?.dispose();
+        window.blazorMonaco.kurema.currentCompletion = monaco.languages.registerCompletionItemProvider('aozora', {
             provideCompletionItems: (model, position, context, token) => {
                 //サジェスト機能は行頭かスペースを入力後しか機能しない。従ってスペースを削除する。半角スペース以外なら削除不要。
                 let snipetDeleteSpace = [];

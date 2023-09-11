@@ -42,7 +42,10 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime, Root?.Theme?.SelectedTheme.MonacoTheme ?? "aozora-theme");
+		if (Root is not null)
+		{
+			await MonacoInterop.Setup.RegisterAozoraOnDemand(JSRuntime, Root.Theme?.SelectedTheme.MonacoTheme ?? "aozora-theme", await Root.LoadSnippetsIndexAsync());
+		}
 		await base.OnInitializedAsync();
 	}
 

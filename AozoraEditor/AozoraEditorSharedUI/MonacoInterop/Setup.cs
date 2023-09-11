@@ -28,14 +28,23 @@ internal static partial class Setup
 		return false;
 	}
 
-	public async static Task RegisterAozoraOnDemand(IJSRuntime runtime, string preferedTheme)
+	public async static Task RegisterAozoraOnDemand(IJSRuntime runtime, string preferedTheme, Snippets.Index? index)
 	{
 		if (runtime is null) return;
+		if (index is null) return;
 		if (await IsAozoraRegistered(runtime)) return;
 		await InitTheme(runtime, preferedTheme);
-		var (_, index) = Snippets.Loader.LoadFromResouce();
+		//var (_, index) = Snippets.Loader.LoadFromResouce();
 		//なぜ最初の要素しか渡されないんだろうと思ったらparamsだった。別にnew[]{*.ToArray()}でも良いけど、nullで。追加も想定し。
-		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora", index.Suggestions.ToArray(), null);
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora");
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozoraCompletion", index.Suggestions.ToArray(), null);
+	}
+
+	public async static Task OverwriteAozoraCompletion(IJSRuntime runtime, Snippets.Index? index)
+	{
+		if (runtime is null) return;
+		if (index is null) return;
+		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozoraCompletion", index.Suggestions.ToArray(), null);
 	}
 
 	public async static Task InitTheme(IJSRuntime runtime, string preferedTheme)

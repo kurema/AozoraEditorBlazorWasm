@@ -52,7 +52,16 @@ namespace AozoraEditor.Shared.Models.Projects
 
 		public Snippets.Index? SnippetsOverrideIndex { get; private set; }
 
+		internal void SetSnippetsValue(Snippets.Schema.Snippets? snippets, Snippets.Index? index)
+		{
+			_SnippetsOverride = snippets;
+			SnippetsOverrideIndex = index;
+		}
+
 		public string? SnippetsOverrideJson { get; set; } = null;
+
+		public string? SnippetsOverrideJsonWorking { get; set; } = null;
+
 	}
 
 	public interface IFileEntry
