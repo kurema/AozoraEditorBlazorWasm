@@ -20,6 +20,7 @@
 						<MenuItem Title="出力" IsVisible="@(()=>ActivePage?.GetMenus("Export")?.Any()==true)">
 							<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Export"))" />
 						</MenuItem>
+						<MenuItem Title="スニペットの編集" OnHeaderSelected="()=>{AddSnippetTab();}" />
 					</MenuItem>
 					<MenuItem Title="ビルド" IsVisible="@(()=>ActivePage?.GetMenus("Build")?.Any()==true)">
 						<MenuItemProviderBasic Provider="@(()=>this.GetActiveProvider("Build"))" />
@@ -50,7 +51,6 @@
 						<MenuItem Title="通知">
 							<MenuItemCheckbox Title="UTF-8で保存した場合の通知" IsChecked="WarnUTF8" Checked="()=>{WarnUTF8=true;}" UnChecked="()=>{WarnUTF8=false;}" />
 						</MenuItem>
-						<MenuItem Title="スニペットの編集" OnHeaderSelected="()=>{AddSnippetTab();}" />
 					</MenuItem>
 					<MenuItem Title="ヘルプ">
 						<MenuItem Title="青空文庫">
@@ -64,6 +64,15 @@
 							<MenuItem IconMaterialSymbols="open_in_new_down" Title="プロジェクトページ" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm");})" />
 							<MenuItem IconMaterialSymbols="open_in_new_down" Title="ライセンス" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/AozoraEditorBlazorWasm/blob/master/LICENSE");})" />
 							<MenuItem Title="サードパーティーライセンス" OnHeaderSelected="@(async ()=>{OepnInNewInternalTab("_content/AozoraEditorSharedUI/thirdparty.xml","サードパーティー");})" />
+						</MenuItem>
+						<MenuItem Title="kuremaについて">
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/kurema/");})" />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="X" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://twitter.com/kurema_makoto");})" />
+						</MenuItem>
+						<MenuItem Title="寄付">
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="GitHub Sponsors" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://github.com/sponsors/kurema");})" />
+							<MenuSeparater />
+							<MenuItem IconMaterialSymbols="open_in_new_down" Title="本の未来基金 (青空文庫への寄付)" OnHeaderSelected="@(async ()=>{await OpenInNewTab("https://honnomirai.net/");})" />
 						</MenuItem>
 						<MenuSeparater />
 						<MenuItem Title="バージョン情報" IconMaterialSymbols="info" OnHeaderSelected="async ()=>{await ShowVersionInfo();}" />
@@ -306,36 +315,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+	{
+		try
 		{
-	try
-	{
-		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-		if (stream is null) return;
-		await LoadFile(stream, fn);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+			if (stream is null) return;
+			await LoadFile(stream, fn);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 			};

@@ -1,0 +1,11 @@
+System.TypeLoadException: Could not resolve type with token 01000070 from typeref (expected class 'Json.More.JsonSerializerOptionsExtensions' in assembly 'Json.More, Version=1.0.0.0, Culture=neutral, PublicKeyToken=17ed63f672b0e278') blazor.webassembly.js:1:38566
+   at System.Text.Json.Serialization.JsonConverter`1[[Json.Schema.JsonSchema, JsonSchema.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=17ed63f672b0e278]].TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, JsonSchema& value) blazor.webassembly.js:1:38566
+   at System.Text.Json.Serialization.JsonConverter`1[[Json.Schema.JsonSchema, JsonSchema.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=17ed63f672b0e278]].ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state) blazor.webassembly.js:1:38566
+   at System.Text.Json.JsonSerializer.ReadFromSpan[JsonSchema](ReadOnlySpan`1 utf8Json, JsonTypeInfo jsonTypeInfo, Nullable`1 actualByteCount) blazor.webassembly.js:1:38566
+   at System.Text.Json.JsonSerializer.ReadFromSpan[JsonSchema](ReadOnlySpan`1 json, JsonTypeInfo jsonTypeInfo) blazor.webassembly.js:1:38566
+   at System.Text.Json.JsonSerializer.Deserialize[JsonSchema](String json, JsonSerializerOptions options) blazor.webassembly.js:1:38566
+   at Json.Schema.JsonSchema.FromText(String jsonText, JsonSerializerOptions options) blazor.webassembly.js:1:38566
+   at AozoraEditor.Shared.Snippets.Loader.LoadSchemaFromResouceAsJsonSchema(Boolean useCache) blazor.webassembly.js:1:38566
+   at AozoraEditor.Shared.Shared.TabPages.EditorSnippetsTab.Validiate(String text) blazor.webassembly.js:1:38566
+
+nugetÇÃàÀë∂ä÷åWÇ™ê≥ÇµÇ≠ê›íËÇµÇƒÇ≥ÇÍÇƒÇ¢Ç»Ç©Ç¡ÇΩÇÊÇ§Ç≈ÅA`Json.More`ÇéËìÆÇ≈í«â¡Ç∑ÇÍÇŒê≥ÇµÇ≠ìÆçÏÇµÇΩÅB

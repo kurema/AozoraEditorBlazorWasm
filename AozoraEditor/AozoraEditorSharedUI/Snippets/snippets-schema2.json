@@ -36,7 +36,7 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": [ "en", "jp", "short_en", "short_jp", "jp_fully_roman" ]
+            "enum": [ "en", "jp", "short_en", "short_jp", "jp_fully_roman", "obsolete", "unsupported" ]
           }
         }
       }

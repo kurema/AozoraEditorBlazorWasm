@@ -32,15 +32,15 @@ internal static partial class Setup
 	{
 		if (runtime is null) return;
 		if (await IsAozoraRegistered(runtime)) return;
-		await InitTheme(preferedTheme);
+		await InitTheme(runtime, preferedTheme);
 		var (_, index) = Snippets.Loader.LoadFromResouce();
 		//なぜ最初の要素しか渡されないんだろうと思ったらparamsだった。別にnew[]{*.ToArray()}でも良いけど、nullで。追加も想定し。
 		await runtime.InvokeVoidAsync("blazorMonaco.kurema.registerAozora", index.Suggestions.ToArray(), null);
 	}
 
-	public async static Task InitTheme(string preferedTheme)
+	public async static Task InitTheme(IJSRuntime runtime, string preferedTheme)
 	{
-		await Global.DefineTheme("aozora-theme", new StandaloneThemeData()
+		await Global.DefineTheme(runtime, "aozora-theme", new StandaloneThemeData()
 		{
 			Base = "vs",
 			Inherit = true,
@@ -56,7 +56,7 @@ internal static partial class Setup
 			}
 		});
 
-		await Global.DefineTheme("aozora-theme-dark", new StandaloneThemeData()
+		await Global.DefineTheme(runtime, "aozora-theme-dark", new StandaloneThemeData()
 		{
 			Base = "vs-dark",
 			Inherit = true,
@@ -72,7 +72,7 @@ internal static partial class Setup
 			}
 		});
 
-		await Global.SetTheme(preferedTheme);
+		await Global.SetTheme(runtime, preferedTheme);
 	}
 
 	public async static Task EnableJsonSchema(IJSRuntime runtime)

@@ -96,16 +96,19 @@ public partial class Index
 		var wordLabelPlaceholder = (IEnumerable<string>)new[] { string.Empty };
 
 		bool[] enabled = new bool[] {
-			!snippets.Config?.Disable?.Contains(Disable.Jp) ?? true,
-			!snippets.Config?.Disable?.Contains(Disable.En) ?? true,
-			!snippets.Config?.Disable?.Contains(Disable.ShortJp) ?? true,
-			!snippets.Config?.Disable?.Contains(Disable.ShortEn) ?? true,
-			!snippets.Config?.Disable?.Contains(Disable.JpFullyRoman) ?? true,
+			!snippets.Config?.Disable?.Contains(Disable.Jp) ?? true,//0
+			!snippets.Config?.Disable?.Contains(Disable.En) ?? true,//1
+			!snippets.Config?.Disable?.Contains(Disable.ShortJp) ?? true,//2
+			!snippets.Config?.Disable?.Contains(Disable.ShortEn) ?? true,//3
+			!snippets.Config?.Disable?.Contains(Disable.JpFullyRoman) ?? true,//4
+			!snippets.Config?.Disable?.Contains(Disable.Unsupported) ?? true,//5
+			!snippets.Config?.Disable?.Contains(Disable.Obsolete) ?? true,//6
 		};
 
 		foreach (var content in snippets.Contents)
 		{
 			if (content is null) continue;
+			if (content.Obsolete == true && !enabled[6]) continue;
 			List<Word>? words = content.Words;
 			if (content.Words is not null && !string.IsNullOrEmpty(content.WordsId)) wordsCache.Add(content.WordsId, content.Words);
 			if (content.Words is null && !string.IsNullOrEmpty(content.WordsRef))

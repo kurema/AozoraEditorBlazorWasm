@@ -211,7 +211,7 @@ namespace AozoraEditor.Shared.Snippets.Schema
 		public string ShortJp { get; set; }
 	}
 
-	public enum Disable { En, Jp, JpFullyRoman, ShortEn, ShortJp };
+	public enum Disable { En, Jp, JpFullyRoman, Obsolete, ShortEn, ShortJp, Unsupported };
 
 	public enum ArgType { Alphabet, Any, NumberFull, NumberHalf, Ref };
 
@@ -265,10 +265,14 @@ namespace AozoraEditor.Shared.Snippets.Schema
 					return Disable.Jp;
 				case "jp_fully_roman":
 					return Disable.JpFullyRoman;
+				case "obsolete":
+					return Disable.Obsolete;
 				case "short_en":
 					return Disable.ShortEn;
 				case "short_jp":
 					return Disable.ShortJp;
+				case "unsupported":
+					return Disable.Unsupported;
 			}
 			throw new Exception("Cannot unmarshal type Disable");
 		}
@@ -286,11 +290,17 @@ namespace AozoraEditor.Shared.Snippets.Schema
 				case Disable.JpFullyRoman:
 					JsonSerializer.Serialize(writer, "jp_fully_roman", options);
 					return;
+				case Disable.Obsolete:
+					JsonSerializer.Serialize(writer, "obsolete", options);
+					return;
 				case Disable.ShortEn:
 					JsonSerializer.Serialize(writer, "short_en", options);
 					return;
 				case Disable.ShortJp:
 					JsonSerializer.Serialize(writer, "short_jp", options);
+					return;
+				case Disable.Unsupported:
+					JsonSerializer.Serialize(writer, "unsupported", options);
 					return;
 			}
 			throw new Exception("Cannot marshal type Disable");
