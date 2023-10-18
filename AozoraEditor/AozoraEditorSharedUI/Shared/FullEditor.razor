@@ -154,7 +154,7 @@
 						var cl = page == ActivePage ? "tab_control_controller_tab_active" : "tab_control_controller_tab";
 						var id = page.Id;
 
-						<div class="@cl" @onmousedown="(e)=>TabClicked(e,page)" data-tab-id="@id">
+						<div class="@cl" @onmousedown="(e)=>TabClicked(e,page)" data-tab-id="@id" @key="@($"tab_control_item_{id}")">
 							<p class="tab_control_controller_tab_title">@(page.Title)</p>
 							@*<p class="tab_control_controller_tab_title">@(page.Id)</p>*@
 							<button @onclick:preventDefault @onclick:stopPropagation="true" title="タブを閉じる" class="ButtonMini tab_control_controller_tab_close" @onclick="async ()=>{await CloseTab(id);}">
@@ -218,7 +218,7 @@
 				</div>
 
 				<div class="tab_control_body">
-					@{
+					@* @{
 						RenderFragment GetBody() => builder =>
 						{
 							//シークエンス番号を固定することで差分が明確になる。その結果、タブの挙動がマトモになる！
@@ -236,7 +236,14 @@
 							}
 						};
 						@GetBody()
-					}
+					} *@
+					@foreach (var (item, s) in Pages)
+					{
+						//わざわざbuilderでシーケンス番号を固定しなくても`@key`を使えば上手くいく。C# Discordで教えてもらった。
+						<div style="@(item == ActivePage ? "display: flex;flex: 1 0 0;" : "display: none;flex: 1 0 0;")" @key="@($"body_{item.Id}")">
+							@item.Body
+						</div>
+						}
 					@if (ActivePage is null)
 					{
 						<div class="tab_page_container" style="display:flex;justify-content:center;align-items:center;text-align:center;font-family:var(--aozora-ui-fonts);background:var(--aozora-tabs-empty-background);">
@@ -315,36 +322,36 @@
 					var commandOpenFile = CommandEntryFile.FromMaterialSymbolOutlined("file_open", "開く");
 					//Visual Studioではラムダ式のインデントが狂いがち。
 					commandOpenFile.FileChanged += async (_, e) =>
+	{
+		if (e.FileCount != 1 || e.File?.Name == null) return;
+		try
 		{
-	if (e.FileCount != 1 || e.File?.Name == null) return;
-	try
-	{
-		var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
-		await LoadFile(stream, e.File.Name);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var stream = e.File.OpenReadStream(CommandEntryFile.MaxFileSize);
+			await LoadFile(stream, e.File.Name);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 				else
 				{
 					var commandOpenFile = CommandEntry.FromMaterialSymbolOutlined("file_open", "開く");
 					commandOpenFile.Clicked += async (_, _) =>
+	{
+		try
 		{
-	try
-	{
-		var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
-		if (stream is null) return;
-		await LoadFile(stream, fn);
-	}
-	catch
-	{
-		await ShowFileOpenError();
-	}
-		};
+			var (stream, fn) = await ilf.OpenLocalFile(new[] { ".txt", ".zip", ".aozoraproj" });
+			if (stream is null) return;
+			await LoadFile(stream, fn);
+		}
+		catch
+		{
+			await ShowFileOpenError();
+		}
+	};
 					yield return commandOpenFile;
 				}
 			};
